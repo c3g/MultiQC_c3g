@@ -1,0 +1,2 @@
+genomeAssembly	Sample	RawReads	SurvivingReads	SurvivingReads_perc	AlignedReads	AlignedReads_perc	AlternativeAlignments	AlternativeAlignments_perc	rRNA_perc	DuplicationRate	Coverage	IntergenicRate	MitoReads	IntragenicRate	ExonicRate	IntronicRate	GenesDetected	StrandSpecificity
+GRCm38	sampleY	92687294	92671184	99.9826	90241576	97.3782	9857960	10.92396702	0.206531833	0.18978795	119.760475	0.06262115	2154905	0.9742384	0.9116172	0.025371045	16969	95.7019

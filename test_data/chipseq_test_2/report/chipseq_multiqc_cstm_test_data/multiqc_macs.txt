@@ -1,0 +1,5 @@
+Sample	peak_count	fragment_size	treatment_fragments_total	treatment_fragments_after_filtering	treatment_max_duplicates	treatment_redundant_rate	control_fragments_total	control_fragments_after_filtering	control_max_duplicates	control_redundant_rate	d
+EW22.H3K27ac	1528	95.0	595388.0	554895.0	1.0	0.07	398909.0	380440.0	1.0	0.05	200.0
+EW3.H3K27ac	1821	150.0	581257.0	534679.0	1.0	0.08	692605.0	651483.0	1.0	0.06	200.0
+EW7.H3K27ac	1373	100.0	765412.0	712985.0	1.0	0.07	289559.0	282157.0	1.0	0.03	200.0
+TC71.H3K27ac	1437	97.0	400209.0	367431.0	1.0	0.08	258904.0	234175.0	1.0	0.1	200.0

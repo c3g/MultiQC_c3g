@@ -53,3 +53,5 @@ def c3g_execution():
     config.fn_ignore_paths.extend([
         '*/job_output/*'
     ])
+    
+

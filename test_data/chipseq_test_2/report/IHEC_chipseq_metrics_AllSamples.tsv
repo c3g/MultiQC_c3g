@@ -1,0 +1,6 @@
+Sample_Name	Mark_Name	ChIP_type	Genome_Assembly	Raw_Reads	Trimmed_Reads	Trimmed_Reads_Fraction	Mapped_Reads	Mapped_Reads_Fraction	Duplicates_Reads	Duplicates_Reads_Fraction	Filtered_Reads	Filtered_Reads_Fraction	Mitochondrial_Reads	Mitochondrial_Reads_Fraction	Singletons_Reads	Nbr_Peaks	Reads_in_Peaks	frip	Mark_NSC	Mark_RSC	Mark_Quality	JS_Distance	Chance_Divergence
+EW22	H3K27ac	narrow	hg19	623449	623422	99.99	623342	99.98	45812	7.34	561821	90.11	0	0	0	1528	128605	.2289	1.18	1.21	veryHigh	.21	.36
+EW3	H3K27ac	narrow	hg19	594436	594406	99.99	594386	99.99	48384	8.14	538161	90.53	0	0	0	1821	240633	.4471	1.28	1.00	High	.32	.46
+EW7	H3K27ac	narrow	hg19	806160	806143	99.99	806050	99.98	61549	7.63	721523	89.50	0	0	0	1373	165176	.2289	1.15	1.12	Medium	.25	.40
+TC71	H3K27ac	narrow	hg19	419787	419777	99.99	419724	99.98	38814	9.24	371658	88.53	0	0	0	1437	73843	.1986	1.10	.97	Low	.19	.47
+TC71	input	NA	hg19	295059	295056	99.99	295028	99.99	42431	14.38	238946	80.98	0	0	0	NA	NA	NA	1.13	.84	veryLow	NA	NA

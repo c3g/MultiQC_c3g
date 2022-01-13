@@ -1,0 +1,69 @@
+INFO:core.config:Check modules...
+INFO:core.config:module check finished
+
+INFO:core.pipeline:Create jobs for step qc_metrics...
+INFO:bfx.readset:Parse Illumina readset file readset.chipseq.txt ...
+INFO:bfx.readset:8 readsets parsed
+INFO:bfx.readset:4 samples parsed
+
+DEBUG:core.pipeline:Job name: qc_plots_R
+DEBUG:core.pipeline:Job input files:
+  tags/EW22/EW22.input/tagInfo.txt
+  tags/EW22/EW22.H3K27ac/tagInfo.txt
+  tags/EW3/EW3.input/tagInfo.txt
+  tags/EW3/EW3.H3K27ac/tagInfo.txt
+  tags/EW7/EW7.input/tagInfo.txt
+  tags/EW7/EW7.H3K27ac/tagInfo.txt
+  tags/TC71/TC71.input/tagInfo.txt
+  tags/TC71/TC71.H3K27ac/tagInfo.txt
+DEBUG:core.pipeline:Job output files:
+  graphs/EW22.input_QC_Metrics.ps
+  graphs/EW22.H3K27ac_QC_Metrics.ps
+  graphs/EW3.input_QC_Metrics.ps
+  graphs/EW3.H3K27ac_QC_Metrics.ps
+  graphs/EW7.input_QC_Metrics.ps
+  graphs/EW7.H3K27ac_QC_Metrics.ps
+  graphs/TC71.input_QC_Metrics.ps
+  graphs/TC71.H3K27ac_QC_Metrics.ps
+  report/yaml/ChipSeq.qc_metrics.yaml
+
+DEBUG:core.job:Job qc_plots_R NOT up to date
+DEBUG:core.job:Input, output or .done file missing: /lustre04/scratch/newtonma/chipseq_test_2/job_output/qc_metrics/qc_plots_R.24b563b424d812ba78b3e83a9f602204.mugqic.done
+INFO:core.pipeline:Step qc_metrics: 1 job created
+
+INFO:core.pipeline:Create jobs for step annotation_graphs...
+DEBUG:core.pipeline:Job name: annotation_graphs
+DEBUG:core.pipeline:Job input files:
+  annotation/EW22/H3K27ac/EW22.H3K27ac.tss.stats.csv
+  annotation/EW22/H3K27ac/EW22.H3K27ac.exon.stats.csv
+  annotation/EW22/H3K27ac/EW22.H3K27ac.intron.stats.csv
+  annotation/EW22/H3K27ac/EW22.H3K27ac.tss.distance.csv
+  annotation/EW3/H3K27ac/EW3.H3K27ac.tss.stats.csv
+  annotation/EW3/H3K27ac/EW3.H3K27ac.exon.stats.csv
+  annotation/EW3/H3K27ac/EW3.H3K27ac.intron.stats.csv
+  annotation/EW3/H3K27ac/EW3.H3K27ac.tss.distance.csv
+  annotation/EW7/H3K27ac/EW7.H3K27ac.tss.stats.csv
+  annotation/EW7/H3K27ac/EW7.H3K27ac.exon.stats.csv
+  annotation/EW7/H3K27ac/EW7.H3K27ac.intron.stats.csv
+  annotation/EW7/H3K27ac/EW7.H3K27ac.tss.distance.csv
+  annotation/TC71/H3K27ac/TC71.H3K27ac.tss.stats.csv
+  annotation/TC71/H3K27ac/TC71.H3K27ac.exon.stats.csv
+  annotation/TC71/H3K27ac/TC71.H3K27ac.intron.stats.csv
+  annotation/TC71/H3K27ac/TC71.H3K27ac.tss.distance.csv
+DEBUG:core.pipeline:Job output files:
+  annotation/EW22/peak_stats.csv
+  annotation/EW3/peak_stats.csv
+  annotation/EW7/peak_stats.csv
+  annotation/TC71/peak_stats.csv
+  report/yaml/ChipSeq.annotation_graphs.yaml
+
+DEBUG:core.job:Job annotation_graphs NOT up to date
+DEBUG:core.job:Input, output or .done file missing: /lustre04/scratch/newtonma/chipseq_test_2/job_output/annotation_graphs/annotation_graphs.370fbe137ddd57f127a6edbf8cb80e59.mugqic.done
+INFO:core.pipeline:Step annotation_graphs: 1 job created
+
+INFO:core.pipeline:True
+INFO:core.pipeline:/project/6007512/C3G/analyste_dev/portal_out_dir
+INFO:core.pipeline:TOTAL: 2 jobs created
+
+INFO:core.scheduler:
+All submitted"

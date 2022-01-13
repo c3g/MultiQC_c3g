@@ -24,12 +24,12 @@ class MultiqcModule(BaseMultiqcModule):
 
         # Initialise the parent object
         super(MultiqcModule, self).__init__(
-            name='Kallisto', 
+            name='Kallisto',
             anchor='kallisto_c3g',
             href='https://pachterlab.github.io/kallisto/about',
             info="kallisto is a program for quantifying abundances of transcripts from RNA-Seq data")
-            
+
 
 ## Start Code here:
-    
+
     log.info('Hello World! Kallisto_c3g is Alive!')

@@ -1,0 +1,30 @@
+N_peaks_motifs_analysis:
+  id: N_peaks_motifs_analysis
+  parent_title: Narrow Peaks Motif Analysis
+  content: |
+    De novo motif analyses are performed using [[homer]]. The following guidelines are helpful when intepreting de novo motifs results; a candidate motif should typically have:
+
+    * A low p-value (< 1E-50)
+    * High sequence complexity
+    * No simple repeats
+    * A high % of target sequences and a low % of background sequences
+
+    The following links will direct you to the [[homer]] motif results for each Narrow Peak design:
+    
+    ----
+    ####TC71
+    * [HOMER _De Novo_ Motif Results for Sample TC71 and Mark H3K27ac](annotation/TC71/H3K27ac/homerResults.html)
+    * [HOMER Known Motif Results for Sample TC71 and Mark H3K27ac](annotation/TC71/H3K27ac/knownResults.html)
+    ----
+    ####EW3
+    * [HOMER _De Novo_ Motif Results for Sample EW3 and Mark H3K27ac](annotation/EW3/H3K27ac/homerResults.html)
+    * [HOMER Known Motif Results for Sample EW3 and Mark H3K27ac](annotation/EW3/H3K27ac/knownResults.html)
+    ----
+    ####EW22
+    * [HOMER _De Novo_ Motif Results for Sample EW22 and Mark H3K27ac](annotation/EW22/H3K27ac/homerResults.html)
+    * [HOMER Known Motif Results for Sample EW22 and Mark H3K27ac](annotation/EW22/H3K27ac/knownResults.html)
+    ----
+    ####EW7
+    * [HOMER _De Novo_ Motif Results for Sample EW7 and Mark H3K27ac](annotation/EW7/H3K27ac/homerResults.html)
+    * [HOMER Known Motif Results for Sample EW7 and Mark H3K27ac](annotation/EW7/H3K27ac/knownResults.html)
+

@@ -50,6 +50,11 @@ setup(
             'c3g_table_renderer = multiqc_c3g.modules.c3g_table_renderer:MultiqcModule',
             'c3g_section_renderer = multiqc_c3g.modules.c3g_section_renderer:MultiqcModule',
             'references = multiqc_c3g.modules.references:MultiqcModule',
+            "c3g_alignments = c3g_runprocessing_plugin.modules.c3g_alignments:MultiqcModule",
+            "c3g_progress = c3g_runprocessing_plugin.modules.c3g_progress:MultiqcModule",
+            "c3g_verifybamid = c3g_runprocessing_plugin.modules.c3g_verifybamid:MultiqcModule",
+            "demuxmetrics = c3g_runprocessing_plugin.modules.demuxmetrics:MultiqcModule",
+            "genpipes = c3g_runprocessing_plugin.modules.genpipes:MultiqcModule",
         ],
 
         'multiqc.templates.v1': [

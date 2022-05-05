@@ -27,6 +27,8 @@ class MultiqcModule(BaseMultiqcModule):
             info=" files from run processing output",
         )
 
+        log.info("Inside the c3g_progress module!")
+
         job_data = dict()
         for f in self.find_log_files("genpipes/joblist"):
             log.info("Found joblist: {}".format(f['fn']))

@@ -36,7 +36,7 @@ setup(
     packages = find_packages(),
     include_package_data = True,
     install_requires = [
-        'multiqc>=1.5',
+        'multiqc>=1.12',
         'bs4>=0.0.1',
         'pybtex>=0.24.0'
     ],
@@ -50,11 +50,13 @@ setup(
             'c3g_table_renderer = multiqc_c3g.modules.c3g_table_renderer:MultiqcModule',
             'c3g_section_renderer = multiqc_c3g.modules.c3g_section_renderer:MultiqcModule',
             'references = multiqc_c3g.modules.references:MultiqcModule',
-            "c3g_alignments = c3g_runprocessing_plugin.modules.c3g_alignments:MultiqcModule",
-            "c3g_progress = c3g_runprocessing_plugin.modules.c3g_progress:MultiqcModule",
-            "c3g_verifybamid = c3g_runprocessing_plugin.modules.c3g_verifybamid:MultiqcModule",
-            "demuxmetrics = c3g_runprocessing_plugin.modules.demuxmetrics:MultiqcModule",
-            "genpipes = c3g_runprocessing_plugin.modules.genpipes:MultiqcModule",
+            # "c3g_alignments = c3g_runprocessing_plugin.modules.c3g_alignments:MultiqcModule",
+            # "c3g_progress = c3g_runprocessing_plugin.modules.c3g_progress:MultiqcModule",
+            # "c3g_verifybamid = c3g_runprocessing_plugin.modules.c3g_verifybamid:MultiqcModule",
+            # "demuxmetrics = c3g_runprocessing_plugin.modules.demuxmetrics:MultiqcModule",
+            # "genpipes = c3g_runprocessing_plugin.modules.genpipes:MultiqcModule",
+            "c3g_runprocessing = multiqc_c3g.modules.c3g_runprocessing:MultiqcModule",
+            "c3g_fastp = multiqc_c3g.modules.c3g_fastp:MultiqcModule",
         ],
 
         'multiqc.templates.v1': [
@@ -68,19 +70,21 @@ setup(
         ],
         'multiqc.cli_options.v1': [
             'enable = multiqc_c3g.cli:enable_c3g',
-            'project = multiqc_c3g.cli:project_c3g'
+            'project = multiqc_c3g.cli:project_c3g',
+            'runprocessing = multiqc_c3g.cli:runprocessing',
         ],
         ## points of entry into main run: possible hookup insertions:
-        #'before_config'
-        #'config_loaded'
-        #'execution_start'
-        #'before_modules'
-        #'after_modules'
-        #'before_report_generation'
-        #'before_template'
-        #'execution_finish'
+        # 'before_config'
+        # 'config_loaded'
+        # 'execution_start'
+        # 'before_modules'
+        # 'after_modules'
+        # 'before_report_generation'
+        # 'before_template'
+        # 'execution_finish'
         'multiqc.hooks.v1': [
             'execution_start = multiqc_c3g.multiqc_c3g:c3g_execution',
+            'after_modules = multiqc_c3g.multiqc_c3g:c3g_summaries'
         ]
     },
     classifiers = [

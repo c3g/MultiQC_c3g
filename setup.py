@@ -53,10 +53,11 @@ setup(
             # "c3g_alignments = c3g_runprocessing_plugin.modules.c3g_alignments:MultiqcModule",
             # "c3g_progress = c3g_runprocessing_plugin.modules.c3g_progress:MultiqcModule",
             # "c3g_verifybamid = c3g_runprocessing_plugin.modules.c3g_verifybamid:MultiqcModule",
-            # "demuxmetrics = c3g_runprocessing_plugin.modules.demuxmetrics:MultiqcModule",
             # "genpipes = c3g_runprocessing_plugin.modules.genpipes:MultiqcModule",
             "c3g_runprocessing = multiqc_c3g.modules.c3g_runprocessing:MultiqcModule",
             "c3g_fastp = multiqc_c3g.modules.c3g_fastp:MultiqcModule",
+            "c3g_demuxmetrics = multiqc_c3g.modules.c3g_demuxmetrics:MultiqcModule",
+            "c3g_blastresults = multiqc_c3g.modules.c3g_blastresults:MultiqcModule",
         ],
 
         'multiqc.templates.v1': [

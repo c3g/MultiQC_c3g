@@ -7,13 +7,12 @@ import json
 import logging
 
 from multiqc.utils import config
-from multiqc_c3g.base_module import RunprocessingMultiqcModule
-from multiqc_c3g.modules.c3g_runprocessing import runvalidation
+from multiqc_c3g.runprocessing_base import RunProcessingBaseModule
 
 # Initialise the main MultiQC logger
 log = logging.getLogger("multiqc")
 
-class MultiqcModule(RunprocessingMultiqcModule):
+class MultiqcModule(RunProcessingBaseModule):
 
     def __init__(self):
         # Initialise the parent module Class object
@@ -32,7 +31,6 @@ class MultiqcModule(RunprocessingMultiqcModule):
         ## Parse Genpipes JSON files
         sample_data = {}
         for f in self.find_log_files("c3g_runprocessing/report"):
-            # report = runvalidation.Report.from_dict(json.loads(f['f']))
             d = self.parse_genpipes_general_info_json(f)
 
             sample_data.update(d)
@@ -42,7 +40,6 @@ class MultiqcModule(RunprocessingMultiqcModule):
         log.info("Found {} samples in {} JSONs".format(
             len(sample_data),
             len(list(self.find_log_files("c3g_runprocessing/report")))))
-
 
         # ## General Summary Section
         self.generaljson_data = dict()
@@ -54,6 +51,9 @@ class MultiqcModule(RunprocessingMultiqcModule):
         headers['Lane'] = {
             'title': 'Lane',
             'description': 'Flowcell lane',
+            'scale': False,
+            'scale': False,
+            'format': '{:,.0f}',
             'hidden': True,
         }
 
@@ -61,114 +61,6 @@ class MultiqcModule(RunprocessingMultiqcModule):
             self.generaljson_data[s_name] = {colname:data[colname] for colname in list(headers.keys()) if colname in data}
         self.generaljson_data = self.ignore_samples(self.generaljson_data)
         self.general_stats_addcols(self.generaljson_data, headers)
-        # unexpected_barcode_data = {}
-        # for f in self.find_log_files("genpipes/sequencestat", filehandles=True):
-        #     d = self.parse_sequencestat(f, 20)
-        #     unexpected_barcode_data.update(d)
-
-        # barcode_to_id = {"L{} | {}".format(data["Lane"], data['Index name']) : s_name for (s_name, data) in sample_data.items()}
-        # barcode_data = {}
-        # for f in self.find_log_files("runprocessing/barcodestat"):
-        #     d = self.parse_barcodestat(f, barcode_to_id)
-        #     barcode_data.update(d)
-        #     for s_name in barcode_data:
-        #         self.add_data_source(f, s_name, section="barcodestat")
-
-        # for f in self.find_log_files("genpipes/demuxmetrics"):
-        #     d = self.parse_barcodemetrics(f)
-        #     barcode_data.update(d)
-
-        # headers = OrderedDict()
-        # headers['Correct'] = {
-        #     'title': 'Perfect',
-        #     'description': 'Number of clusters with perfect barcode sequence',
-        #     'modify': lambda x: x * config.read_count_multiplier,
-        #     'suffix': config.read_count_prefix,
-        #     'format': '{:,.0f}'
-        # }
-        # headers['Corrected'] = {
-        #     'title': 'Imperfect',
-        #     'description': 'Number of clusters assigned to barcode within mismatch distance',
-        #     'modify': lambda x: x * config.read_count_multiplier,
-        #     'suffix': config.read_count_prefix,
-        #     'format': '{:,.0f}'
-        # }
-        # headers['Total'] = {
-        #     'description': 'Total number of clusters assigned to barcode',
-        #     'modify': lambda x: x * config.read_count_multiplier,
-        #     'suffix': config.read_count_prefix,
-        #     'format': '{:,.0f}'
-        # }
-        # headers['Percentage(%)'] = {
-        #     'title' : "Lane composition (%)",
-        #     'description': 'Percentage of the lane assigned to this barcode',
-        #     'suffix': '%',
-        #     'format': '{:,.1f}'
-        # }
-
-        # total_matcher = re.compile(" Clusters assigned to barcode$")
-        # barcode_data_without_totals = {k: barcode_data[k] for k in barcode_data.keys() if not total_matcher.search(k)}
-        # barcode_data_for_unexpected = {k: barcode_data[k] for k in barcode_data.keys() if total_matcher.search(k)}
-
-        # barcode_data_for_unexpected.update(unexpected_barcode_data)
-
-        # if(len(barcode_data_without_totals)>0):
-        #     self.add_section(
-        #         name = "Barcodes - Expected",
-        #         description = "The counts for expected barcodes are shown below. Note that percentage is relative to the lane, not the run as a whole.",
-        #         plot = table.plot(barcode_data_without_totals, headers)
-        #     )
-
-        # headers = OrderedDict()
-        # headers['Total'] = {
-        #     'description': 'Total number of clusters assigned to barcode',
-        #     'modify': lambda x: float(x) * config.read_count_multiplier,
-        #     'suffix': config.read_count_prefix,
-        #     'format': '{:,.0f}'
-        # }
-        # headers['Percentage(%)'] = {
-        #     'title' : "Lane composition (%)",
-        #     'description': 'Percentage of the lane assigned to this barcode',
-        #     'suffix': '%',
-        #     'format': '{:,.4f}'
-        # }
-        # if(len(barcode_data_for_unexpected)>0):
-        #     self.add_section(
-        #         name = "Barcodes - Unexpected",
-        #         description = "The most abundant 20 unexpected barcodes in each lane are shown in the table below.",
-        #         plot = table.plot(
-        #             barcode_data_for_unexpected,
-        #             headers,
-        #             {'col1_header':'Barcode', 'sortRows': False}
-        #         )
-        #     )
-
-
-        # blast_data = {}
-        # for f in self.find_log_files("genpipes/blastsummary"):
-        #     cleaner_name = re.sub(r'_\d+_L\d+.R1(R2)?.RDP.blastHit_20MF_species.txt', '', f['fn'])
-        #     s_name = self.clean_s_name(cleaner_name, f)
-        #     d = self.parse_blast_results(f)
-        #     sample_data[s_name].update(d)
-        #     blast_data[s_name] = d
-        #     self.add_data_source(f, s_name, section="blast")
-
-        # headers = OrderedDict()
-        # headers['blast_hit_1'] = {'title': 'Top blast hit'}
-        # headers['blast_hit_2'] = {'title': 'Second blast hit'}
-        # headers['blast_hit_3'] = {'title': 'Third blast hit'}
-        # if(len(blast_data)>0):
-        #     self.add_section(
-        #         name = "Blast hits",
-        #         plot = table.plot(
-        #             {k:
-        #                 {
-        #                 "blast_hit_1": "{} ({} hits)".format(v['blast_hit_1_name'],v['blast_hit_1_count']),
-        #                 "blast_hit_2": "{} ({} hits)".format(v['blast_hit_2_name'],v['blast_hit_2_count']),
-        #                 "blast_hit_3": "{} ({} hits)".format(v['blast_hit_3_name'],v['blast_hit_3_count']),
-        #                 }
-        #             for (k, v) in blast_data.items()}, headers))
-
 
 
     def parse_genpipes_general_info_json(self, f):
@@ -264,12 +156,10 @@ class MultiqcModule(RunprocessingMultiqcModule):
         data = {}
         for readset_name, dct in parsed_json["readsets"].items():
             barcodes = dct.get("barcodes")
-            first_barcode_section = barcodes[0]
-            sample_barcode_info = self.barcode_subsection_to_dict(first_barcode_section)
+            barcode_infos = [self.barcode_subsection_to_dict(barcode_section) for barcode_section in barcodes]
             s_name = self.clean_s_name(readset_name, f)
-            # TODO: From python 3.9, we can switch to the nicer "|" syntax for merging dictionaries:
-            # data[s_name] = sample_barcode_info | run_data
-            data[s_name] = {**sample_barcode_info, **run_data}
+            data[s_name] = run_data
+            data[s_name]["barcodes"] = barcode_infos
 
         # Add information from the "run_validation" section
         if "run_validation" not in parsed_json:
@@ -282,6 +172,7 @@ class MultiqcModule(RunprocessingMultiqcModule):
 
         lane_dict = {'Lane':parsed_json['lane']}
         data = {self.clean_s_name(name, f, lane=parsed_json['lane']): {**items, **lane_dict} for name, items in data.items()}
+        self.add_to_sample_renames(data)
         return data
 
 
@@ -290,9 +181,22 @@ class MultiqcModule(RunprocessingMultiqcModule):
         s_dct["Library"] = s_dct.pop("LIBRARY", None)
         s_dct["Project"] = s_dct.pop("PROJECT", None)
         s_dct["Index name"] = s_dct.pop("INDEX_NAME", None)
-        s_dct["Index 1"] = s_dct.pop("INDEX_NAME", None)
-        s_dct["Index 2"] = s_dct.pop("INDEX1", None)
         s_dct["Adapter-i7"] = s_dct.pop("ADAPTERi7", None)
         s_dct["Adapter-i5"] = s_dct.pop("ADAPTERi5", None)
-        s_dct["Barcode sequence"] = s_dct.pop("BARCODE_SEQUENCE", None)
         return s_dct
+
+
+    def add_to_sample_renames(self, s_dct):
+
+        names_full = [key for key, value in s_dct.items() for barcode in value['barcodes']]
+        names_with_indexname = [key.removesuffix(barcode['Library']).removesuffix("_") + " | " + barcode['Index name'] for key, value in s_dct.items() for barcode in value['barcodes']]
+        names_simple = [key.removesuffix(barcode['Library']).removesuffix("_") for key, value in s_dct.items() for barcode in value['barcodes']]
+
+        foo = [key for key, value in s_dct.items() for barcode in value['barcodes']]
+        [key.removesuffix('_2-2119395') for key, value in s_dct.items() for barcode in value['barcodes']]
+        [(key, barcode['Library']) for key, value in s_dct.items() for barcode in value['barcodes']]
+
+        names_all = {x for x in zip(names_full, names_with_indexname, names_simple)}
+
+        config.sample_names_rename_buttons = ["With library ID", "With library Name", "Simple"]
+        config.sample_names_rename.extend(names_all)

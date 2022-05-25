@@ -9,12 +9,12 @@ import json
 from multiqc import config
 from multiqc.plots import linegraph
 
-from multiqc_c3g.base_module import RunprocessingMultiqcModule
+from multiqc_c3g.runprocessing_base import RunProcessingBaseModule
 
 # Initialise the main MultiQC logger
 log = logging.getLogger("multiqc")
 
-class MultiqcModule(RunprocessingMultiqcModule):
+class MultiqcModule(RunProcessingBaseModule):
     doi = ["10.1093/bioinformatics/bty560"]
 
     def __init__(self):

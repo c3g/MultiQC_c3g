@@ -53,17 +53,22 @@ class MultiqcModule(RunProcessingBaseModule):
                 name = "Blast hits",
                 plot = table.plot(blast_data, headers))
 
+        blast_data = dict()
+        for f in self.find_log_files("c3g_blastresults/summary"):
+            blast_data = {**blast_data, **self.blast_metrics(f, include_counts=False)}
         headers = OrderedDict()
         headers['blast_hit_1'] = { 'title' : "Top blast hit", 'hidden': False }
         headers['blast_hit_2'] = { 'title' : "Second blast hit", 'hidden': True }
         headers['blast_hit_3'] = { 'title' : "Third blast hit", 'hidden': True }
         self.general_stats_addcols(blast_data, headers)
 
-
-    def blast_metrics(self, f):
+    def blast_metrics(self, f, include_counts=True):
         buff = StringIO(f['f'])
         reader = csv.DictReader(buff, delimiter=" ", skipinitialspace=True, fieldnames=['count', 'result'])
-        blast_hit_dict = {f"blast_hit_{index+1}" : f"{row['result']} ({row['count']} hits)" for index, row in enumerate(reader) }
+        if include_counts:
+            blast_hit_dict = {f"blast_hit_{index+1}" : f"{row['result']} ({row['count']} hits)" for index, row in enumerate(reader) }
+        else:
+            blast_hit_dict = {f"blast_hit_{index+1}" : f"{row['result']}" for index, row in enumerate(reader) }
         cleaner_name = re.sub(r'_\d+_L\d+.R1(R2)?.RDP.blastHit_20MF_species.txt', '', f['fn'])
         s_name = self.clean_s_name(cleaner_name, f)
         return { s_name : blast_hit_dict }

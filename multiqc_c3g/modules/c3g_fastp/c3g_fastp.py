@@ -25,6 +25,7 @@ class MultiqcModule(RunProcessingBaseModule):
             anchor="fastp",
             href="https://github.com/OpenGene/fastp",
             info=" outputs presented in more detail.",
+            doi = ["10.1093/bioinformatics/bty560"]
         )
 
         # Halt execution if we've disabled the plugin
@@ -41,7 +42,8 @@ class MultiqcModule(RunProcessingBaseModule):
             d = self.parse_fastp_jsons(f)
             duplication_data[s_name] = d.pop("duplication_histogram",[])
             quality_curves_read1[s_name] = d.pop("quality_curves_read1",[])
-            quality_curves_read2[s_name] = d.pop("quality_curves_read2",[])
+            if "quality_curves_read2" in d:
+                quality_curves_read2[s_name] = d.pop("quality_curves_read2",[])
             sample_data.update({s_name:d})
             self.add_data_source(f, s_name, section="fastp")
 
@@ -107,7 +109,7 @@ class MultiqcModule(RunProcessingBaseModule):
                     [
                         quality_curves_read1,
                         quality_curves_read2
-                    ],
+                    ] if len(quality_curves_read2) > 0 else [ quality_curves_read1 ],
                     {
                         'ymin': 0,
                         'data_labels':[
@@ -139,7 +141,8 @@ class MultiqcModule(RunProcessingBaseModule):
         histogram_values = parsed_json["duplication"]["histogram"]
         data['duplication_histogram'] = {i+1 : v for i, v in enumerate(histogram_values)}
         quality_values_1 = parsed_json["read1_before_filtering"]["quality_curves"]["mean"]
-        quality_values_2 = parsed_json["read2_before_filtering"]["quality_curves"]["mean"]
         data['quality_curves_read1'] = {i+1 : v for i, v in enumerate(quality_values_1)}
-        data['quality_curves_read2'] = {i+1 : v for i, v in enumerate(quality_values_2)}
+        if "read2_before_filtering" in parsed_json:
+            quality_values_2 = parsed_json["read2_before_filtering"]["quality_curves"]["mean"]
+            data['quality_curves_read2'] = {i+1 : v for i, v in enumerate(quality_values_2)}
         return data

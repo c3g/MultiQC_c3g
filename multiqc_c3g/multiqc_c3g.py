@@ -123,6 +123,8 @@ def c3g_summaries():
         spreads_by_lane = [(lane, max(vals) / min(vals)) for lane, vals in yields_by_lane.items()]
         spreads_by_lane.sort(key=lambda tupl: tupl[0])
         clusters_by_lane = [(lane, sum(vals)) for lane, vals in clusters_by_lane.items()]
+        if config.report_header_info is None:
+            config.report_header_info = []
         config.report_header_info.append({"Spreads" : " | ".join([lane + ": {:.2f}".format(spread) for lane, spread in spreads_by_lane])})
         clusters_by_lane.sort(key=lambda tupl: tupl[0])
         config.report_header_info.append({"Total clusters" : " | ".join([f'{lane}: {count:,}' for lane, count in clusters_by_lane])})

@@ -16,7 +16,7 @@ def parse_reports(self):
     self.picard_insertSize_histogram = dict()
     self.picard_insertSize_samplestats = dict()
 
-    for f in self.find_log_files("genpipes/insert_size_metrics", filehandles=True):
+    for f in self.find_log_files("c3g_alignments/insert_size_metrics", filehandles=True):
         in_hist = False
         s_name = self.clean_s_name(f['fn'], f)
         for l in f["f"]:

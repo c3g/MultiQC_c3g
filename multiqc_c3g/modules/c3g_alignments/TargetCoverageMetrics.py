@@ -18,7 +18,7 @@ def parse_reports(self):
     self.target_coverage_metrics = dict()
 
     # Go through logs and find Metrics
-    for f in self.find_log_files("genpipes/target_coverage_metrics", filehandles=True):
+    for f in self.find_log_files("c3g_alignments/target_coverage_metrics", filehandles=True):
         s_name = self.clean_s_name(f['fn'], f)
         parsed_data = dict()
         keys = None

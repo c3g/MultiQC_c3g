@@ -37,7 +37,7 @@ class MultiqcModule(RunProcessingBaseModule):
         duplication_data = {}
         quality_curves_read1 = {}
         quality_curves_read2 = {}
-        for f in self.find_log_files("c3g_fastp/json"):
+        for f in self.find_log_files("c3g_fastp"):
             s_name = f['s_name']
             d = self.parse_fastp_jsons(f)
             duplication_data[s_name] = d.pop("duplication_histogram",[])

@@ -30,7 +30,7 @@ class MultiqcModule(BaseMultiqcModule):
         log.info("Inside the c3g_progress module!")
 
         job_data = dict()
-        for f in self.find_log_files("genpipes/joblist"):
+        for f in self.find_log_files("c3g_progress"):
             log.info("Found joblist: {}".format(f['fn']))
             for line in f['f'].splitlines():
                 id, name, dependencies, outpath = line.split("\t")

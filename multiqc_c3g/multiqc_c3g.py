@@ -69,9 +69,9 @@ def c3g_execution():
         if "c3g_alignments/alignment_summary_metrics" not in config.sp:
             config.update_dict( config.sp, {"c3g_alignments/alignment_summary_metrics": {"fn": "*.sorted.metrics.alignment_summary_metrics"}} )
         if "c3g_alignments/insert_size_metrics" not in config.sp:
-            config.update_dict( config.sp, {"c3g_alignments/insert_size_metrics": {"fn": "*.sorted.metrics.insert_size_metrics"}})
+            config.update_dict( config.sp, {"c3g_alignments/insert_size_metrics": {"fn": "*.sorted.metrics.insert_size_metrics"}} )
         if "c3g_alignments/target_coverage_metrics" not in config.sp:
-            config.update_dict( config.sp, {"c3g_alignments/target_coverage_metrics": {"fn": "*.sorted.metrics.targetCoverage.txt"}})
+            config.update_dict( config.sp, {"c3g_alignments/target_coverage_metrics": {"fn": "*.sorted.metrics.targetCoverage.txt"}} )
 
         # We replace the default verifybamid module with our own version
         config.avail_modules.pop('verifybamid', None)

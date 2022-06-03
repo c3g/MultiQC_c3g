@@ -34,7 +34,7 @@ class MultiqcModule(RunProcessingBaseModule):
             return None
 
         blast_data = dict()
-        for f in self.find_log_files("c3g_blastresults/summary"):
+        for f in self.find_log_files("c3g_blastresults"):
             blast_data = {**blast_data, **self.blast_metrics(f)}
 
         headers = OrderedDict()

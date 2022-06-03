@@ -20,7 +20,7 @@ def parse_reports(self):
     self.picard_alignment_metrics = dict()
 
     # Go through logs and find Metrics
-    for f in self.find_log_files("genpipes/alignment_summary_metrics", filehandles=True):
+    for f in self.find_log_files("c3g_alignments/alignment_summary_metrics", filehandles=True):
         parsed_data = dict()
         s_name = None
         keys = None

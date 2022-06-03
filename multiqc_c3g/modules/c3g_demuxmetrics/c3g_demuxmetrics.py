@@ -35,7 +35,7 @@ class MultiqcModule(RunProcessingBaseModule):
         barcode_data = dict()
         unexpected_per_lane = dict()
 
-        for f in self.find_log_files("c3g_demuxmetrics/metrics"):
+        for f in self.find_log_files("c3g_demuxmetrics"):
             lane_data = self.expected_metrics(f)
             lane = self.get_lane(f)
             unexpected_per_lane[f"L{lane}"] = self.unexpected_metrics(f)

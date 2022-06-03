@@ -18,8 +18,8 @@ class MultiqcModule(RunProcessingBaseModule):
         # Initialise the parent module Class object
         super(MultiqcModule, self).__init__(
             name="Runprocessing",
-            target="genpipes",
-            anchor="genpipes",
+            target="c3g_runprocessing",
+            anchor="c3g_runprocessing",
             href="https://genpipes.readthedocs.io",
             info=" outputs presented in more detail.",
         )
@@ -30,8 +30,8 @@ class MultiqcModule(RunProcessingBaseModule):
 
         ## Parse Genpipes JSON files
         sample_data = {}
-        for f in self.find_log_files("c3g_runprocessing/report"):
-            d = self.parse_genpipes_general_info_json(f)
+        for f in self.find_log_files("c3g_runprocessing"):
+            d = self.parse_genpipes_run_processing_json(f)
 
             sample_data.update(d)
             for s_name in d:
@@ -39,7 +39,8 @@ class MultiqcModule(RunProcessingBaseModule):
 
         log.info("Found {} samples in {} JSONs".format(
             len(sample_data),
-            len(list(self.find_log_files("c3g_runprocessing/report")))))
+            len(list(self.find_log_files("c3g_runprocessing"))))
+        )
 
         # ## General Summary Section
         self.generaljson_data = dict()
@@ -63,7 +64,7 @@ class MultiqcModule(RunProcessingBaseModule):
         self.general_stats_addcols(self.generaljson_data, headers)
 
 
-    def parse_genpipes_general_info_json(self, f):
+    def parse_genpipes_run_processing_json(self, f):
         try:
             parsed_json = json.loads(f["f"])
         except:
@@ -77,7 +78,7 @@ class MultiqcModule(RunProcessingBaseModule):
         elif (version == "2.0"):
             return self._json_v2(parsed_json, f)
         elif (version == "3.0"):
-            return self._json_v2(parsed_json, f)
+            return self._json_v3(parsed_json, f)
         else:
             return self._json_v1(parsed_json, f)
 
@@ -175,6 +176,50 @@ class MultiqcModule(RunProcessingBaseModule):
         self.add_to_sample_renames(data)
         return data
 
+    def _json_v3(self, parsed_json, f):
+        run_data = {
+            "Run": parsed_json.get("run", "No run found in JSON"),
+            "Instrument": parsed_json.get("instrument", "No instrument found in JSON"),
+            "Flowcell": parsed_json.get("flowcell", "No flowcell found in JSON"),
+            "Seqtype": parsed_json.get("seqtype", "No seqtype found in JSON"),
+            "Sequencing method": parsed_json.get("sequencing_method", "No seqmethod found in JSON"),
+        }
+
+        if config.report_header_info is None:
+            config.report_header_info = [{k:v} for k,v in run_data.items()]
+        else:
+            # Add run information to report header
+            for (rKey, rVal) in run_data.items():
+                first_key_matches_rKey = lambda d: list(d.keys())[0] == rKey
+                header_idx = next((i for i,d in enumerate(config.report_header_info) if first_key_matches_rKey(d)), None)
+                val_set = set(config.report_header_info[header_idx][rKey].split(", "))
+                val_set.add(rVal)
+                config.report_header_info[header_idx][rKey] = ", ".join(sorted(val_set))
+
+        # Add information from the "barcodes" section
+        data = {}
+        for readset_name, dct in parsed_json["readsets"].items():
+            barcodes = dct.get("barcodes")
+            barcode_infos = [self.barcode_subsection_to_dict(barcode_section) for barcode_section in barcodes]
+            s_name = self.clean_s_name(readset_name, f)
+            data[s_name]["Reported Sex"] = dct["reported_sex"]
+            data[s_name]["Reported Species"] = dct["species"]
+            data[s_name] = run_data
+            data[s_name]["barcodes"] = barcode_infos
+
+        # Add information from the "run_validation" section
+        if "run_validation" not in parsed_json:
+            log.warn("Genpipes JSON did not have 'run_validation' key: '{}'".format(f["fn"]))
+            return
+        for obj in parsed_json["run_validation"]:
+            s_name = self.clean_s_name(obj["sample"], f)
+            data[s_name]["Project"] = obj["project"]
+            
+
+        lane_dict = {'Lane':parsed_json['lane']}
+        data = {self.clean_s_name(name, f, lane=parsed_json['lane']): {**items, **lane_dict} for name, items in data.items()}
+        self.add_to_sample_renames(data)
+        return data
 
     def barcode_subsection_to_dict(self, s_dct):
         s_dct["Readset name"] = s_dct.pop("SAMPLESHEET_NAME", None)

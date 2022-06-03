@@ -23,7 +23,7 @@ class MultiqcModule(BaseMultiqcModule):
         # Initialise the parent object
         super(MultiqcModule, self).__init__(
             name="Verify BAM ID",
-            anchor="c3gverifybamid",
+            anchor="c3g_verifybamid",
             href="https://genome.sph.umich.edu/wiki/VerifyBamID",
             info="detects sample contamination and/or sample swaps.",
         )
@@ -45,7 +45,7 @@ class MultiqcModule(BaseMultiqcModule):
         self.verifybamid_data = dict()
 
         # for each file ending in self.SM
-        for f in self.find_log_files("c3gverifybamid/selfsm"):
+        for f in self.find_log_files("c3g_verifybamid"):
             # pass the file to function self.parse_selfsm to parse file
             parsed_data = self.parse_selfsm(f)
             # if a result was returned
@@ -121,7 +121,7 @@ class MultiqcModule(BaseMultiqcModule):
                     parsed_data[s_name]["FREEMIX"] = parsed_data[s_name]["FREEMIX(alpha)"]
 
         # else return the dictionary
-        return parsed_data
+        return parsed_data if headers else None
 
     def verifybamid_general_stats_table(self):
         """Take the percentage of contamination from all the parsed *.SELFSM files and add it to the basic stats table at the top of the report"""

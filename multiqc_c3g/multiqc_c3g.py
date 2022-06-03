@@ -58,18 +58,30 @@ def c3g_execution():
 
         log.info("Running C3G Runprocessing Plugin v{}".format(config.c3g_plugin_version))
         # Search patterns used by Run Processing
-        if "c3g_runprocessing/report" not in config.sp:
-            config.update_dict( config.sp, {"c3g_runprocessing/report": {"fn": "*.run_validation_report.json"}} )
-        if "c3g_demuxmetrics/metrics" not in config.sp:
-            config.update_dict( config.sp, {"c3g_demuxmetrics/metrics": {"fn": "*.DemuxFastqs.metrics.txt"}} )
-        if "c3g_blastresults/summary" not in config.sp:
-            config.update_dict( config.sp, {"c3g_blastresults/summary": {"fn": "*.blastHit_20MF_species.txt"}} )
+        if "c3g_runprocessing" not in config.sp:
+            config.update_dict( config.sp, {"c3g_runprocessing": {"fn": "*.run_validation_report.json"}} )
+        if "c3g_demuxmetrics" not in config.sp:
+            config.update_dict( config.sp, {"c3g_demuxmetrics": {"fn": "*.DemuxFastqs.metrics.txt"}} )
+        if "c3g_blastresults" not in config.sp:
+            config.update_dict( config.sp, {"c3g_blastresults": {"fn": "*.blastHit_20MF_species.txt"}} )
+        if "c3g_progress" not in config.sp:
+            config.update_dict( config.sp, {"c3g_progress": {"fn": "RunProcessing_job_list_*"}} )
+        if "c3g_alignments/alignment_summary_metrics" not in config.sp:
+            config.update_dict( config.sp, {"c3g_alignments/alignment_summary_metrics": {"fn": "*.sorted.metrics.alignment_summary_metrics"}} )
+        if "c3g_alignments/insert_size_metrics" not in config.sp:
+            config.update_dict( config.sp, {"c3g_alignments/insert_size_metrics": {"fn": "*.sorted.metrics.insert_size_metrics"}} )
+        if "c3g_alignments/target_coverage_metrics" not in config.sp:
+            config.update_dict( config.sp, {"c3g_alignments/target_coverage_metrics": {"fn": "*.sorted.metrics.targetCoverage.txt"}} )
 
+        # We replace the default verifybamid module with our own version
+        config.avail_modules.pop('verifybamid', None)
+        if "c3g_verifybamid" not in config.sp:
+            config.update_dict( config.sp, {"c3g_verifybamid": {"fn": "*.sorted.metrics.verifyBamId.selfSM"}} )
 
         # We replace the default fastp module with our own version and remove fastqc.
         config.avail_modules.pop('fastp', None)
-        if "c3g_fastp/json" not in config.sp:
-            config.update_dict( config.sp, {"c3g_fastp/json": {"fn": "*.fastp.json"}} )
+        if "c3g_fastp" not in config.sp:
+            config.update_dict( config.sp, {"c3g_fastp": {"fn": "*.fastp.json"}} )
         config.avail_modules.pop('fastqc', None)
 
 
@@ -123,6 +135,8 @@ def c3g_summaries():
         spreads_by_lane = [(lane, max(vals) / min(vals)) for lane, vals in yields_by_lane.items()]
         spreads_by_lane.sort(key=lambda tupl: tupl[0])
         clusters_by_lane = [(lane, sum(vals)) for lane, vals in clusters_by_lane.items()]
+        if config.report_header_info is None:
+            config.report_header_info = []
         config.report_header_info.append({"Spreads" : " | ".join([lane + ": {:.2f}".format(spread) for lane, spread in spreads_by_lane])})
         clusters_by_lane.sort(key=lambda tupl: tupl[0])
         config.report_header_info.append({"Total clusters" : " | ".join([f'{lane}: {count:,}' for lane, count in clusters_by_lane])})

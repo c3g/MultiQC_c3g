@@ -4,10 +4,11 @@ core here to add in extra functionality. """
 
 
 from __future__ import print_function
-from random import sample
 from pkg_resources import get_distribution
 import logging
+import os
 
+from multiqc_c3g.modules.c3g_runprocessing import ValidationReport
 from multiqc.utils import report, config
 
 # Initialise the main MultiQC logger
@@ -120,7 +121,7 @@ def c3g_execution():
 
 
 def c3g_summaries():
-    # If at least one fastp file has been parsed, use those metrics to calculate lane-level spread and yield
+    """ Add run-level metrics to the report header """
     if 'FastP' in [mod.name for mod in report.modules_output]:
         yields_by_lane = dict()
         clusters_by_lane = dict()
@@ -140,3 +141,16 @@ def c3g_summaries():
         config.report_header_info.append({"Spreads" : " | ".join([lane + ": {:.2f}".format(spread) for lane, spread in spreads_by_lane])})
         clusters_by_lane.sort(key=lambda tupl: tupl[0])
         config.report_header_info.append({"Total clusters" : " | ".join([f'{lane}: {count:,}' for lane, count in clusters_by_lane])})
+
+
+def before_modules():
+    """
+    Replace .{library} with _{library}
+    This is necessary because the pipeline uses _{library} for most outputs and
+    the .{library} for alignment outputs.
+    """
+    for f in report.files['c3g_runprocessing']:
+        with open(os.path.join(f['root'], f['fn']), 'r') as f:
+            v_report = ValidationReport.from_string(f.read())
+            for readset in v_report.readsets:
+                config.sample_names_replace[f".{readset.library}"] = f"_{readset.library}"

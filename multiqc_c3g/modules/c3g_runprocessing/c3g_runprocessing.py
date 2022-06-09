@@ -8,6 +8,7 @@ import logging
 
 from multiqc.utils import config
 from multiqc_c3g.runprocessing_base import RunProcessingBaseModule
+from .validationreport import ValidationReport
 
 # Initialise the main MultiQC logger
 log = logging.getLogger("multiqc")
@@ -39,7 +40,7 @@ class MultiqcModule(RunProcessingBaseModule):
 
         log.info("Found {} samples in {} JSONs".format(
             len(sample_data),
-            len(list(self.find_log_files("c3g_runprocessing"))))
+            len(list(self.find_log_files("c3g_runprocessing")))),
         )
 
         # ## General Summary Section
@@ -134,12 +135,14 @@ class MultiqcModule(RunProcessingBaseModule):
         return data
 
     def _json_v2(self, parsed_json, f):
+        report = ValidationReport(parsed_json)
+
         run_data = {
-            "Run": parsed_json.get("run", "No run found in JSON"),
-            "Instrument": parsed_json.get("instrument", "No instrument found in JSON"),
-            "Flowcell": parsed_json.get("flowcell", "No flowcell found in JSON"),
-            "Seqtype": parsed_json.get("seqtype", "No seqtype found in JSON"),
-            "Sequencing method": parsed_json.get("sequencing_method", "No seqmethod found in JSON"),
+            "Run": report.run,
+            "Instrument": report.instrument,
+            "Flowcell": report.flowcell,
+            "Seqtype": report.seqtype,
+            "Sequencing method": report.sequencing_method,
         }
 
         if config.report_header_info is None:
@@ -153,27 +156,10 @@ class MultiqcModule(RunProcessingBaseModule):
                 val_set.add(rVal)
                 config.report_header_info[header_idx][rKey] = ", ".join(sorted(val_set))
 
-        # Add information from the "barcodes" section
-        data = {}
-        for readset_name, dct in parsed_json["readsets"].items():
-            barcodes = dct.get("barcodes")
-            barcode_infos = [self.barcode_subsection_to_dict(barcode_section) for barcode_section in barcodes]
-            s_name = self.clean_s_name(readset_name, f)
-            data[s_name] = run_data
-            data[s_name]["barcodes"] = barcode_infos
+        lane_dict = {'Lane':parsed_json.get('lane')}
 
-        # Add information from the "run_validation" section
-        if "run_validation" not in parsed_json:
-            log.warn("Genpipes JSON did not have 'run_validation' key: '{}'".format(f["fn"]))
-            return
-        for obj in parsed_json["run_validation"]:
-            s_name = self.clean_s_name(obj["sample"], f)
-            data[s_name]["Project"] = obj["project"]
-            data[s_name]["Reported Sex"] = obj["alignment"]["reported_sex"]
-
-        lane_dict = {'Lane':parsed_json['lane']}
-        data = {self.clean_s_name(name, f, lane=parsed_json['lane']): {**items, **lane_dict} for name, items in data.items()}
-        self.add_to_sample_renames(data)
+        data = {self.clean_s_name(readset.name, f): {**readset, **lane_dict} for readset in report.readsets}
+        self.add_to_sample_renames(report)
         return data
 
     def _json_v3(self, parsed_json, f):
@@ -204,7 +190,7 @@ class MultiqcModule(RunProcessingBaseModule):
             s_name = self.clean_s_name(readset_name, f)
             data[s_name]["Reported Sex"] = dct["reported_sex"]
             data[s_name]["Reported Species"] = dct["species"]
-            data[s_name] = run_data
+            data[s_name] = run_data.copy()
             data[s_name]["barcodes"] = barcode_infos
 
         # Add information from the "run_validation" section
@@ -214,7 +200,6 @@ class MultiqcModule(RunProcessingBaseModule):
         for obj in parsed_json["run_validation"]:
             s_name = self.clean_s_name(obj["sample"], f)
             data[s_name]["Project"] = obj["project"]
-            
 
         lane_dict = {'Lane':parsed_json['lane']}
         data = {self.clean_s_name(name, f, lane=parsed_json['lane']): {**items, **lane_dict} for name, items in data.items()}
@@ -230,18 +215,13 @@ class MultiqcModule(RunProcessingBaseModule):
         s_dct["Adapter-i5"] = s_dct.pop("ADAPTERi5", None)
         return s_dct
 
-
-    def add_to_sample_renames(self, s_dct):
-
-        names_full = [key for key, value in s_dct.items() for barcode in value['barcodes']]
-        names_with_indexname = [key.removesuffix(barcode['Library']).removesuffix("_") + " | " + barcode['Index name'] for key, value in s_dct.items() for barcode in value['barcodes']]
-        names_simple = [key.removesuffix(barcode['Library']).removesuffix("_") for key, value in s_dct.items() for barcode in value['barcodes']]
-
-        foo = [key for key, value in s_dct.items() for barcode in value['barcodes']]
-        [key.removesuffix('_2-2119395') for key, value in s_dct.items() for barcode in value['barcodes']]
-        [(key, barcode['Library']) for key, value in s_dct.items() for barcode in value['barcodes']]
+    # Automatically add sample rename buttons.
+    # In `config.sample_names_rename`, we add a list of lists that have sample names in various formats.
+    def add_to_sample_renames(self, report):
+        names_full = [readset.name for readset in report.readsets]
+        names_with_indexname = [readset.name.removesuffix(readset.library).removesuffix("_") + f" | {readset.index_name}" for readset in report.readsets]
+        names_simple = [readset.name.removesuffix(readset.library).removesuffix("_") for readset in report.readsets]
 
         names_all = {x for x in zip(names_full, names_with_indexname, names_simple)}
-
         config.sample_names_rename_buttons = ["With library ID", "With library Name", "Simple"]
         config.sample_names_rename.extend(names_all)

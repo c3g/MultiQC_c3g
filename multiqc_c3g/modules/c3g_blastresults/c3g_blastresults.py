@@ -54,7 +54,7 @@ class MultiqcModule(RunProcessingBaseModule):
                 plot = table.plot(blast_data, headers))
 
         blast_data = dict()
-        for f in self.find_log_files("c3g_blastresults/summary"):
+        for f in self.find_log_files("c3g_blastresults"):
             blast_data = {**blast_data, **self.blast_metrics(f, include_counts=False)}
         headers = OrderedDict()
         headers['blast_hit_1'] = { 'title' : "Top blast hit", 'hidden': False }

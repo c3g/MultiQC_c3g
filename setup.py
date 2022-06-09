@@ -73,6 +73,7 @@ setup(
             'project = multiqc_c3g.cli:project_c3g',
             'runprocessing = multiqc_c3g.cli:runprocessing',
         ],
+
         ## points of entry into main run: possible hookup insertions:
         # 'before_config'
         # 'config_loaded'
@@ -83,6 +84,7 @@ setup(
         # 'before_template'
         # 'execution_finish'
         'multiqc.hooks.v1': [
+            'before_modules = multiqc_c3g.multiqc_c3g:before_modules',
             'execution_start = multiqc_c3g.multiqc_c3g:c3g_execution',
             'after_modules = multiqc_c3g.multiqc_c3g:c3g_summaries'
         ]

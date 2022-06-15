@@ -138,8 +138,8 @@ class MultiqcModule(RunProcessingBaseModule):
         data["q30_rate"] = parsed_json["summary"]["before_filtering"]["q30_rate"]
         data["q20_rate"] = parsed_json["summary"]["before_filtering"]["q20_rate"]
         data["Duplication"] = parsed_json["duplication"]["rate"] * 100
-        histogram_values = parsed_json["duplication"]["histogram"]
-        data['duplication_histogram'] = {i+1 : v for i, v in enumerate(histogram_values)}
+        # histogram_values = parsed_json["duplication"]["histogram"]
+        # data['duplication_histogram'] = {i+1 : v for i, v in enumerate(histogram_values)}
         quality_values_1 = parsed_json["read1_before_filtering"]["quality_curves"]["mean"]
         data['quality_curves_read1'] = {i+1 : v for i, v in enumerate(quality_values_1)}
         if "read2_before_filtering" in parsed_json:

@@ -50,6 +50,7 @@ class MultiqcModule(BaseMultiqcModule):
             else:
                 jobs_by_step[job.step] = {
                     "Holding"   : 0,
+                    "Queued"    : 0,
                     "Running"   : 0,
                     "Complete"  : 0,
                     "Error"     : 0,
@@ -59,6 +60,7 @@ class MultiqcModule(BaseMultiqcModule):
 
         headers = OrderedDict()
         headers['Holding'] = {'description': 'Jobs waiting on dependencies', 'format': '{:,.0f}'}
+        headers['Queued'] = {'description': 'Jobs could start running at any time', 'format': '{:,.0f}'}
         headers['Running'] = {'description': 'Jobs currently running', 'format': '{:,.0f}'}
         headers['Complete'] = {'description': 'Jobs complete', 'format': '{:,.0f}'}
         headers['Error'] = {'description': 'Jobs with errors', 'format': '{:,.0f}'}

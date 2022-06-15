@@ -51,7 +51,14 @@ class ValidationReport(UserDict):
 
     @property
     def readsets(self):
-        return [Readset.with_name(name, dct) for name, dct in self.data.get('readsets').items()]
+        proj_by_sample = {x.get('sample'):x.get('project') for x in self.data.get('run_validation')}
+        return [
+            Readset
+            .from_dct(dct)
+            .with_name(name)
+            .with_project(proj_by_sample.get(name))
+            for name, dct in self.data.get('readsets').items()
+        ]
 
     @property
     def barcodes(self):
@@ -61,10 +68,16 @@ class ValidationReport(UserDict):
 class Readset(UserDict):
 
     @staticmethod
-    def with_name(name, dct):
-        r = Readset(dct)
-        r.name = name
-        return r
+    def from_dct(dct):
+        return Readset(dct)
+
+    def with_name(self, name):
+        self.data['name'] = name
+        return self
+
+    def with_project(self, project_name):
+        self.data['Project'] = project_name
+        return self
 
     @property
     def name(self):

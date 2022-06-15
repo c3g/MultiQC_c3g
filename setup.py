@@ -12,7 +12,7 @@ For more information about MultiQC, see http://multiqc.info
 from setuptools import setup, find_packages
 
 
-version = '1.0.0'
+version = '1.0.1'
 
 
 print("""-----------------------------------
@@ -84,8 +84,8 @@ setup(
         # 'before_template'
         # 'execution_finish'
         'multiqc.hooks.v1': [
-            'before_modules = multiqc_c3g.multiqc_c3g:before_modules',
             'execution_start = multiqc_c3g.multiqc_c3g:c3g_execution',
+            'before_modules = multiqc_c3g.multiqc_c3g:before_modules',
             'after_modules = multiqc_c3g.multiqc_c3g:c3g_summaries'
         ]
     },

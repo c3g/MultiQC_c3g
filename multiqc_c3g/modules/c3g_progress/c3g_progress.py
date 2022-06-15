@@ -27,8 +27,6 @@ class MultiqcModule(BaseMultiqcModule):
             info=" files from run processing output",
         )
 
-        log.info("Inside the c3g_progress module!")
-
         job_data = dict()
         for f in self.find_log_files("c3g_progress"):
             log.info("Found joblist: {}".format(f['fn']))
@@ -151,6 +149,8 @@ class Job:
                 return "Complete"
             elif self.queue_status == 'R':
                 return "Running"
+            elif self.queue_status == 'Y':
+                return "Status unavailable"
             else:
                 log.warning("Could not determine status (queue status == '{}') for file {}".format(self.queue_status, self._outfile))
                 return "Unknown"

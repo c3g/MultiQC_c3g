@@ -11,13 +11,14 @@ For more information about MultiQC, see http://multiqc.info
 
 ### What is this repository for? ###
 
-This plugin allows C3G to write MultiQC extensions for custom pipeline reporting. It can also render: images, tables (tsv or csv), and content. 
+This plugin allows C3G to write MultiQC extensions for custom pipeline reporting. It can also render: images, tables (tsv or csv), and content.
 
 ### How do I get set up? ###
 
 1- You will need to pip install this branch. You may modify the `load_tem_scr.sh` bash script above and use it to install multiqc_c3g.
 
 2- If it does not work, contact [Rola Dali](rola.dali@mail.mcgill.ca) to dicuss the tool and its uses and to decide if it goes in the main MultiQC repo or in the C3G plugin. You may also contact Paul Stretenowich or Édouard Henrion for the questions related to C3G sections.
+
 
 ### How to run the test data? ###
 
@@ -61,7 +62,7 @@ The example yamls are located in the `example_yamls` folder. Follow the document
 
 [C3G multiQC_C3G plugin repo](https://bitbucket.org/mugqic/multiqc_c3g)
 
-[MultiQC gitter](https://gitter.im/ewels/MultiQC) 
+[MultiQC gitter](https://gitter.im/ewels/MultiQC)
 
 
 

@@ -77,9 +77,9 @@ class MultiqcModule(RunProcessingBaseModule):
         if (version == "1.0"):
             return self._json_v1(parsed_json, f)
         elif (version == "2.0"):
-            return self._json_v2(parsed_json, f)
+            return self._from_report(parsed_json, f)
         elif (version == "3.0"):
-            return self._json_v3(parsed_json, f)
+            return self._from_report(parsed_json, f)
         else:
             return self._json_v1(parsed_json, f)
 
@@ -134,8 +134,9 @@ class MultiqcModule(RunProcessingBaseModule):
 
         return data
 
-    def _json_v2(self, parsed_json, f):
+    def _from_report(self, parsed_json, f):
         report = ValidationReport(parsed_json)
+        self.add_to_sample_renames(report)
 
         run_data = {
             "Run": report.run,
@@ -156,54 +157,7 @@ class MultiqcModule(RunProcessingBaseModule):
                 val_set.add(rVal)
                 config.report_header_info[header_idx][rKey] = ", ".join(sorted(val_set))
 
-        lane_dict = {'Lane':parsed_json.get('lane')}
-
-        data = {self.clean_s_name(readset.name, f): {**readset, **lane_dict} for readset in report.readsets}
-        self.add_to_sample_renames(report)
-        return data
-
-    def _json_v3(self, parsed_json, f):
-        run_data = {
-            "Run": parsed_json.get("run", "No run found in JSON"),
-            "Instrument": parsed_json.get("instrument", "No instrument found in JSON"),
-            "Flowcell": parsed_json.get("flowcell", "No flowcell found in JSON"),
-            "Seqtype": parsed_json.get("seqtype", "No seqtype found in JSON"),
-            "Sequencing method": parsed_json.get("sequencing_method", "No seqmethod found in JSON"),
-        }
-
-        if config.report_header_info is None:
-            config.report_header_info = [{k:v} for k,v in run_data.items()]
-        else:
-            # Add run information to report header
-            for (rKey, rVal) in run_data.items():
-                first_key_matches_rKey = lambda d: list(d.keys())[0] == rKey
-                header_idx = next((i for i,d in enumerate(config.report_header_info) if first_key_matches_rKey(d)), None)
-                val_set = set(config.report_header_info[header_idx][rKey].split(", "))
-                val_set.add(rVal)
-                config.report_header_info[header_idx][rKey] = ", ".join(sorted(val_set))
-
-        # Add information from the "barcodes" section
-        data = {}
-        for readset_name, dct in parsed_json["readsets"].items():
-            barcodes = dct.get("barcodes")
-            barcode_infos = [self.barcode_subsection_to_dict(barcode_section) for barcode_section in barcodes]
-            s_name = self.clean_s_name(readset_name, f)
-            data[s_name]["Reported Sex"] = dct["reported_sex"]
-            data[s_name]["Reported Species"] = dct["species"]
-            data[s_name] = run_data.copy()
-            data[s_name]["barcodes"] = barcode_infos
-
-        # Add information from the "run_validation" section
-        if "run_validation" not in parsed_json:
-            log.warn("Genpipes JSON did not have 'run_validation' key: '{}'".format(f["fn"]))
-            return
-        for obj in parsed_json["run_validation"]:
-            s_name = self.clean_s_name(obj["sample"], f)
-            data[s_name]["Project"] = obj["project"]
-
-        lane_dict = {'Lane':parsed_json['lane']}
-        data = {self.clean_s_name(name, f, lane=parsed_json['lane']): {**items, **lane_dict} for name, items in data.items()}
-        self.add_to_sample_renames(data)
+        data = {self.clean_s_name(readset.name, f, lane=report.lane): {**readset, **{'Lane':report.lane}} for readset in report.readsets}
         return data
 
     def barcode_subsection_to_dict(self, s_dct):

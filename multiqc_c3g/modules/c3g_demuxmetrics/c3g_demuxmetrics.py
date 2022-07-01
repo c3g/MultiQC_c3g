@@ -127,7 +127,7 @@ class MultiqcModule(RunProcessingBaseModule):
         return {
             "expected": expected_total,
             "unexpected": unexpected_total,
-            "fraction_expected": expected_total / (expected_total + unexpected_total)
+            "fraction_expected": expected_total / float(expected_total + unexpected_total)
         }
 
 

@@ -3,6 +3,7 @@
 """ C3G Genpipes JSON plugin module """
 
 from __future__ import print_function
+import functools
 import logging
 import os
 import subprocess
@@ -55,6 +56,7 @@ class MultiqcModule(BaseMultiqcModule):
                     "Complete"  : 0,
                     "Error"     : 0,
                     "Cancelled" : 0,
+                    "Unknown"   : 0,
                 }
                 jobs_by_step[job.step][job.status] += 1
 
@@ -65,6 +67,7 @@ class MultiqcModule(BaseMultiqcModule):
         headers['Complete'] = {'description': 'Jobs complete', 'format': '{:,.0f}'}
         headers['Error'] = {'description': 'Jobs with errors', 'format': '{:,.0f}'}
         headers['Cancelled'] = {'description': 'Jobs manually cancelled', 'format': '{:,.0f}'}
+        headers['Unknown'] = {'description': 'Jobs manually unknown', 'format': '{:,.0f}'}
 
         self.add_section(
             name = "Jobs",
@@ -121,7 +124,7 @@ class Job:
         self._queue_status = 'Y'
         return self._queue_status
 
-    @property
+    @functools.cached_property
     def status(self):
         # Use cached value if available
         if self._status is not None: return self._status
@@ -164,20 +167,40 @@ class Job:
         jobsrt_p = re.compile("^Begin PBS Prologue.* (\d+)$")
         jobstp_p = re.compile("^Begin PBS Epilogue.* (\d+)$")
         exitid_p = re.compile("^MUGQICexitStatus:(\d+)")
-        with open(self.outfile, 'r') as f:
-            for line in f.readlines():
-                m = jobsrt_p.match(line)
-                if m:
-                    self._start = m.group(1)
-                    continue
-                m = jobstp_p.match(line)
-                if m:
-                    self._stop = m.group(1)
-                    continue
-                m = exitid_p.match(line)
-                if m:
-                    self._exitstatus = int(m.group(1))
-                    continue
+
+        lines = []
+        if os.path.getsize(self.outfile) < 20000:
+            with open(self.outfile, 'r') as f:
+                lines = f.readlines()
+        else:
+            head = self.head()
+            tail = self.tail()
+            lines = head + tail
+
+        for line in lines:
+            m = jobsrt_p.match(line)
+            if m:
+                self._start = m.group(1)
+                continue
+            m = jobstp_p.match(line)
+            if m:
+                self._stop = m.group(1)
+                continue
+            m = exitid_p.match(line)
+            if m:
+                self._exitstatus = int(m.group(1))
+                continue
+
+    def head(self, n=10):
+        with open(self.outfile) as myfile:
+            return [next(myfile) for x in range(n)]
+
+    def tail(self, n=1024):
+        seekback = min(n, os.path.getsize(self.outfile))
+        with open(self.outfile, 'rb') as file:
+            file.seek(-1 * seekback, os.SEEK_END)  # Note minus sign
+            tail = file.read().decode("utf-8")
+            return tail.split('\n')
 
     def __lt__(self, other): return self.jobnum < other.jobnum
 

@@ -155,7 +155,7 @@ class Job:
             elif self.queue_status == 'R':
                 return "Running"
             elif self.queue_status == 'Y':
-                return "Status unavailable"
+                return "Unknown"
             else:
                 log.warning("Could not determine status (queue status == '{}') for file {}".format(self.queue_status, self._outfile))
                 return "Unknown"

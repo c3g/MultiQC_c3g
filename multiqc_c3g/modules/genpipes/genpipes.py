@@ -340,6 +340,8 @@ class MultiqcModule(BaseMultiqcModule):
             "Lane": parsed_json.get("lane", ""),
             "Seqtype": parsed_json.get("seqtype", "No seqtype found in JSON"),
             "Sequencing method": parsed_json.get("sequencing_method", "No seqmethod found in JSON"),
+            "Spread": parsed_json.get("spread", "No spread in JSON"),
+            "Total Clusters": parsed_json.get("total_pf_clusters", "No totalclusters found in JSON"),
         }
 
         if config.report_header_info is None:
@@ -354,6 +356,10 @@ class MultiqcModule(BaseMultiqcModule):
                     found = True
                     if value == h_value and key == "Lane":
                         d = {h_key : ", ".join([h_value, value.lstrip("Lane ")])}
+                    elif value == h_value and key == "Spread":
+                        d = {h_key : ", ".join([h_value, value.lstrip("Spread ")])}
+                    elif value == h_value and key == "Total Clusters":
+                        d = {h_key : ", ".join([h_value, value.lstrip("Total Clusters ")])}
                     elif value == h_value:
                         d = {h_key : ", ".join([h_value, value])}
 

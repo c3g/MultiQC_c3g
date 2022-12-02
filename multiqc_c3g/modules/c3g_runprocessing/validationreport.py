@@ -52,18 +52,25 @@ class ValidationReport(UserDict):
     @property
     def readsets(self):
         proj_by_sample = {x.get('sample'):x.get('project') for x in self.data.get('run_validation')}
+        align_dct_by_sample = {x.get('sample'):x.get('alignment') for x in self.data.get('run_validation')}
+        if self.version == '2.0':
+            reportd_sex_by_sample = {x.get('sample'):x.get('alignment').get('reported_sex') for x in self.data.get('run_validation')}
+        else:
+            reportd_sex_by_sample = {x.get('sample'):x.get('reported_sex') for x in self.data.get('run_validation')}
+
         return [
             Readset
             .from_dct(dct)
             .with_name(name)
+            .with_reported_sex(reportd_sex_by_sample.get(name))
             .with_project(proj_by_sample.get(name))
+            .with_align_dict(align_dct_by_sample.get(name))
             for name, dct in self.data.get('readsets').items()
         ]
 
     @property
     def barcodes(self):
         return [bc for rs in self.readsets for bc in rs.barcodes]
-
 
 class Readset(UserDict):
 
@@ -75,8 +82,17 @@ class Readset(UserDict):
         self.data['name'] = name
         return self
 
+    def with_reported_sex(self, reported_sex):
+        self.data['Reported Sex'] = reported_sex
+        return self
+
     def with_project(self, project_name):
         self.data['Project'] = project_name
+        return self
+
+    def with_align_dict(self, align_dict):
+        self.data['Inferred Sex'] = align_dict['inferred_sex']
+        self.data['Sex Concordance'] = align_dict['sex_concordance']
         return self
 
     @property
@@ -102,7 +118,6 @@ class Readset(UserDict):
     @property
     def index_name(self):
         return self.barcodes[0].index_name if 0 < len(self.barcodes) else "unknown index name"
-
 
 class Barcode(UserDict):
 

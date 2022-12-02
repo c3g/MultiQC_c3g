@@ -61,8 +61,14 @@ def c3g_execution():
         # Search patterns used by Run Processing
         if "c3g_runprocessing" not in config.sp:
             config.update_dict( config.sp, {"c3g_runprocessing": {"fn": "*.run_validation_report.json"}} )
-        if "c3g_demuxmetrics" not in config.sp:
-            config.update_dict( config.sp, {"c3g_demuxmetrics": {"fn": "*.DemuxFastqs.metrics.txt"}} )
+        if "c3g_demuxmetrics/demuxfastqs" not in config.sp:
+            config.update_dict( config.sp, {"c3g_demuxmetrics/demuxfastqs": {"fn": "*.DemuxFastqs.metrics.txt"}} )
+        if "c3g_demuxmetrics/count_illumina_barcodes" not in config.sp:
+            config.update_dict( config.sp, {"c3g_demuxmetrics/count_illumina_barcodes": {"fn": "*_[12345678].metrics"}} )
+        if "c3g_demuxmetrics/bcl2fastq" not in config.sp:
+            config.update_dict( config.sp, {"c3g_demuxmetrics/bcl2fastq": {"fn": "Stats.json", "contents": "DemuxResults"}} )
+        if "c3g_demuxmetrics/unassigned" not in config.sp:
+            config.update_dict( config.sp, {"c3g_demuxmetrics/unassigned": {"fn": "Undetermined_*.counts.txt"}} )
         if "c3g_blastresults" not in config.sp:
             config.update_dict( config.sp, {"c3g_blastresults": {"fn": "*.blastHit_20MF_species.txt"}} )
         if "c3g_progress" not in config.sp:
@@ -131,7 +137,7 @@ def c3g_summaries():
             sample_clusters = d['clusters']
             yields_by_lane[lane] = yields_by_lane.get(lane, []) + [sample_yield]
             clusters_by_lane[lane] = clusters_by_lane.get(lane, []) + [sample_clusters]
-        spreads_by_lane = [(lane, max(vals) / min(vals)) for lane, vals in yields_by_lane.items()]
+        spreads_by_lane = [(lane, max(vals) / min(vals) if min(vals) else (lane, max(vals))) for lane, vals in yields_by_lane.items()]
         spreads_by_lane.sort(key=lambda tupl: tupl[0])
         clusters_by_lane = [(lane, sum(vals)) for lane, vals in clusters_by_lane.items()]
         if config.report_header_info is None:

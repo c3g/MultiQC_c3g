@@ -48,7 +48,7 @@ class MultiqcModule(RunProcessingBaseModule):
         headers = OrderedDict()
         headers['Project'] = {
             'title': 'Project',
-            'description': 'Project ID',
+            'description': 'Project ID'
         }
         headers['Lane'] = {
             'title': 'Lane',
@@ -56,7 +56,22 @@ class MultiqcModule(RunProcessingBaseModule):
             'scale': False,
             'scale': False,
             'format': '{:,.0f}',
-            'hidden': True,
+            'hidden': True
+        }
+        headers['Reported Gender'] = {
+            'title': 'Reported Sex',
+            'description': 'Reported Sex',
+            'hidden': True
+        }
+        headers['Inferred Gender'] = {
+            'title': 'Inferred Sex',
+            'description': 'Inferred Sex',
+            'hidden': True
+        }
+        headers['Gender Concordance'] = {
+            'title': 'Sex Concordance',
+            'description': 'Sex Concordance',
+            'hidden': True
         }
 
         for (s_name, data) in sample_data.items():
@@ -76,9 +91,7 @@ class MultiqcModule(RunProcessingBaseModule):
 
         if (version == "1.0"):
             return self._json_v1(parsed_json, f)
-        elif (version == "2.0"):
-            return self._from_report(parsed_json, f)
-        elif (version == "3.0"):
+        elif (version in ["2.0", "3.0", "4.0"]):
             return self._from_report(parsed_json, f)
         else:
             return self._json_v1(parsed_json, f)

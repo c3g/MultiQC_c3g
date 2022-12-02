@@ -88,26 +88,29 @@ class Job:
         self._outfile = outfile_path
 
     @property
-    def jobnum(self): return self.id.split(".")[0]
+    def jobnum(self):
+        return self.id.split(".")[0]
 
     @property
-    def id(self): return self._id
+    def id(self):
+        return self._id
 
     @property
-    def name(self): return self._name
+    def name(self):
+        return self._name
 
     @property
-    def step(self): return self._name.split('.')[0]
+    def step(self):
+        return self._name.split('.')[0]
 
     @property
-    def id(self): return self._id
-
-    @property
-    def outfile(self): return self._outfile
+    def outfile(self):
+        return self._outfile
 
     @property
     def queue_status(self):
-        if self._queue_status is not None: return self._queue_status
+        if self._queue_status is not None:
+            return self._queue_status
         result = subprocess.run(['qstat', '-f', '-1', self.id], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         for line in result.stderr.decode('utf-8').splitlines():
@@ -127,7 +130,8 @@ class Job:
     @functools.cached_property
     def status(self):
         # Use cached value if available
-        if self._status is not None: return self._status
+        if self._status is not None:
+            return self._status
         # Otherwise, check status on filesystem
         outfile_exists = os.path.isfile(self.outfile)
         if not outfile_exists:
@@ -145,8 +149,10 @@ class Job:
             self.parse_outfile()
             if self._exitstatus is not None:
                 # Definitely finished
-                if self._exitstatus == 0: return "Complete"
-                else: return "Error"
+                if self._exitstatus == 0:
+                    return "Complete"
+                else:
+                    return "Error"
             elif self._stop is not None:
                 # Job is finished, but we don't know the exit status
                 # Note that here, the exit status is missing, so we
@@ -202,14 +208,20 @@ class Job:
             tail = file.read().decode("utf-8")
             return tail.split('\n')
 
-    def __lt__(self, other): return self.jobnum < other.jobnum
+    def __lt__(self, other):
+        return self.jobnum < other.jobnum
 
-    def __le__(self, other): return self.jobnum <= other.jobnum
+    def __le__(self, other):
+        return self.jobnum <= other.jobnum
 
-    def __gt__(self, other): return self.jobnum > other.jobnum
+    def __gt__(self, other):
+        return self.jobnum > other.jobnum
 
-    def __ge__(self, other): return self.jobnum >= other.jobnum
+    def __ge__(self, other):
+        return self.jobnum >= other.jobnum
 
-    def __eq__(self, other): return self.jobnum == other.jobnum
+    def __eq__(self, other):
+        return self.jobnum == other.jobnum
 
-    def __ne__(self, other): return self.jobnum != other.jobnum
+    def __ne__(self, other):
+        return self.jobnum != other.jobnum

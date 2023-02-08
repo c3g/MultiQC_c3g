@@ -9,15 +9,16 @@ import re
 from typing import OrderedDict
 
 from multiqc import config
-from multiqc.modules.base_module import BaseMultiqcModule
+from multiqc_c3g.runprocessing_base import RunProcessingBaseModule
 
 from . import DemuxFastqs
 from . import CountIlluminaBarcodes
+from . import bcl2fastq
 
 # Initialise the main MultiQC logger
 log = logging.getLogger("multiqc")
 
-class MultiqcModule(BaseMultiqcModule):
+class MultiqcModule(RunProcessingBaseModule):
     def __init__(self):
 
         # Initialise the parent module Class object
@@ -34,9 +35,17 @@ class MultiqcModule(BaseMultiqcModule):
             return None
 
         n = dict()
-        n["DemuxFastqs"] = DemuxFastqs.parse_reports(self)
-        if n["DemuxFastqs"]:
-            log.info("Found DemuxFastqs report: {}".format(n["DemuxFastqs"]))
+        n["Bcl2Fastq"] = bcl2fastq.parse_reports(self)
+        if n["Bcl2Fastq"] > 0:
+            log.info("Found {} Bcl2Fastq reports".format(n["Bcl2Fastq"]))
+
         n["CountIlluminaBarcodes"] = CountIlluminaBarcodes.parse_reports(self)
-        if n["CountIlluminaBarcodes"]:
-            log.info("Found CountIlluminaBarcodes report {} ".format(n["CountIlluminaBarcodes"]))
+        if n["CountIlluminaBarcodes"] > 0:
+            log.info("Found {} CountIlluminaBarcodes reports".format(n["CountIlluminaBarcodes"]))
+
+        n["DemuxFastqs"] = DemuxFastqs.parse_reports(self)
+        if n["DemuxFastqs"] > 0:
+            log.info("Found {} DemuxFastqs reports".format(n["DemuxFastqs"]))
+
+
+    

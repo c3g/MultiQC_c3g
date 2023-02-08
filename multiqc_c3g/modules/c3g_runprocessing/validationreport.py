@@ -54,17 +54,18 @@ class ValidationReport(UserDict):
         proj_by_sample = {x.get('sample'):x.get('project') for x in self.data.get('run_validation')}
         align_dct_by_sample = {x.get('sample'):x.get('alignment') for x in self.data.get('run_validation')}
         if self.version == '2.0':
-            reportd_sex_by_sample = {x.get('sample'):x.get('alignment').get('reported_sex') for x in self.data.get('run_validation')}
+            reported_sex_by_sample = {x.get('sample'):x.get('alignment').get('reported_sex') for x in self.data.get('run_validation')}
         else:
-            reportd_sex_by_sample = {x.get('sample'):x.get('reported_sex') for x in self.data.get('run_validation')}
+            reported_sex_by_sample = {x.get('sample'):x.get('reported_sex') for x in self.data.get('run_validation')}
 
         return [
             Readset
             .from_dct(dct)
             .with_name(name)
-            .with_reported_sex(reportd_sex_by_sample.get(name))
+            .with_reported_sex(reported_sex_by_sample.get(name))
             .with_project(proj_by_sample.get(name))
             .with_align_dict(align_dct_by_sample.get(name))
+            .with_version(self.data.get('version'))
             for name, dct in self.data.get('readsets').items()
         ]
 
@@ -95,6 +96,10 @@ class Readset(UserDict):
         self.data['Sex Concordance'] = align_dict['sex_concordance']
         return self
 
+    def with_version(self, version):
+        self.data['version'] = version
+        return self
+
     @property
     def name(self):
         return self.data.get('name')
@@ -102,6 +107,20 @@ class Readset(UserDict):
     @name.setter
     def name(self, newname):
         self.data['name'] = newname
+
+    @property
+    def pool_fraction(self):
+        if float(self.data.get('version')) >= 3:
+            return self.data.get('pool_fraction')
+        else:
+            return None
+
+    @property
+    def library_type(self):
+        if float(self.data.get('version')) >= 3:
+            return self.data.get('library_type')
+        else:
+            return None
 
     @property
     def barcodes(self):

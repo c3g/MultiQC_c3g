@@ -51,7 +51,8 @@ class MultiqcModule(RunProcessingBaseModule):
         if(len(blast_data)>0):
             self.add_section(
                 name = "Blast hits",
-                plot = table.plot(blast_data, headers))
+                plot = table.plot(blast_data, headers, {"col1_header": "Lane | Sample Name"})
+            )
 
         blast_data = dict()
         for f in self.find_log_files("c3g_blastresults"):

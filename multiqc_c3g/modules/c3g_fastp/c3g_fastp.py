@@ -32,19 +32,32 @@ class MultiqcModule(RunProcessingBaseModule):
         if not config.kwargs.get("runprocessing", False):
             return None
 
-        ## Parse Genpipes JSON files into the self.generaljson dict ##
+        raw_quality_curves_read1 = {}
+        raw_quality_curves_read2 = {}
         sample_data = {}
         duplication_data = {}
         quality_curves_read1 = {}
         quality_curves_read2 = {}
+        quality_curves_idx1 = {}
+        quality_curves_idx2 = {}
         for f in self.find_log_files("c3g_fastp"):
+            lane = self.get_lane(f)
             s_name = f['s_name']
             d = self.parse_fastp_jsons(f)
-            duplication_data[s_name] = d.pop("duplication_histogram",[])
-            quality_curves_read1[s_name] = d.pop("quality_curves_read1",[])
-            if "quality_curves_read2" in d:
-                quality_curves_read2[s_name] = d.pop("quality_curves_read2",[])
-            sample_data.update({s_name:d})
+            if 'raw_reads' in s_name:
+                raw_quality_curves_read1[s_name] = d.pop("quality_curves_read1",[])
+                if "quality_curves_read2" in d:
+                    raw_quality_curves_read2[s_name] = d.pop("quality_curves_read2",[])
+            elif 'barcodes' in s_name:
+                quality_curves_idx1[s_name] = d.pop("quality_curves_read1",[])
+                if "quality_curves_read2" in d:
+                    quality_curves_idx2[s_name] = d.pop("quality_curves_read2",[])
+            else:
+                duplication_data[s_name] = d.pop("duplication_histogram",[])
+                quality_curves_read1[s_name] = d.pop("quality_curves_read1",[])
+                if "quality_curves_read2" in d:
+                    quality_curves_read2[s_name] = d.pop("quality_curves_read2",[])
+                sample_data.update({s_name:d})
             self.add_data_source(f, s_name, section="fastp")
 
         headers = OrderedDict()
@@ -101,21 +114,56 @@ class MultiqcModule(RunProcessingBaseModule):
         self.generaljson_data = {s_name: data for s_name, data in sample_data.items()}
         self.general_stats_addcols(self.generaljson_data, headers)
 
+        # if(len(raw_quality_curves_read1) > 0):
+            
+        #     self.add_section (
+        #         name = 'Raw reads base quality (no demultiplexing nor index removal)',
+        #         anchor = 'genpipes-fastp-raw-reads-quality',
+        #         plot = linegraph.plot(
+        #             [
+        #                 raw_quality_curves_read1,
+        #                 raw_quality_curves_read2
+        #             ] if len(raw_quality_curves_read2) > 0 else [ raw_quality_curves_read1 ],
+        #             {
+        #                 'ymin': 0,
+        #                 'data_labels':[
+        #                     {'name': 'Raw Read 1', 'ylab': 'Phred quality', 'xlab': 'Cycle'},
+        #                     {'name': 'Raw Read 2', 'ylab': 'Phred quality', 'xlab': 'Cycle'},
+        #                 ]
+        #             }
+        #         )
+        #     )
+
+        quality_curves = []
+        data_labels = []
+        if(len(quality_curves_read1) > 0):
+            quality_curves.append(quality_curves_read1)
+            data_labels.append({'name': 'Read 1', 'ylab': 'Phred quality', 'xlab': 'Cycle'})
+        if (len(quality_curves_read2) > 0):
+            quality_curves.append(quality_curves_read2)
+            data_labels.append({'name': 'Read 2', 'ylab': 'Phred quality', 'xlab': 'Cycle'})
+        if(len(quality_curves_idx1) > 0):
+            quality_curves.append(quality_curves_idx1)
+            data_labels.append({'name': 'Index 1', 'ylab': 'Phred quality', 'xlab': 'Cycle'})
+        if (len(quality_curves_idx2) > 0):
+            quality_curves.append(quality_curves_idx2)
+            data_labels.append({'name': 'Index 2', 'ylab': 'Phred quality', 'xlab': 'Cycle'})
+        if(len(raw_quality_curves_read1) > 0):
+            quality_curves.append(raw_quality_curves_read1)
+            data_labels.append({'name': 'Raw Read 1', 'ylab': 'Phred quality', 'xlab': 'Cycle'})
+        if (len(raw_quality_curves_read2) > 0):
+            quality_curves.append(raw_quality_curves_read2)
+            data_labels.append({'name': 'Raw Read 2', 'ylab': 'Phred quality', 'xlab': 'Cycle'})
+        
         if(len(quality_curves_read1) > 0):
             self.add_section (
                 name = 'Base quality',
                 anchor = 'genpipes-fastp-quality',
                 plot = linegraph.plot(
-                    [
-                        quality_curves_read1,
-                        quality_curves_read2
-                    ] if len(quality_curves_read2) > 0 else [ quality_curves_read1 ],
+                    quality_curves,
                     {
                         'ymin': 0,
-                        'data_labels':[
-                            {'name': 'Read 1', 'ylab': 'Phred quality', 'xlab': 'Cycle'},
-                            {'name': 'Read 2', 'ylab': 'Phred quality', 'xlab': 'Cycle'},
-                        ]
+                        'data_labels': data_labels
                     }
                 )
             )

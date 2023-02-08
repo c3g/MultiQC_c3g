@@ -270,6 +270,7 @@ class MultiqcModule(BaseMultiqcModule):
         tconfig = {
             "namespace": "C3G VerifyBAMID",
             "id": "verifybamid-results",
+            "col1_header": "Lane | Sample Name"
         }
 
         # send the plot to add section function with data dict and headers

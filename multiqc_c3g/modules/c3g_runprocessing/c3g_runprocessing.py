@@ -58,7 +58,7 @@ class MultiqcModule(RunProcessingBaseModule):
             'format': '{:,.0f}',
             'hidden': True
         }
-        headers['Reported Gender'] = {
+        headers['Reported Sex'] = {
             'title': 'Reported Sex',
             'description': 'Reported Sex',
             'hidden': True
@@ -91,11 +91,8 @@ class MultiqcModule(RunProcessingBaseModule):
 
         if (version == "1.0"):
             return self._json_v1(parsed_json, f)
-        elif (version in ["2.0", "3.0", "4.0"]):
-            return self._from_report(parsed_json, f)
         else:
-            return self._json_v1(parsed_json, f)
-
+            return self._from_report(parsed_json, f)
 
     def _json_v1(self, parsed_json, f):
         run_data = {

@@ -24,8 +24,8 @@ class MultiqcModule(BaseMultiqcModule):
             name="Job Progress",
             target="Progress",
             anchor="progress",
-            href="https://github.com/c3g/runprocesing_plugin",
-            info=" files from run processing output",
+            href="https://bitbucket.org/mugqic/multiqc_c3g/src/runprocessing/multiqc_c3g/modules/c3g_progress/",
+            info="of the run processing pipeline",
         )
 
         job_data = dict()
@@ -66,13 +66,13 @@ class MultiqcModule(BaseMultiqcModule):
         headers['Running'] = {'description': 'Jobs currently running', 'format': '{:,.0f}'}
         headers['Complete'] = {'description': 'Jobs complete', 'format': '{:,.0f}'}
         headers['Error'] = {'description': 'Jobs with errors', 'format': '{:,.0f}'}
-        headers['Cancelled'] = {'description': 'Jobs manually cancelled', 'format': '{:,.0f}'}
-        headers['Unknown'] = {'description': 'Jobs manually unknown', 'format': '{:,.0f}'}
+        headers['Cancelled'] = {'description': 'Jobs manually cancelled', 'format': '{:,.0f}', 'hidden': True }
+        headers['Unknown'] = {'description': 'Jobs manually unknown', 'format': '{:,.0f}', 'hidden': True }
 
         self.add_section(
             name = "Jobs",
             description = "Job statuses.",
-            plot = table.plot(jobs_by_step, headers)
+            plot = table.plot(jobs_by_step, headers, {"col1_header": "Pipeline Step"})
         )
 
 class Job:

@@ -69,8 +69,10 @@ def expected_metrics(self, f):
         if barcode_name != "unmatched":
             sample_name = get_clean_sample_name(barcode_name, row['library_name'])
             barcode_name = get_clean_barcode_name(barcode_name, row['library_name'])
-            s_name = self.clean_s_name(sample_name, f)
-            row = {**row, **{'barcode_name': barcode_name}}
+            # s_name = self.clean_s_name(sample_name, f)
+            s_name = self.clean_s_name(barcode_name, f)
+            # row = {**row, **{'barcode_name': barcode_name}}
+            row = {**row, **{'sample_name': sample_name}}
             metrics[s_name] = row
 
     return metrics
@@ -94,10 +96,17 @@ def get_clean_barcode_name(barcode, library):
 
 def expected_barcodes_table(self):
     headers = OrderedDict()
-    longest_name = max([len(y['barcode_name']) for (_,y) in self.barcode_data.items()])
-    headers['barcode_name'] = {
-        'title' : "Barcode ID",
-        'description': 'Barcode Name',
+    # longest_name = max([len(y['barcode_name']) for (_,y) in self.barcode_data.items()])
+    longest_name = max([len(y['sample_name']) for (_,y) in self.barcode_data.items()])
+    # headers['barcode_name'] = {
+    #     'title' : "Barcode ID",
+    #     'description': 'Barcode Name',
+    #     'max': longest_name,
+    #     'format': '{:s}',
+    # }
+    headers['sample_name'] = {
+        'title' : "Sample Name",
+        'description': 'Sample Name',
         'max': longest_name,
         'format': '{:s}',
     }
@@ -142,7 +151,8 @@ def expected_barcodes_table(self):
         'min': 0,
         'max': 100
     }
-    return table.plot(self.barcode_data, headers, {"col1_header": "Lane | Sample Name"})
+    # return table.plot(self.barcode_data, headers, {"col1_header": "Lane | Sample Name"})
+    return table.plot(self.barcode_data, headers, {"col1_header": "Lane | Barcode ID"})
 
 def lane_overview_table(self):
     largest_value = max([max(y['expected'],y['unexpected']) for (_,y) in self.unexpected_per_lane.items()])

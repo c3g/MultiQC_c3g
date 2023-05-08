@@ -69,6 +69,8 @@ def c3g_execution():
             config.update_dict( config.sp, {"c3g_demuxmetrics/bcl2fastq": {"fn": "Stats.json"}} )
         if "c3g_demuxmetrics/unassigned" not in config.sp:
             config.update_dict( config.sp, {"c3g_demuxmetrics/unassigned": {"fn": "Undetermined_*.counts.txt"}} )
+        if "c3g_demuxmetrics/matchedundetermined" not in config.sp:
+            config.update_dict( config.sp, {"c3g_demuxmetrics/matchedundetermined": {"fn": "Undetermined_*.match_table.tsv"}} )
         if "c3g_blastresults" not in config.sp:
             config.update_dict( config.sp, {"c3g_blastresults": {"fn": "*.blastHit_20MF_species.txt"}} )
         if "c3g_progress" not in config.sp:

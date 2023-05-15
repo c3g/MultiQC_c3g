@@ -20,7 +20,7 @@ def parse_reports(self):
     self.unexpected_barcode_data = dict()
     report_found = []
 
-    for f in self.find_log_files("c3g_demuxmetrics/matchundetermined"):
+    for f in self.find_log_files("c3g_demuxmetrics/matchedundetermined"):
         lane_data = matched_metrics(self, f)
         lane = self.get_lane(f)
         self.unexpected_barcode_data = {**self.unexpected_barcode_data, **lane_data}
@@ -29,7 +29,7 @@ def parse_reports(self):
     if report_found:
         self.add_section(
             name = "Barcodes - Unexpected",
-            description = "The counts for unexpected barcodes and their potential matches to sequencing barcodes are shown below. Note that only frequent barcodes are shown (>50000 reads)."
+            description = "The counts for unexpected barcodes and their potential matches to sequencing barcodes are shown below. Note that only frequent barcodes are shown (>50000 reads).",
             plot = unexpected_barcodes_table(self)
                 )
     return len(report_found)
@@ -41,7 +41,7 @@ def matched_metrics(self, f):
     reader = csv.DictReader(buff, delimiter="\t")
     for row in reader:
         barcode = row.pop('Sequence')
-        ###??? 
+        metrics[barcode] = row
 
     return metrics
 
@@ -51,15 +51,15 @@ def unexpected_barcodes_table(self):
     headers['ReadCount'] = {
             'title' : "Number of reads",
             'description' : "number of reads for this barcode in run",
-            'format' : '{:,.0f}',
+            'format' : '{:,.0f}'#,
             'max' : largest_value
             }
-    headers['Sequence'] = {
-            'title' : "Barcode sequence",
-            'description' : "sequence of undetermined barcode"
-            }
+   # headers['Sequence'] = {
+   #         'title' : "Barcode sequence",
+   #         'description' : "sequence of undetermined barcode"
+   #         }
     headers['Matches'] = {
             'title' : "Matches",
             'description' : "sequence and names of any matches to the undetermined barcode in database of sequencing barcodes"
             }
-    return table.plot(self.unexpected_barcode_data, headers, {"col1_header": "Lane"})
+    return table.plot(self.unexpected_barcode_data, headers, {"col1_header": "Lane | Barcode sequence"})

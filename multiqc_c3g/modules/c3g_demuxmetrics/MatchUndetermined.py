@@ -23,7 +23,7 @@ def parse_reports(self):
     for f in self.find_log_files("c3g_demuxmetrics/matchedundetermined"):
         #lane_data = matched_metrics(self, f)
         lane = self.get_lane(f)
-        self.unexpected_barcode_data[f"L{lane}"] = matched_metrics(f)
+        self.unexpected_barcode_data = matched_metrics(f, lane)
         #self.unexpected_barcode_data = {**self.unexpected_barcode_data, **lane_data}
         report_found.append(f['fn'])
 
@@ -35,7 +35,7 @@ def parse_reports(self):
                 )
     return len(report_found)
 
-def matched_metrics(f):
+def matched_metrics(f, lane):
     metrics = dict()
 
     buff = StringIO(f['f'])
@@ -43,19 +43,19 @@ def matched_metrics(f):
     for row in reader:
         #barcode = row.pop('Sequence')
         #metrics[barcode] = row
-        readCount = row.pop('ReadCount')
-        metrics[ReadCount] = row
+        s_name = self.clean_s_name(row['ReadCount'], lane=lane)
+        metrics[s_name] = { 'Sequence' : row['Sequence'], 'Matches' : row['Matches']}
 
     return metrics
 
 def unexpected_barcodes_table(self):
-    largest_value = max([y['ReadCount'] for (_,y) in self.unexpected_barcode_data.items()])
+    #largest_value = max([y['ReadCount'] for (_,y) in self.unexpected_barcode_data.items()])
     headers = OrderedDict()
     headers['ReadCount'] = {
             'title' : "Number of reads",
             'description' : "number of reads for this barcode in run",
-            'format' : '{:,.0f}',
-            'max' : largest_value
+            'format' : '{:,.0f}'#,
+           # 'max' : largest_value
             }
     headers['Sequence'] = {
             'title' : "Barcode sequence",

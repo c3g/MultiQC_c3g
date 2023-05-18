@@ -17,14 +17,14 @@ log = logging.getLogger("multiqc")
 def parse_reports(self):
 
     # Parse output files from undetermined barcodes matching
-    unexpected_barcode_data = dict()
+    self.unexpected_barcode_data = dict()
     report_found = []
 
     for f in self.find_log_files("c3g_demuxmetrics/matchedundetermined"):
         lane = self.get_lane(f)
         lane_data = matched_metrics(self, f, lane)
         #lane_data = matched_metrics(self, f, lane)
-        unexpected_barcode_data = {**unexpected_barcode_data, **lane_data}
+        self.unexpected_barcode_data = {**self.unexpected_barcode_data, **lane_data}
         report_found.append(f['fn'])
 
     if report_found:
@@ -39,7 +39,8 @@ def matched_metrics(self, f, lane):
     metrics = dict()
 
     buff = StringIO(f['f'])
-    reader = csv.DictReader(buff, delimiter="\t")
+    reader = list(csv.DictReader(buff, delimiter="\t"))
+    reader.sort(key=lambda row: int(row['ReadCount']), reverse=True)
     for row in reader:
         #barcode = row.pop('Sequence')
         #metrics[barcode] = row
@@ -65,4 +66,4 @@ def unexpected_barcodes_table(self):
             'title' : "Matches",
             'description' : "sequence and names of any matches to the undetermined barcode in database of sequencing barcodes"
             }
-    return table.plot(unexpected_barcode_data, headers, {"col1_header": "Lane"})
+    return table.plot(self.unexpected_barcode_data, headers, {"col1_header": "Lane"})

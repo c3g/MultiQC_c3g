@@ -44,8 +44,8 @@ def matched_metrics(self, f, lane):
     for row in reader:
         #barcode = row.pop('Sequence')
         #metrics[barcode] = row
-        s_name = self.clean_s_name(row['ReadCount'], lane=lane)
-        metrics[s_name] = { 'Sequence' : row['Sequence'], 'Matches' : row['Matches']}
+        s_name = self.clean_s_name(row['Sequence'], lane=lane)
+        metrics[s_name] = { 'ReadCount' : row['ReadCount'], 'Matches' : row['Matches']}
 
     return metrics
 
@@ -66,4 +66,4 @@ def unexpected_barcodes_table(self):
             'title' : "Matches",
             'description' : "sequence and names of any matches to the undetermined barcode in database of sequencing barcodes"
             }
-    return table.plot(self.unexpected_barcode_data, headers, {"col1_header": "Lane"})
+    return table.plot(self.unexpected_barcode_data, headers, {"col1_header": "Lane | Barcode Sequence"})

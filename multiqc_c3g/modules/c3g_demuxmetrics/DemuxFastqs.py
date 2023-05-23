@@ -21,7 +21,7 @@ def parse_reports(self):
     self.unexpected_per_lane = dict()
     report_found = []
 
-    for f in self.find_log_files("c3g_demuxmetrics/demuxfastqs"):
+    for f in self.find_log_files("c3g_demuxmetrics/demuxfastqs"): 
         lane_data = expected_metrics(self, f)
         lane = self.get_lane(f)
         self.unexpected_per_lane[f"L{lane}"] = unexpected_metrics(f)

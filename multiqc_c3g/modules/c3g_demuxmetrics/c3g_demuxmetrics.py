@@ -14,6 +14,7 @@ from multiqc_c3g.runprocessing_base import RunProcessingBaseModule
 from . import DemuxFastqs
 from . import CountIlluminaBarcodes
 from . import bcl2fastq
+from . import MatchUndetermined
 
 # Initialise the main MultiQC logger
 log = logging.getLogger("multiqc")
@@ -47,5 +48,6 @@ class MultiqcModule(RunProcessingBaseModule):
         if n["DemuxFastqs"] > 0:
             log.info("Found {} DemuxFastqs reports".format(n["DemuxFastqs"]))
 
-
-    
+        n["MatchUndetermined"] = MatchUndetermined.parse_reports(self)
+        if n["MatchUndetermined"] > 0:
+            log.info("Found {} MatchUndetermined reports".format(n["MatchUndetermined"]))

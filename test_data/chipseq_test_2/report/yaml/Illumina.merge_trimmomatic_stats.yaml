@@ -1,0 +1,14 @@
+trimming:
+  trimmomatic:
+    info: "is perfoming trimming and cliping."
+    extra: |
+      Reads are trimmed from the 3' end to have a phred score of at least <b>20</b>. Illumina sequencing adapters are removed from the reads, and all reads are required to have a length of at least <b>25</b> bp.
+      <br>Trimming Statistics per Readset table (<a href='metrics/trimReadsetTable.tsv'>download full table</a>).
+      <ul>
+        <li>Raw Single Reads #: "number of Single Reads obtained from the sequencer"</li>
+        <li>Surviving Single Reads #: "number of Remaining Single Reads after the trimming step"</li>
+        <li>Surviving Single Reads %: "percentage of Surviving Single Reads / Raw Single Reads"</li>
+      </ul>
+
+trimmomatic:
+  s_name_filenames: true

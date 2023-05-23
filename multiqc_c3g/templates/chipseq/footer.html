@@ -1,0 +1,62 @@
+{# #######################
+    footer.html
+  ##########################
+  
+  Content for the report footer.
+  
+  #}
+  <style>
+    .logo-bar img{
+      margin-top: 5px;
+      max-height: 100px;
+    
+    }
+    .logo-bar {
+      display: flex;
+      justify-content: space-evenly;
+      height: 200%;
+    }
+  </style>
+  <p style="font-size: larger;">C3G is supported by the following organizations:</p>
+  <div class="logo-bar" class="pull-right" style="padding: 15px;">
+    <p>
+      <a href="http://www.canarie.ca/" target="_blank">
+        <img src="data:image/png;base64,{{ include_file('assets/logo/logoCanarie.png', b64=True) }}" style="max-height:95px;">
+      </a>
+      <a href="https://www.computecanada.ca/" target="_blank">
+        <img src="data:image/png;base64,{{ include_file('assets/logo/logoComputeCanada.png', b64=True) }}" style="max-height:120px;">
+      </a>
+      <a href="http://www.genomequebec.com/" target="_blank">
+        <img src="data:image/png;base64,{{ include_file('assets/logo/logoGQ.png', b64=True) }}" style="max-height:84px;">
+      </a>
+      <a href="http://www.genomecanada.ca/" target="_blank">
+        <img src="data:image/png;base64,{{ include_file('assets/logo/logoGC.png', b64=True) }}" style="max-height:84px;">
+      </a>
+      <a href="http://www.mcgill.ca/" target="_blank">
+        <img src="data:image/png;base64,{{ include_file('assets/logo/logoMG.png', b64=True) }}" style="max-height:51px;">
+      </a>
+    </p>
+  </div>
+  <div class="middle-bar" style="padding: 15px">
+    <p>
+      <strong>
+        <a href="http://multiqc.info" target="_blank">MultiQC v{{ config.version }}</a>
+      </strong>
+      <strong>
+        <a href="http://computecanada.ca" target="_blank">MUGQIC v{{ config.version_MUGQIC }}</a>
+      </strong>
+      - Prepared by <a href="#" target="_blank">C3G</a>,
+      available on <a href="#" target="_blank">Many platforms</a>.
+      This report uses <a href="http://www.highcharts.com/" target="_blank">HighCharts</a>,
+      <a href="https://jquery.com/" target="_blank">jQuery</a>,
+      <a href="https://jqueryui.com/" target="_blank">jQuery UI</a>,
+      <a href="http://getbootstrap.com/" target="_blank">Bootstrap</a>,
+      <a href="https://github.com/eligrey/FileSaver.js" target="_blank">FileSaver.js</a> and
+      <a href="https://clipboardjs.com/" target="_blank">clipboard.js</a>.
+    </p>
+  </div>
+  <div class="bottom-bar" style="background-color: #3A4863; 
+  border-radius: 2.3px; color: white; padding: 15px; margin-top: 10px; margin-bottom: -5pxs;">
+    <p>© Copyright 2015-2021 Canadian Center for Computational Genomics
+      All Rights Reserved</p>
+  </div>

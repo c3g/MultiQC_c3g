@@ -1,0 +1,25 @@
+peak_calls:
+  id: peak_calls
+  parent_title: "Peak Calls"
+  content: |
+    Peaks are called using [[macs]] software. The table below shows the general peak calling strategies for narrow and wide peaks.
+    
+    
+    Table: Peak Calling Strategies using [[macs]]
+
+    |Input       | Narrow Peaks  | Broad Peaks      |
+    |------------|---------------|------------------|
+    |No          | --fix-bimodal | --nomodel --broad|
+    |Yes         | --nomodel     | --nomodel --broad|
+    
+    ----
+    The following links will direct you to the [[macs]] peak calls:
+
+    * [Peak Calls File for Sample TC71 and Mark H3K27ac](peak_call/TC71/H3K27ac/TC71.H3K27ac_peaks.xls)
+
+    * [Peak Calls File for Sample EW3 and Mark H3K27ac](peak_call/EW3/H3K27ac/EW3.H3K27ac_peaks.xls)
+
+    * [Peak Calls File for Sample EW22 and Mark H3K27ac](peak_call/EW22/H3K27ac/EW22.H3K27ac_peaks.xls)
+
+    * [Peak Calls File for Sample EW7 and Mark H3K27ac](peak_call/EW7/H3K27ac/EW7.H3K27ac_peaks.xls)
+

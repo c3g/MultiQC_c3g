@@ -1,0 +1,1578 @@
+{
+    "submission_date": "2021-08-18T16.14.14", 
+    "pipeline": {
+        "step": [
+            {
+                "job": [
+                    {
+                        "name": "trimmomatic.EW22_A787C17_input", 
+                        "input_file": [
+                            "/lustre04/scratch/newtonma/chipseq_test_2/raw_data/EW22_A787C17_input_chr19.fastq.gz"
+                        ], 
+                        "output_file": [
+                            "trim/EW22/input", 
+                            "trim/EW22/input/EW22_A787C17_input.trim.single.fastq.gz", 
+                            "trim/EW22/input/EW22_A787C17_input.trim.log"
+                        ], 
+                        "dependency": [], 
+                        "command": "module purge && module load mugqic/java/openjdk-jdk1.8.0_72 mugqic/trimmomatic/0.39 && mkdir -p trim/EW22/input && touch trim/EW22/input && `cat > trim/EW22/input/EW22_A787C17_input.trim.adapters.fa << END\n>Single\nAGATCGGAAGAGCACACGTCTGAACTCCAGTCA\nEND\n` && java -XX:ParallelGCThreads=1 -Dsamjdk.use_async_io=true -Dsamjdk.buffer_size=4194304 -Xmx20G -jar $TRIMMOMATIC_JAR SE   -threads 5   -phred33   /lustre04/scratch/newtonma/chipseq_test_2/raw_data/EW22_A787C17_input_chr19.fastq.gz   trim/EW22/input/EW22_A787C17_input.trim.single.fastq.gz   ILLUMINACLIP:trim/EW22/input/EW22_A787C17_input.trim.adapters.fa:2:30:15   TRAILING:20   MINLEN:25   2> trim/EW22/input/EW22_A787C17_input.trim.log", 
+                        "id": "trimmomatic_1_JOB_ID"
+                    }, 
+                    {
+                        "name": "trimmomatic.EW22_A787C20_H3K27ac", 
+                        "input_file": [
+                            "/lustre04/scratch/newtonma/chipseq_test_2/raw_data/EW22_A787C20_H3K27ac_chr19.fastq.gz"
+                        ], 
+                        "output_file": [
+                            "trim/EW22/H3K27ac", 
+                            "trim/EW22/H3K27ac/EW22_A787C20_H3K27ac.trim.single.fastq.gz", 
+                            "trim/EW22/H3K27ac/EW22_A787C20_H3K27ac.trim.log"
+                        ], 
+                        "dependency": [], 
+                        "command": "module purge && module load mugqic/java/openjdk-jdk1.8.0_72 mugqic/trimmomatic/0.39 && mkdir -p trim/EW22/H3K27ac && touch trim/EW22/H3K27ac && `cat > trim/EW22/H3K27ac/EW22_A787C20_H3K27ac.trim.adapters.fa << END\n>Single\nAGATCGGAAGAGCACACGTCTGAACTCCAGTCA\nEND\n` && java -XX:ParallelGCThreads=1 -Dsamjdk.use_async_io=true -Dsamjdk.buffer_size=4194304 -Xmx20G -jar $TRIMMOMATIC_JAR SE   -threads 5   -phred33   /lustre04/scratch/newtonma/chipseq_test_2/raw_data/EW22_A787C20_H3K27ac_chr19.fastq.gz   trim/EW22/H3K27ac/EW22_A787C20_H3K27ac.trim.single.fastq.gz   ILLUMINACLIP:trim/EW22/H3K27ac/EW22_A787C20_H3K27ac.trim.adapters.fa:2:30:15   TRAILING:20   MINLEN:25   2> trim/EW22/H3K27ac/EW22_A787C20_H3K27ac.trim.log", 
+                        "id": "trimmomatic_2_JOB_ID"
+                    }
+                ], 
+                "name": "trimmomatic"
+            }, 
+            {
+                "job": [
+                    {
+                        "name": "merge_trimmomatic_stats.", 
+                        "input_file": [
+                            "trim/EW22/input/EW22_A787C17_input.trim.log", 
+                            "trim/EW22/H3K27ac/EW22_A787C20_H3K27ac.trim.log", 
+                            "trim/EW3/input/EW3_1056C284_input.trim.log", 
+                            "trim/EW3/H3K27ac/EW3_A1056C287_H3K27ac.trim.log", 
+                            "trim/EW7/input/EW7_A485C51_input.trim.log", 
+                            "trim/EW7/H3K27ac/EW7_A490C39_H3K27ac.trim.log", 
+                            "trim/TC71/H3K27ac/TC71_A379C48_H3K27ac.trim.log", 
+                            "trim/TC71/input/TC71_A379C51_input.trim.log"
+                        ], 
+                        "output_file": [
+                            "metrics", 
+                            "metrics/trimReadsetTable.tsv", 
+                            "metrics/trimSampleTable.tsv", 
+                            "report/yaml/Illumina.merge_trimmomatic_stats.yaml"
+                        ], 
+                        "dependency": [
+                            "trimmomatic_1_JOB_ID", 
+                            "trimmomatic_2_JOB_ID", 
+                            "trimmomatic_3_JOB_ID", 
+                            "trimmomatic_4_JOB_ID", 
+                            "trimmomatic_5_JOB_ID", 
+                            "trimmomatic_6_JOB_ID", 
+                            "trimmomatic_7_JOB_ID", 
+                            "trimmomatic_8_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/perl/5.22.1 mugqic/pandoc/1.15.2 && mkdir -p metrics && touch metrics && \necho -e \"Sample\\tReadset\\tMark Name\\tRaw Single Reads #\\tSurviving Single Reads #\\tSurviving Single Reads %\" > metrics/trimReadsetTable.tsv && grep ^Input trim/EW22/input/EW22_A787C17_input.trim.log | perl -pe 's/^Input Reads: (\\d+).*Surviving: (\\d+).*$/EW22\\tEW22_A787C17_input\\tinput\\t\\1\\t\\2/' | awk '{OFS=\"\\t\"; print $0, $5 / $4 * 100}'   >> metrics/trimReadsetTable.tsv && grep ^Input trim/EW22/H3K27ac/EW22_A787C20_H3K27ac.trim.log | perl -pe 's/^Input Reads: (\\d+).*Surviving: (\\d+).*$/EW22\\tEW22_A787C20_H3K27ac\\tH3K27ac\\t\\1\\t\\2/' | awk '{OFS=\"\\t\"; print $0, $5 / $4 * 100}'   >> metrics/trimReadsetTable.tsv && grep ^Input trim/EW3/input/EW3_1056C284_input.trim.log | perl -pe 's/^Input Reads: (\\d+).*Surviving: (\\d+).*$/EW3\\tEW3_1056C284_input\\tinput\\t\\1\\t\\2/' | awk '{OFS=\"\\t\"; print $0, $5 / $4 * 100}'   >> metrics/trimReadsetTable.tsv && grep ^Input trim/EW3/H3K27ac/EW3_A1056C287_H3K27ac.trim.log | perl -pe 's/^Input Reads: (\\d+).*Surviving: (\\d+).*$/EW3\\tEW3_A1056C287_H3K27ac\\tH3K27ac\\t\\1\\t\\2/' | awk '{OFS=\"\\t\"; print $0, $5 / $4 * 100}'   >> metrics/trimReadsetTable.tsv && grep ^Input trim/EW7/input/EW7_A485C51_input.trim.log | perl -pe 's/^Input Reads: (\\d+).*Surviving: (\\d+).*$/EW7\\tEW7_A485C51_input\\tinput\\t\\1\\t\\2/' | awk '{OFS=\"\\t\"; print $0, $5 / $4 * 100}'   >> metrics/trimReadsetTable.tsv && grep ^Input trim/EW7/H3K27ac/EW7_A490C39_H3K27ac.trim.log | perl -pe 's/^Input Reads: (\\d+).*Surviving: (\\d+).*$/EW7\\tEW7_A490C39_H3K27ac\\tH3K27ac\\t\\1\\t\\2/' | awk '{OFS=\"\\t\"; print $0, $5 / $4 * 100}'   >> metrics/trimReadsetTable.tsv && grep ^Input trim/TC71/H3K27ac/TC71_A379C48_H3K27ac.trim.log | perl -pe 's/^Input Reads: (\\d+).*Surviving: (\\d+).*$/TC71\\tTC71_A379C48_H3K27ac\\tH3K27ac\\t\\1\\t\\2/' | awk '{OFS=\"\\t\"; print $0, $5 / $4 * 100}'   >> metrics/trimReadsetTable.tsv && grep ^Input trim/TC71/input/TC71_A379C51_input.trim.log | perl -pe 's/^Input Reads: (\\d+).*Surviving: (\\d+).*$/TC71\\tTC71_A379C51_input\\tinput\\t\\1\\t\\2/' | awk '{OFS=\"\\t\"; print $0, $5 / $4 * 100}'   >> metrics/trimReadsetTable.tsv && cut -f1,3- metrics/trimReadsetTable.tsv | awk -F\"\\t\" '{OFS=\"\\t\"; if (NR==1) {if ($3==\"Raw Paired Reads #\") {paired=1};print \"Sample\", \"Mark Name\", \"Raw Reads #\", \"Surviving Reads #\", \"Surviving %\"} else {if (paired) {$3=$3*2; $4=$4*2}; sample[$1$2]=$1; markname[$1$2]=$2; raw[$1$2]+=$3; surviving[$1$2]+=$4}}END{for (samplemark in raw){print sample[samplemark], markname[samplemark], raw[samplemark], surviving[samplemark], surviving[samplemark] / raw[samplemark] * 100}}'   > metrics/trimSampleTable.tsv && mkdir -p report/yaml && cp metrics/trimReadsetTable.tsv metrics/trimSampleTable.tsv report/ && sed -e 's@trailing_min_quality@20@g'     -e 's@min_length@25@g'     -e 's@read_type@Single@g'     -e 's@readset_merge_trim_stats@metrics/trimReadsetTable.tsv@g'     /home/newtonma/apps/genpipes/bfx/report/Illumina.merge_trimmomatic_stats.yaml > report/yaml/Illumina.merge_trimmomatic_stats.yaml", 
+                        "id": "merge_trimmomatic_stats_1_JOB_ID"
+                    }
+                ], 
+                "name": "merge_trimmomatic_stats"
+            }, 
+            {
+                "job": [
+                    {
+                        "name": "mapping_bwa_mem_sambamba.EW22_A787C17_input", 
+                        "input_file": [
+                            "trim/EW22/input/EW22_A787C17_input.trim.single.fastq.gz"
+                        ], 
+                        "output_file": [
+                            "alignment/EW22/input/EW22_A787C17_input", 
+                            "alignment/EW22/input/EW22_A787C17_input/EW22_A787C17_input.sorted.bam", 
+                            "alignment/EW22/input/EW22_A787C17_input/EW22_A787C17_input.sorted.bam.bai"
+                        ], 
+                        "dependency": [
+                            "trimmomatic_1_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/bwa/0.7.17 mugqic/sambamba/0.8.0 && mkdir -p alignment/EW22/input/EW22_A787C17_input && touch alignment/EW22/input/EW22_A787C17_input && bwa mem -K 100000000 -v 3 -t 7 -Y      -R '@RG\\tID:EW22_A787C17_input\\tSM:EW22\\tLB:EW22\\tPU:run2965_1\\tCN:McGill University and Genome Quebec Innovation Centre\\tPL:Illumina'   /cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.hg19/genome/bwa_index/Homo_sapiens.hg19.fa   trim/EW22/input/EW22_A787C17_input.trim.single.fastq.gz | sambamba view -S -f bam   /dev/stdin     | sambamba sort    /dev/stdin   --tmpdir ${SLURM_TMPDIR}   --out alignment/EW22/input/EW22_A787C17_input/EW22_A787C17_input.sorted.bam && sambamba index    alignment/EW22/input/EW22_A787C17_input/EW22_A787C17_input.sorted.bam   alignment/EW22/input/EW22_A787C17_input/EW22_A787C17_input.sorted.bam.bai", 
+                        "id": "mapping_bwa_mem_sambamba_1_JOB_ID"
+                    }, 
+                    {
+                        "name": "mapping_bwa_mem_sambamba.EW22_A787C20_H3K27ac", 
+                        "input_file": [
+                            "trim/EW22/H3K27ac/EW22_A787C20_H3K27ac.trim.single.fastq.gz"
+                        ], 
+                        "output_file": [
+                            "alignment/EW22/H3K27ac/EW22_A787C20_H3K27ac", 
+                            "alignment/EW22/H3K27ac/EW22_A787C20_H3K27ac/EW22_A787C20_H3K27ac.sorted.bam", 
+                            "alignment/EW22/H3K27ac/EW22_A787C20_H3K27ac/EW22_A787C20_H3K27ac.sorted.bam.bai"
+                        ], 
+                        "dependency": [
+                            "trimmomatic_2_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/bwa/0.7.17 mugqic/sambamba/0.8.0 && mkdir -p alignment/EW22/H3K27ac/EW22_A787C20_H3K27ac && touch alignment/EW22/H3K27ac/EW22_A787C20_H3K27ac && bwa mem -K 100000000 -v 3 -t 7 -Y      -R '@RG\\tID:EW22_A787C20_H3K27ac\\tSM:EW22\\tLB:EW22\\tPU:run2962_1\\tCN:McGill University and Genome Quebec Innovation Centre\\tPL:Illumina'   /cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.hg19/genome/bwa_index/Homo_sapiens.hg19.fa   trim/EW22/H3K27ac/EW22_A787C20_H3K27ac.trim.single.fastq.gz | sambamba view -S -f bam   /dev/stdin     | sambamba sort    /dev/stdin   --tmpdir ${SLURM_TMPDIR}   --out alignment/EW22/H3K27ac/EW22_A787C20_H3K27ac/EW22_A787C20_H3K27ac.sorted.bam && sambamba index    alignment/EW22/H3K27ac/EW22_A787C20_H3K27ac/EW22_A787C20_H3K27ac.sorted.bam   alignment/EW22/H3K27ac/EW22_A787C20_H3K27ac/EW22_A787C20_H3K27ac.sorted.bam.bai", 
+                        "id": "mapping_bwa_mem_sambamba_2_JOB_ID"
+                    }
+                ], 
+                "name": "mapping_bwa_mem_sambamba"
+            }, 
+            {
+                "job": [
+                    {
+                        "name": "symlink_readset_sample_bam.EW22.input", 
+                        "input_file": [
+                            "alignment/EW22/input/EW22_A787C17_input/EW22_A787C17_input.sorted.bam", 
+                            "alignment/EW22/input/EW22_A787C17_input/EW22_A787C17_input.sorted.bam.bai"
+                        ], 
+                        "output_file": [
+                            "alignment/EW22/input", 
+                            "alignment/EW22/input/EW22.input.sorted.bam", 
+                            "alignment/EW22/input/EW22.input.sorted.bam.bai"
+                        ], 
+                        "dependency": [
+                            "mapping_bwa_mem_sambamba_1_JOB_ID"
+                        ], 
+                        "command": "mkdir -p alignment/EW22/input && touch alignment/EW22/input && ln -s -f   /lustre04/scratch/newtonma/chipseq_test_2/alignment/EW22/input/EW22_A787C17_input/EW22_A787C17_input.sorted.bam   /lustre04/scratch/newtonma/chipseq_test_2/alignment/EW22/input/EW22.input.sorted.bam && ln -s -f   /lustre04/scratch/newtonma/chipseq_test_2/alignment/EW22/input/EW22_A787C17_input/EW22_A787C17_input.sorted.bam.bai   /lustre04/scratch/newtonma/chipseq_test_2/alignment/EW22/input/EW22.input.sorted.bam.bai", 
+                        "id": "sambamba_merge_bam_files_1_JOB_ID"
+                    }, 
+                    {
+                        "name": "symlink_readset_sample_bam.EW22.H3K27ac", 
+                        "input_file": [
+                            "alignment/EW22/H3K27ac/EW22_A787C20_H3K27ac/EW22_A787C20_H3K27ac.sorted.bam", 
+                            "alignment/EW22/H3K27ac/EW22_A787C20_H3K27ac/EW22_A787C20_H3K27ac.sorted.bam.bai"
+                        ], 
+                        "output_file": [
+                            "alignment/EW22/H3K27ac", 
+                            "alignment/EW22/H3K27ac/EW22.H3K27ac.sorted.bam", 
+                            "alignment/EW22/H3K27ac/EW22.H3K27ac.sorted.bam.bai"
+                        ], 
+                        "dependency": [
+                            "mapping_bwa_mem_sambamba_2_JOB_ID"
+                        ], 
+                        "command": "mkdir -p alignment/EW22/H3K27ac && touch alignment/EW22/H3K27ac && ln -s -f   /lustre04/scratch/newtonma/chipseq_test_2/alignment/EW22/H3K27ac/EW22_A787C20_H3K27ac/EW22_A787C20_H3K27ac.sorted.bam   /lustre04/scratch/newtonma/chipseq_test_2/alignment/EW22/H3K27ac/EW22.H3K27ac.sorted.bam && ln -s -f   /lustre04/scratch/newtonma/chipseq_test_2/alignment/EW22/H3K27ac/EW22_A787C20_H3K27ac/EW22_A787C20_H3K27ac.sorted.bam.bai   /lustre04/scratch/newtonma/chipseq_test_2/alignment/EW22/H3K27ac/EW22.H3K27ac.sorted.bam.bai", 
+                        "id": "sambamba_merge_bam_files_2_JOB_ID"
+                    }
+                ], 
+                "name": "sambamba_merge_bam_files"
+            }, 
+            {
+                "job": [
+                    {
+                        "name": "sambamba_mark_duplicates.EW22.input", 
+                        "input_file": [
+                            "alignment/EW22/input/EW22.input.sorted.bam"
+                        ], 
+                        "output_file": [
+                            "alignment/EW22/input", 
+                            "alignment/EW22/input/EW22.input.sorted.dup.bam"
+                        ], 
+                        "dependency": [
+                            "sambamba_merge_bam_files_1_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/samtools/1.12 mugqic/sambamba/0.8.0 && mkdir -p alignment/EW22/input && touch alignment/EW22/input && sambamba markdup -t 4 --sort-buffer-size=8192 --io-buffer-size=1024   alignment/EW22/input/EW22.input.sorted.bam   --tmpdir ${SLURM_TMPDIR}   alignment/EW22/input/EW22.input.sorted.dup.bam", 
+                        "id": "sambamba_mark_duplicates_1_JOB_ID"
+                    }, 
+                    {
+                        "name": "sambamba_mark_duplicates.EW22.H3K27ac", 
+                        "input_file": [
+                            "alignment/EW22/H3K27ac/EW22.H3K27ac.sorted.bam"
+                        ], 
+                        "output_file": [
+                            "alignment/EW22/H3K27ac", 
+                            "alignment/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.bam"
+                        ], 
+                        "dependency": [
+                            "sambamba_merge_bam_files_2_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/samtools/1.12 mugqic/sambamba/0.8.0 && mkdir -p alignment/EW22/H3K27ac && touch alignment/EW22/H3K27ac && sambamba markdup -t 4 --sort-buffer-size=8192 --io-buffer-size=1024   alignment/EW22/H3K27ac/EW22.H3K27ac.sorted.bam   --tmpdir ${SLURM_TMPDIR}   alignment/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.bam", 
+                        "id": "sambamba_mark_duplicates_2_JOB_ID"
+                    }
+                ], 
+                "name": "sambamba_mark_duplicates"
+            }, 
+            {
+                "job": [
+                    {
+                        "name": "sambamba_view_filter.EW22.input", 
+                        "input_file": [
+                            "alignment/EW22/input/EW22.input.sorted.dup.bam"
+                        ], 
+                        "output_file": [
+                            "alignment/EW22/input", 
+                            "alignment/EW22/input/EW22.input.sorted.dup.filtered.bam", 
+                            "alignment/EW22/input/EW22.input.sorted.dup.filtered.bam.bai"
+                        ], 
+                        "dependency": [
+                            "sambamba_mark_duplicates_1_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/sambamba/0.8.0 && mkdir -p alignment/EW22/input && touch alignment/EW22/input && sambamba view -t 4 -f bam -F \"not unmapped and not failed_quality_control and mapping_quality >= 20\"   alignment/EW22/input/EW22.input.sorted.dup.bam   -o alignment/EW22/input/EW22.input.sorted.dup.filtered.bam  && sambamba index    alignment/EW22/input/EW22.input.sorted.dup.filtered.bam   alignment/EW22/input/EW22.input.sorted.dup.filtered.bam.bai", 
+                        "id": "sambamba_view_filter_1_JOB_ID"
+                    }, 
+                    {
+                        "name": "sambamba_view_filter.EW22.H3K27ac", 
+                        "input_file": [
+                            "alignment/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.bam"
+                        ], 
+                        "output_file": [
+                            "alignment/EW22/H3K27ac", 
+                            "alignment/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.filtered.bam", 
+                            "alignment/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.filtered.bam.bai"
+                        ], 
+                        "dependency": [
+                            "sambamba_mark_duplicates_2_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/sambamba/0.8.0 && mkdir -p alignment/EW22/H3K27ac && touch alignment/EW22/H3K27ac && sambamba view -t 4 -f bam -F \"not unmapped and not failed_quality_control and mapping_quality >= 20\"   alignment/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.bam   -o alignment/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.filtered.bam  && sambamba index    alignment/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.filtered.bam   alignment/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.filtered.bam.bai", 
+                        "id": "sambamba_view_filter_2_JOB_ID"
+                    }
+                ], 
+                "name": "sambamba_view_filter"
+            }, 
+            {
+                "job": [
+                    {
+                        "name": "picard_collect_multiple_metrics.EW22.input", 
+                        "input_file": [
+                            "alignment/EW22/input/EW22.input.sorted.dup.filtered.bam"
+                        ], 
+                        "output_file": [
+                            "metrics/EW22/input", 
+                            "metrics/EW22/input/EW22.input.sorted.dup.filtered.all.metrics.quality_by_cycle.pdf", 
+                            "metrics/EW22/input/EW22.input.sorted.dup.filtered.all.metrics.alignment_summary_metrics", 
+                            "metrics/EW22/input/EW22.input.sorted.dup.filtered.all.metrics.quality_by_cycle_metrics", 
+                            "metrics/EW22/input/EW22.input.sorted.dup.filtered.all.metrics.quality_distribution_metrics", 
+                            "metrics/EW22/input/EW22.input.sorted.dup.filtered.all.metrics.quality_distribution.pdf"
+                        ], 
+                        "dependency": [
+                            "sambamba_view_filter_1_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/java/openjdk-jdk1.8.0_72 mugqic/picard/2.0.1 mugqic/R_Bioconductor/4.0.3_3.12 && mkdir -p metrics/EW22/input && touch metrics/EW22/input && java -Djava.io.tmpdir=${SLURM_TMPDIR} -XX:ParallelGCThreads=1 -Dsamjdk.use_async_io=true -Dsamjdk.buffer_size=4194304 -Xmx8G -jar $PICARD_HOME/picard.jar CollectMultipleMetrics  PROGRAM=CollectAlignmentSummaryMetrics PROGRAM=CollectInsertSizeMetrics VALIDATION_STRINGENCY=SILENT  TMP_DIR=${SLURM_TMPDIR}  REFERENCE_SEQUENCE=/cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.hg19/genome/Homo_sapiens.hg19.fa  INPUT=alignment/EW22/input/EW22.input.sorted.dup.filtered.bam  OUTPUT=metrics/EW22/input/EW22.input.sorted.dup.filtered.all.metrics  MAX_RECORDS_IN_RAM=1000000", 
+                        "id": "metrics_1_JOB_ID"
+                    }, 
+                    {
+                        "name": "metrics_flagstat.EW22.input", 
+                        "input_file": [
+                            "alignment/EW22/input/EW22.input.sorted.dup.bam", 
+                            "alignment/EW22/input/EW22.input.sorted.dup.filtered.bam"
+                        ], 
+                        "output_file": [
+                            "metrics/EW22/input", 
+                            "metrics/EW22/input/EW22.input.sorted.dup.flagstat", 
+                            "metrics/EW22/input/EW22.input.sorted.dup.filtered.flagstat"
+                        ], 
+                        "dependency": [
+                            "sambamba_mark_duplicates_1_JOB_ID", 
+                            "sambamba_view_filter_1_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/sambamba/0.8.0 && mkdir -p metrics/EW22/input && touch metrics/EW22/input && sambamba flagstat    alignment/EW22/input/EW22.input.sorted.dup.bam   > metrics/EW22/input/EW22.input.sorted.dup.flagstat && sambamba flagstat    alignment/EW22/input/EW22.input.sorted.dup.filtered.bam   > metrics/EW22/input/EW22.input.sorted.dup.filtered.flagstat", 
+                        "id": "metrics_2_JOB_ID"
+                    }, 
+                    {
+                        "name": "picard_collect_multiple_metrics.EW22.H3K27ac", 
+                        "input_file": [
+                            "alignment/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.filtered.bam"
+                        ], 
+                        "output_file": [
+                            "metrics/EW22/H3K27ac", 
+                            "metrics/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.filtered.all.metrics.quality_by_cycle.pdf", 
+                            "metrics/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.filtered.all.metrics.alignment_summary_metrics", 
+                            "metrics/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.filtered.all.metrics.quality_by_cycle_metrics", 
+                            "metrics/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.filtered.all.metrics.quality_distribution_metrics", 
+                            "metrics/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.filtered.all.metrics.quality_distribution.pdf"
+                        ], 
+                        "dependency": [
+                            "sambamba_view_filter_2_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/java/openjdk-jdk1.8.0_72 mugqic/picard/2.0.1 mugqic/R_Bioconductor/4.0.3_3.12 && mkdir -p metrics/EW22/H3K27ac && touch metrics/EW22/H3K27ac && java -Djava.io.tmpdir=${SLURM_TMPDIR} -XX:ParallelGCThreads=1 -Dsamjdk.use_async_io=true -Dsamjdk.buffer_size=4194304 -Xmx8G -jar $PICARD_HOME/picard.jar CollectMultipleMetrics  PROGRAM=CollectAlignmentSummaryMetrics PROGRAM=CollectInsertSizeMetrics VALIDATION_STRINGENCY=SILENT  TMP_DIR=${SLURM_TMPDIR}  REFERENCE_SEQUENCE=/cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.hg19/genome/Homo_sapiens.hg19.fa  INPUT=alignment/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.filtered.bam  OUTPUT=metrics/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.filtered.all.metrics  MAX_RECORDS_IN_RAM=1000000", 
+                        "id": "metrics_3_JOB_ID"
+                    }, 
+                    {
+                        "name": "metrics_flagstat.EW22.H3K27ac", 
+                        "input_file": [
+                            "alignment/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.bam", 
+                            "alignment/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.filtered.bam"
+                        ], 
+                        "output_file": [
+                            "metrics/EW22/H3K27ac", 
+                            "metrics/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.flagstat", 
+                            "metrics/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.filtered.flagstat"
+                        ], 
+                        "dependency": [
+                            "sambamba_mark_duplicates_2_JOB_ID", 
+                            "sambamba_view_filter_2_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/sambamba/0.8.0 && mkdir -p metrics/EW22/H3K27ac && touch metrics/EW22/H3K27ac && sambamba flagstat    alignment/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.bam   > metrics/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.flagstat && sambamba flagstat    alignment/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.filtered.bam   > metrics/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.filtered.flagstat", 
+                        "id": "metrics_4_JOB_ID"
+                    }, 
+                    {
+                        "name": "picard_collect_multiple_metrics.EW3.input", 
+                        "input_file": [
+                            "alignment/EW3/input/EW3.input.sorted.dup.filtered.bam"
+                        ], 
+                        "output_file": [
+                            "metrics/EW3/input", 
+                            "metrics/EW3/input/EW3.input.sorted.dup.filtered.all.metrics.quality_by_cycle.pdf", 
+                            "metrics/EW3/input/EW3.input.sorted.dup.filtered.all.metrics.alignment_summary_metrics", 
+                            "metrics/EW3/input/EW3.input.sorted.dup.filtered.all.metrics.quality_by_cycle_metrics", 
+                            "metrics/EW3/input/EW3.input.sorted.dup.filtered.all.metrics.quality_distribution_metrics", 
+                            "metrics/EW3/input/EW3.input.sorted.dup.filtered.all.metrics.quality_distribution.pdf"
+                        ], 
+                        "dependency": [
+                            "sambamba_view_filter_3_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/java/openjdk-jdk1.8.0_72 mugqic/picard/2.0.1 mugqic/R_Bioconductor/4.0.3_3.12 && mkdir -p metrics/EW3/input && touch metrics/EW3/input && java -Djava.io.tmpdir=${SLURM_TMPDIR} -XX:ParallelGCThreads=1 -Dsamjdk.use_async_io=true -Dsamjdk.buffer_size=4194304 -Xmx8G -jar $PICARD_HOME/picard.jar CollectMultipleMetrics  PROGRAM=CollectAlignmentSummaryMetrics PROGRAM=CollectInsertSizeMetrics VALIDATION_STRINGENCY=SILENT  TMP_DIR=${SLURM_TMPDIR}  REFERENCE_SEQUENCE=/cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.hg19/genome/Homo_sapiens.hg19.fa  INPUT=alignment/EW3/input/EW3.input.sorted.dup.filtered.bam  OUTPUT=metrics/EW3/input/EW3.input.sorted.dup.filtered.all.metrics  MAX_RECORDS_IN_RAM=1000000", 
+                        "id": "metrics_5_JOB_ID"
+                    }, 
+                    {
+                        "name": "metrics_flagstat.EW3.input", 
+                        "input_file": [
+                            "alignment/EW3/input/EW3.input.sorted.dup.bam", 
+                            "alignment/EW3/input/EW3.input.sorted.dup.filtered.bam"
+                        ], 
+                        "output_file": [
+                            "metrics/EW3/input", 
+                            "metrics/EW3/input/EW3.input.sorted.dup.flagstat", 
+                            "metrics/EW3/input/EW3.input.sorted.dup.filtered.flagstat"
+                        ], 
+                        "dependency": [
+                            "sambamba_mark_duplicates_3_JOB_ID", 
+                            "sambamba_view_filter_3_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/sambamba/0.8.0 && mkdir -p metrics/EW3/input && touch metrics/EW3/input && sambamba flagstat    alignment/EW3/input/EW3.input.sorted.dup.bam   > metrics/EW3/input/EW3.input.sorted.dup.flagstat && sambamba flagstat    alignment/EW3/input/EW3.input.sorted.dup.filtered.bam   > metrics/EW3/input/EW3.input.sorted.dup.filtered.flagstat", 
+                        "id": "metrics_6_JOB_ID"
+                    }, 
+                    {
+                        "name": "picard_collect_multiple_metrics.EW3.H3K27ac", 
+                        "input_file": [
+                            "alignment/EW3/H3K27ac/EW3.H3K27ac.sorted.dup.filtered.bam"
+                        ], 
+                        "output_file": [
+                            "metrics/EW3/H3K27ac", 
+                            "metrics/EW3/H3K27ac/EW3.H3K27ac.sorted.dup.filtered.all.metrics.quality_by_cycle.pdf", 
+                            "metrics/EW3/H3K27ac/EW3.H3K27ac.sorted.dup.filtered.all.metrics.alignment_summary_metrics", 
+                            "metrics/EW3/H3K27ac/EW3.H3K27ac.sorted.dup.filtered.all.metrics.quality_by_cycle_metrics", 
+                            "metrics/EW3/H3K27ac/EW3.H3K27ac.sorted.dup.filtered.all.metrics.quality_distribution_metrics", 
+                            "metrics/EW3/H3K27ac/EW3.H3K27ac.sorted.dup.filtered.all.metrics.quality_distribution.pdf"
+                        ], 
+                        "dependency": [
+                            "sambamba_view_filter_4_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/java/openjdk-jdk1.8.0_72 mugqic/picard/2.0.1 mugqic/R_Bioconductor/4.0.3_3.12 && mkdir -p metrics/EW3/H3K27ac && touch metrics/EW3/H3K27ac && java -Djava.io.tmpdir=${SLURM_TMPDIR} -XX:ParallelGCThreads=1 -Dsamjdk.use_async_io=true -Dsamjdk.buffer_size=4194304 -Xmx8G -jar $PICARD_HOME/picard.jar CollectMultipleMetrics  PROGRAM=CollectAlignmentSummaryMetrics PROGRAM=CollectInsertSizeMetrics VALIDATION_STRINGENCY=SILENT  TMP_DIR=${SLURM_TMPDIR}  REFERENCE_SEQUENCE=/cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.hg19/genome/Homo_sapiens.hg19.fa  INPUT=alignment/EW3/H3K27ac/EW3.H3K27ac.sorted.dup.filtered.bam  OUTPUT=metrics/EW3/H3K27ac/EW3.H3K27ac.sorted.dup.filtered.all.metrics  MAX_RECORDS_IN_RAM=1000000", 
+                        "id": "metrics_7_JOB_ID"
+                    }, 
+                    {
+                        "name": "metrics_flagstat.EW3.H3K27ac", 
+                        "input_file": [
+                            "alignment/EW3/H3K27ac/EW3.H3K27ac.sorted.dup.bam", 
+                            "alignment/EW3/H3K27ac/EW3.H3K27ac.sorted.dup.filtered.bam"
+                        ], 
+                        "output_file": [
+                            "metrics/EW3/H3K27ac", 
+                            "metrics/EW3/H3K27ac/EW3.H3K27ac.sorted.dup.flagstat", 
+                            "metrics/EW3/H3K27ac/EW3.H3K27ac.sorted.dup.filtered.flagstat"
+                        ], 
+                        "dependency": [
+                            "sambamba_mark_duplicates_4_JOB_ID", 
+                            "sambamba_view_filter_4_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/sambamba/0.8.0 && mkdir -p metrics/EW3/H3K27ac && touch metrics/EW3/H3K27ac && sambamba flagstat    alignment/EW3/H3K27ac/EW3.H3K27ac.sorted.dup.bam   > metrics/EW3/H3K27ac/EW3.H3K27ac.sorted.dup.flagstat && sambamba flagstat    alignment/EW3/H3K27ac/EW3.H3K27ac.sorted.dup.filtered.bam   > metrics/EW3/H3K27ac/EW3.H3K27ac.sorted.dup.filtered.flagstat", 
+                        "id": "metrics_8_JOB_ID"
+                    }, 
+                    {
+                        "name": "picard_collect_multiple_metrics.EW7.input", 
+                        "input_file": [
+                            "alignment/EW7/input/EW7.input.sorted.dup.filtered.bam"
+                        ], 
+                        "output_file": [
+                            "metrics/EW7/input", 
+                            "metrics/EW7/input/EW7.input.sorted.dup.filtered.all.metrics.quality_by_cycle.pdf", 
+                            "metrics/EW7/input/EW7.input.sorted.dup.filtered.all.metrics.alignment_summary_metrics", 
+                            "metrics/EW7/input/EW7.input.sorted.dup.filtered.all.metrics.quality_by_cycle_metrics", 
+                            "metrics/EW7/input/EW7.input.sorted.dup.filtered.all.metrics.quality_distribution_metrics", 
+                            "metrics/EW7/input/EW7.input.sorted.dup.filtered.all.metrics.quality_distribution.pdf"
+                        ], 
+                        "dependency": [
+                            "sambamba_view_filter_5_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/java/openjdk-jdk1.8.0_72 mugqic/picard/2.0.1 mugqic/R_Bioconductor/4.0.3_3.12 && mkdir -p metrics/EW7/input && touch metrics/EW7/input && java -Djava.io.tmpdir=${SLURM_TMPDIR} -XX:ParallelGCThreads=1 -Dsamjdk.use_async_io=true -Dsamjdk.buffer_size=4194304 -Xmx8G -jar $PICARD_HOME/picard.jar CollectMultipleMetrics  PROGRAM=CollectAlignmentSummaryMetrics PROGRAM=CollectInsertSizeMetrics VALIDATION_STRINGENCY=SILENT  TMP_DIR=${SLURM_TMPDIR}  REFERENCE_SEQUENCE=/cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.hg19/genome/Homo_sapiens.hg19.fa  INPUT=alignment/EW7/input/EW7.input.sorted.dup.filtered.bam  OUTPUT=metrics/EW7/input/EW7.input.sorted.dup.filtered.all.metrics  MAX_RECORDS_IN_RAM=1000000", 
+                        "id": "metrics_9_JOB_ID"
+                    }, 
+                    {
+                        "name": "metrics_flagstat.EW7.input", 
+                        "input_file": [
+                            "alignment/EW7/input/EW7.input.sorted.dup.bam", 
+                            "alignment/EW7/input/EW7.input.sorted.dup.filtered.bam"
+                        ], 
+                        "output_file": [
+                            "metrics/EW7/input", 
+                            "metrics/EW7/input/EW7.input.sorted.dup.flagstat", 
+                            "metrics/EW7/input/EW7.input.sorted.dup.filtered.flagstat"
+                        ], 
+                        "dependency": [
+                            "sambamba_mark_duplicates_5_JOB_ID", 
+                            "sambamba_view_filter_5_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/sambamba/0.8.0 && mkdir -p metrics/EW7/input && touch metrics/EW7/input && sambamba flagstat    alignment/EW7/input/EW7.input.sorted.dup.bam   > metrics/EW7/input/EW7.input.sorted.dup.flagstat && sambamba flagstat    alignment/EW7/input/EW7.input.sorted.dup.filtered.bam   > metrics/EW7/input/EW7.input.sorted.dup.filtered.flagstat", 
+                        "id": "metrics_10_JOB_ID"
+                    }, 
+                    {
+                        "name": "picard_collect_multiple_metrics.EW7.H3K27ac", 
+                        "input_file": [
+                            "alignment/EW7/H3K27ac/EW7.H3K27ac.sorted.dup.filtered.bam"
+                        ], 
+                        "output_file": [
+                            "metrics/EW7/H3K27ac", 
+                            "metrics/EW7/H3K27ac/EW7.H3K27ac.sorted.dup.filtered.all.metrics.quality_by_cycle.pdf", 
+                            "metrics/EW7/H3K27ac/EW7.H3K27ac.sorted.dup.filtered.all.metrics.alignment_summary_metrics", 
+                            "metrics/EW7/H3K27ac/EW7.H3K27ac.sorted.dup.filtered.all.metrics.quality_by_cycle_metrics", 
+                            "metrics/EW7/H3K27ac/EW7.H3K27ac.sorted.dup.filtered.all.metrics.quality_distribution_metrics", 
+                            "metrics/EW7/H3K27ac/EW7.H3K27ac.sorted.dup.filtered.all.metrics.quality_distribution.pdf"
+                        ], 
+                        "dependency": [
+                            "sambamba_view_filter_6_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/java/openjdk-jdk1.8.0_72 mugqic/picard/2.0.1 mugqic/R_Bioconductor/4.0.3_3.12 && mkdir -p metrics/EW7/H3K27ac && touch metrics/EW7/H3K27ac && java -Djava.io.tmpdir=${SLURM_TMPDIR} -XX:ParallelGCThreads=1 -Dsamjdk.use_async_io=true -Dsamjdk.buffer_size=4194304 -Xmx8G -jar $PICARD_HOME/picard.jar CollectMultipleMetrics  PROGRAM=CollectAlignmentSummaryMetrics PROGRAM=CollectInsertSizeMetrics VALIDATION_STRINGENCY=SILENT  TMP_DIR=${SLURM_TMPDIR}  REFERENCE_SEQUENCE=/cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.hg19/genome/Homo_sapiens.hg19.fa  INPUT=alignment/EW7/H3K27ac/EW7.H3K27ac.sorted.dup.filtered.bam  OUTPUT=metrics/EW7/H3K27ac/EW7.H3K27ac.sorted.dup.filtered.all.metrics  MAX_RECORDS_IN_RAM=1000000", 
+                        "id": "metrics_11_JOB_ID"
+                    }, 
+                    {
+                        "name": "metrics_flagstat.EW7.H3K27ac", 
+                        "input_file": [
+                            "alignment/EW7/H3K27ac/EW7.H3K27ac.sorted.dup.bam", 
+                            "alignment/EW7/H3K27ac/EW7.H3K27ac.sorted.dup.filtered.bam"
+                        ], 
+                        "output_file": [
+                            "metrics/EW7/H3K27ac", 
+                            "metrics/EW7/H3K27ac/EW7.H3K27ac.sorted.dup.flagstat", 
+                            "metrics/EW7/H3K27ac/EW7.H3K27ac.sorted.dup.filtered.flagstat"
+                        ], 
+                        "dependency": [
+                            "sambamba_mark_duplicates_6_JOB_ID", 
+                            "sambamba_view_filter_6_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/sambamba/0.8.0 && mkdir -p metrics/EW7/H3K27ac && touch metrics/EW7/H3K27ac && sambamba flagstat    alignment/EW7/H3K27ac/EW7.H3K27ac.sorted.dup.bam   > metrics/EW7/H3K27ac/EW7.H3K27ac.sorted.dup.flagstat && sambamba flagstat    alignment/EW7/H3K27ac/EW7.H3K27ac.sorted.dup.filtered.bam   > metrics/EW7/H3K27ac/EW7.H3K27ac.sorted.dup.filtered.flagstat", 
+                        "id": "metrics_12_JOB_ID"
+                    }, 
+                    {
+                        "name": "picard_collect_multiple_metrics.TC71.input", 
+                        "input_file": [
+                            "alignment/TC71/input/TC71.input.sorted.dup.filtered.bam"
+                        ], 
+                        "output_file": [
+                            "metrics/TC71/input", 
+                            "metrics/TC71/input/TC71.input.sorted.dup.filtered.all.metrics.quality_by_cycle.pdf", 
+                            "metrics/TC71/input/TC71.input.sorted.dup.filtered.all.metrics.alignment_summary_metrics", 
+                            "metrics/TC71/input/TC71.input.sorted.dup.filtered.all.metrics.quality_by_cycle_metrics", 
+                            "metrics/TC71/input/TC71.input.sorted.dup.filtered.all.metrics.quality_distribution_metrics", 
+                            "metrics/TC71/input/TC71.input.sorted.dup.filtered.all.metrics.quality_distribution.pdf"
+                        ], 
+                        "dependency": [
+                            "sambamba_view_filter_7_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/java/openjdk-jdk1.8.0_72 mugqic/picard/2.0.1 mugqic/R_Bioconductor/4.0.3_3.12 && mkdir -p metrics/TC71/input && touch metrics/TC71/input && java -Djava.io.tmpdir=${SLURM_TMPDIR} -XX:ParallelGCThreads=1 -Dsamjdk.use_async_io=true -Dsamjdk.buffer_size=4194304 -Xmx8G -jar $PICARD_HOME/picard.jar CollectMultipleMetrics  PROGRAM=CollectAlignmentSummaryMetrics PROGRAM=CollectInsertSizeMetrics VALIDATION_STRINGENCY=SILENT  TMP_DIR=${SLURM_TMPDIR}  REFERENCE_SEQUENCE=/cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.hg19/genome/Homo_sapiens.hg19.fa  INPUT=alignment/TC71/input/TC71.input.sorted.dup.filtered.bam  OUTPUT=metrics/TC71/input/TC71.input.sorted.dup.filtered.all.metrics  MAX_RECORDS_IN_RAM=1000000", 
+                        "id": "metrics_13_JOB_ID"
+                    }, 
+                    {
+                        "name": "metrics_flagstat.TC71.input", 
+                        "input_file": [
+                            "alignment/TC71/input/TC71.input.sorted.dup.bam", 
+                            "alignment/TC71/input/TC71.input.sorted.dup.filtered.bam"
+                        ], 
+                        "output_file": [
+                            "metrics/TC71/input", 
+                            "metrics/TC71/input/TC71.input.sorted.dup.flagstat", 
+                            "metrics/TC71/input/TC71.input.sorted.dup.filtered.flagstat"
+                        ], 
+                        "dependency": [
+                            "sambamba_mark_duplicates_7_JOB_ID", 
+                            "sambamba_view_filter_7_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/sambamba/0.8.0 && mkdir -p metrics/TC71/input && touch metrics/TC71/input && sambamba flagstat    alignment/TC71/input/TC71.input.sorted.dup.bam   > metrics/TC71/input/TC71.input.sorted.dup.flagstat && sambamba flagstat    alignment/TC71/input/TC71.input.sorted.dup.filtered.bam   > metrics/TC71/input/TC71.input.sorted.dup.filtered.flagstat", 
+                        "id": "metrics_14_JOB_ID"
+                    }, 
+                    {
+                        "name": "picard_collect_multiple_metrics.TC71.H3K27ac", 
+                        "input_file": [
+                            "alignment/TC71/H3K27ac/TC71.H3K27ac.sorted.dup.filtered.bam"
+                        ], 
+                        "output_file": [
+                            "metrics/TC71/H3K27ac", 
+                            "metrics/TC71/H3K27ac/TC71.H3K27ac.sorted.dup.filtered.all.metrics.quality_by_cycle.pdf", 
+                            "metrics/TC71/H3K27ac/TC71.H3K27ac.sorted.dup.filtered.all.metrics.alignment_summary_metrics", 
+                            "metrics/TC71/H3K27ac/TC71.H3K27ac.sorted.dup.filtered.all.metrics.quality_by_cycle_metrics", 
+                            "metrics/TC71/H3K27ac/TC71.H3K27ac.sorted.dup.filtered.all.metrics.quality_distribution_metrics", 
+                            "metrics/TC71/H3K27ac/TC71.H3K27ac.sorted.dup.filtered.all.metrics.quality_distribution.pdf"
+                        ], 
+                        "dependency": [
+                            "sambamba_view_filter_8_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/java/openjdk-jdk1.8.0_72 mugqic/picard/2.0.1 mugqic/R_Bioconductor/4.0.3_3.12 && mkdir -p metrics/TC71/H3K27ac && touch metrics/TC71/H3K27ac && java -Djava.io.tmpdir=${SLURM_TMPDIR} -XX:ParallelGCThreads=1 -Dsamjdk.use_async_io=true -Dsamjdk.buffer_size=4194304 -Xmx8G -jar $PICARD_HOME/picard.jar CollectMultipleMetrics  PROGRAM=CollectAlignmentSummaryMetrics PROGRAM=CollectInsertSizeMetrics VALIDATION_STRINGENCY=SILENT  TMP_DIR=${SLURM_TMPDIR}  REFERENCE_SEQUENCE=/cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.hg19/genome/Homo_sapiens.hg19.fa  INPUT=alignment/TC71/H3K27ac/TC71.H3K27ac.sorted.dup.filtered.bam  OUTPUT=metrics/TC71/H3K27ac/TC71.H3K27ac.sorted.dup.filtered.all.metrics  MAX_RECORDS_IN_RAM=1000000", 
+                        "id": "metrics_15_JOB_ID"
+                    }, 
+                    {
+                        "name": "metrics_flagstat.TC71.H3K27ac", 
+                        "input_file": [
+                            "alignment/TC71/H3K27ac/TC71.H3K27ac.sorted.dup.bam", 
+                            "alignment/TC71/H3K27ac/TC71.H3K27ac.sorted.dup.filtered.bam"
+                        ], 
+                        "output_file": [
+                            "metrics/TC71/H3K27ac", 
+                            "metrics/TC71/H3K27ac/TC71.H3K27ac.sorted.dup.flagstat", 
+                            "metrics/TC71/H3K27ac/TC71.H3K27ac.sorted.dup.filtered.flagstat"
+                        ], 
+                        "dependency": [
+                            "sambamba_mark_duplicates_8_JOB_ID", 
+                            "sambamba_view_filter_8_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/sambamba/0.8.0 && mkdir -p metrics/TC71/H3K27ac && touch metrics/TC71/H3K27ac && sambamba flagstat    alignment/TC71/H3K27ac/TC71.H3K27ac.sorted.dup.bam   > metrics/TC71/H3K27ac/TC71.H3K27ac.sorted.dup.flagstat && sambamba flagstat    alignment/TC71/H3K27ac/TC71.H3K27ac.sorted.dup.filtered.bam   > metrics/TC71/H3K27ac/TC71.H3K27ac.sorted.dup.filtered.flagstat", 
+                        "id": "metrics_16_JOB_ID"
+                    }, 
+                    {
+                        "name": "metrics_report", 
+                        "input_file": [
+                            "metrics/EW22/input/EW22.input.sorted.dup.flagstat", 
+                            "metrics/EW22/input/EW22.input.sorted.dup.filtered.flagstat", 
+                            "alignment/EW22/input/EW22.input.sorted.dup.filtered.bam", 
+                            "metrics/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.flagstat", 
+                            "metrics/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.filtered.flagstat", 
+                            "alignment/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.filtered.bam", 
+                            "metrics/EW3/input/EW3.input.sorted.dup.flagstat", 
+                            "metrics/EW3/input/EW3.input.sorted.dup.filtered.flagstat", 
+                            "alignment/EW3/input/EW3.input.sorted.dup.filtered.bam", 
+                            "metrics/EW3/H3K27ac/EW3.H3K27ac.sorted.dup.flagstat", 
+                            "metrics/EW3/H3K27ac/EW3.H3K27ac.sorted.dup.filtered.flagstat", 
+                            "alignment/EW3/H3K27ac/EW3.H3K27ac.sorted.dup.filtered.bam", 
+                            "metrics/EW7/input/EW7.input.sorted.dup.flagstat", 
+                            "metrics/EW7/input/EW7.input.sorted.dup.filtered.flagstat", 
+                            "alignment/EW7/input/EW7.input.sorted.dup.filtered.bam", 
+                            "metrics/EW7/H3K27ac/EW7.H3K27ac.sorted.dup.flagstat", 
+                            "metrics/EW7/H3K27ac/EW7.H3K27ac.sorted.dup.filtered.flagstat", 
+                            "alignment/EW7/H3K27ac/EW7.H3K27ac.sorted.dup.filtered.bam", 
+                            "metrics/TC71/input/TC71.input.sorted.dup.flagstat", 
+                            "metrics/TC71/input/TC71.input.sorted.dup.filtered.flagstat", 
+                            "alignment/TC71/input/TC71.input.sorted.dup.filtered.bam", 
+                            "metrics/TC71/H3K27ac/TC71.H3K27ac.sorted.dup.flagstat", 
+                            "metrics/TC71/H3K27ac/TC71.H3K27ac.sorted.dup.filtered.flagstat", 
+                            "alignment/TC71/H3K27ac/TC71.H3K27ac.sorted.dup.filtered.bam"
+                        ], 
+                        "output_file": [
+                            "report/SampleMetrics.tsv"
+                        ], 
+                        "dependency": [
+                            "sambamba_view_filter_1_JOB_ID", 
+                            "sambamba_view_filter_2_JOB_ID", 
+                            "sambamba_view_filter_3_JOB_ID", 
+                            "sambamba_view_filter_4_JOB_ID", 
+                            "sambamba_view_filter_5_JOB_ID", 
+                            "sambamba_view_filter_6_JOB_ID", 
+                            "sambamba_view_filter_7_JOB_ID", 
+                            "sambamba_view_filter_8_JOB_ID", 
+                            "metrics_2_JOB_ID", 
+                            "metrics_4_JOB_ID", 
+                            "metrics_6_JOB_ID", 
+                            "metrics_8_JOB_ID", 
+                            "metrics_10_JOB_ID", 
+                            "metrics_12_JOB_ID", 
+                            "metrics_14_JOB_ID", 
+                            "metrics_16_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/pandoc/1.15.2 && module load mugqic/sambamba/0.8.0 && mkdir -p metrics\ncp /dev/null metrics/SampleMetrics.tsv && declare -A samples_associative_array=([\"EW22\"]=\"input H3K27ac\" [\"EW3\"]=\"input H3K27ac\" [\"EW7\"]=\"input H3K27ac\" [\"TC71\"]=\"input H3K27ac\") && for sample in ${!samples_associative_array[@]}\ndo\n  for mark_name in ${samples_associative_array[$sample]}\n  do\n    raw_flagstat_file=metrics/$sample/$mark_name/$sample.$mark_name.sorted.dup.flagstat\n    filtered_flagstat_file=metrics/$sample/$mark_name/$sample.$mark_name.sorted.dup.filtered.flagstat\n    bam_file=alignment/$sample/$mark_name/$sample.$mark_name.sorted.dup.filtered.bam\n    raw_supplementarysecondary_reads=`bc <<< $(grep \"secondary\" $raw_flagstat_file | sed -e 's/ + [[:digit:]]* secondary.*//')+$(grep \"supplementary\" $raw_flagstat_file | sed -e 's/ + [[:digit:]]* supplementary.*//')`\n    mapped_reads=`bc <<< $(grep \"mapped (\" $raw_flagstat_file | sed -e 's/ + [[:digit:]]* mapped (.*)//')-$raw_supplementarysecondary_reads`\n    filtered_supplementarysecondary_reads=`bc <<< $(grep \"secondary\" $filtered_flagstat_file | sed -e 's/ + [[:digit:]]* secondary.*//')+$(grep \"supplementary\" $filtered_flagstat_file | sed -e 's/ + [[:digit:]]* supplementary.*//')`\n    filtered_reads=`bc <<< $(grep \"in total\" $filtered_flagstat_file | sed -e 's/ + [[:digit:]]* in total .*//')-$filtered_supplementarysecondary_reads`\n    filtered_mapped_reads=`bc <<< $(grep \"mapped (\" $filtered_flagstat_file | sed -e 's/ + [[:digit:]]* mapped (.*)//')-$filtered_supplementarysecondary_reads`\n    filtered_mapped_rate=`echo \"scale=4; 100*$filtered_mapped_reads/$filtered_reads\" | bc -l`\n    filtered_dup_reads=`grep \"duplicates\" $filtered_flagstat_file | sed -e 's/ + [[:digit:]]* duplicates$//'`\n    filtered_dup_rate=`echo \"scale=4; 100*$filtered_dup_reads/$filtered_mapped_reads\" | bc -l`\n    filtered_dedup_reads=`echo \"$filtered_mapped_reads-$filtered_dup_reads\" | bc -l`\n    if [[ -s metrics/trimSampleTable.tsv ]]\n      then\n        raw_reads=$(grep -P \"${sample}\\t${mark_name}\" metrics/trimSampleTable.tsv | cut -f 3)\n        raw_trimmed_reads=`bc <<< $(grep \"in total\" $raw_flagstat_file | sed -e 's/ + [[:digit:]]* in total .*//')-$raw_supplementarysecondary_reads`\n        mapped_reads_rate=`echo \"scale=4; 100*$mapped_reads/$raw_trimmed_reads\" | bc -l`\n        raw_trimmed_rate=`echo \"scale=4; 100*$raw_trimmed_reads/$raw_reads\" | bc -l`\n        filtered_rate=`echo \"scale=4; 100*$filtered_reads/$raw_trimmed_reads\" | bc -l`\n      else\n        raw_reads=`bc <<< $(grep \"in total\" $raw_flagstat_file | sed -e 's/ + [[:digit:]]* in total .*//')-$raw_supplementarysecondary_reads`\n        raw_trimmed_reads=\"NULL\"\n        mapped_reads_rate=`echo \"scale=4; 100*$mapped_reads/$raw_reads\" | bc -l`\n        raw_trimmed_rate=\"NULL\"\n        filtered_rate=`echo \"scale=4; 100*$filtered_reads/$raw_reads\" | bc -l`\n    fi\n    filtered_mito_reads=$(sambamba view -F \"not duplicate\" -c $bam_file chrM)\n    filtered_mito_rate=$(echo \"scale=4; 100*$filtered_mito_reads/$filtered_mapped_reads\" | bc -l)\n    echo -e \"$sample\\t$mark_name\\t$raw_reads\\t$raw_trimmed_reads\\t$raw_trimmed_rate\\t$mapped_reads\\t$mapped_reads_rate\\t$filtered_reads\\t$filtered_rate\\t$filtered_mapped_reads\\t$filtered_mapped_rate\\t$filtered_dup_reads\\t$filtered_dup_rate\\t$filtered_dedup_reads\\t$filtered_mito_reads\\t$filtered_mito_rate\" >> metrics/SampleMetrics.tsv\n  done\ndone && sed -i -e \"1 i\\Sample\\tMark Name\\tRaw Reads #\\tRemaining Reads after Trimming #\\tRemaining Reads after Trimming %\\tAligned Trimmed Reads #\\tAligned Trimmed Reads %\\tRemaining Reads after Filtering #\\tRemaining Reads after Filtering %\\tAligned Filtered Reads #\\tAligned Filtered Reads %\\tDuplicate Reads #\\tDuplicate Reads %\\tFinal Aligned Reads # without Duplicates\\tMitochondrial Reads #\\tMitochondrial Reads %\" metrics/SampleMetrics.tsv && mkdir -p report/yaml && cp metrics/SampleMetrics.tsv report/SampleMetrics.tsv && sed -e 's@report_metrics_file@report/SampleMetrics.tsv@g'    /home/newtonma/apps/genpipes/bfx/report/ChipSeq.metrics.yaml > report/yaml/ChipSeq.metrics.yaml", 
+                        "id": "metrics_17_JOB_ID"
+                    }
+                ], 
+                "name": "metrics"
+            }, 
+            {
+                "job": [
+                    {
+                        "name": "homer_make_ucsc_file.EW22.input", 
+                        "input_file": [
+                            "tags/EW22/EW22.input/tagInfo.txt"
+                        ], 
+                        "output_file": [
+                            "tracks/EW22/input", 
+                            "tracks/EW22/input/EW22.input.ucsc.bedGraph", 
+                            "tracks/EW22/input/EW22.input.ucsc.bedGraph.gz"
+                        ], 
+                        "dependency": [
+                            "homer_make_tag_directory_1_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/perl/5.22.1 mugqic/homer/4.11 && mkdir -p tracks/EW22/input && touch tracks/EW22/input && makeUCSCfile         tags/EW22/EW22.input > tracks/EW22/input/EW22.input.ucsc.bedGraph &&         gzip -c tracks/EW22/input/EW22.input.ucsc.bedGraph > tracks/EW22/input/EW22.input.ucsc.bedGraph.gz", 
+                        "id": "homer_make_ucsc_file_1_JOB_ID"
+                    }, 
+                    {
+                        "name": "homer_make_ucsc_file_bigWig.EW22.input", 
+                        "input_file": [
+                            "tracks/EW22/input/EW22.input.ucsc.bedGraph"
+                        ], 
+                        "output_file": [
+                            "tracks/EW22/input/bigWig", 
+                            "tracks/EW22/input/EW22.input.ucsc.bedGraph.sorted", 
+                            "tracks/EW22/input/bigWig/EW22.input.bw"
+                        ], 
+                        "dependency": [
+                            "homer_make_ucsc_file_1_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/ucsc/v346 && mkdir -p tracks/EW22/input/bigWig && touch tracks/EW22/input/bigWig && export TMPDIR=${SLURM_TMPDIR} && cat tracks/EW22/input/EW22.input.ucsc.bedGraph | head -n 1 > tracks/EW22/input/EW22.input.ucsc.bedGraph.head.tmp && cat tracks/EW22/input/EW22.input.ucsc.bedGraph | awk ' NR > 1 ' | sort  --temporary-directory=${SLURM_TMPDIR} -k1,1 -k2,2n | awk '{if($0 !~ /^[A-W]/) print \"\"$0; else print $0}' | grep -v \"GL\\|lambda\\|pUC19\\|KI\\|\\KN\\|random\"  | awk '{printf \"%s\\t%d\\t%d\\t%4.4g\\n\", $1,$2,$3,$4}' > tracks/EW22/input/EW22.input.ucsc.bedGraph.body.tmp && cat tracks/EW22/input/EW22.input.ucsc.bedGraph.head.tmp tracks/EW22/input/EW22.input.ucsc.bedGraph.body.tmp > tracks/EW22/input/EW22.input.ucsc.bedGraph.sorted && rm tracks/EW22/input/EW22.input.ucsc.bedGraph.head.tmp tracks/EW22/input/EW22.input.ucsc.bedGraph.body.tmp && bedGraphToBigWig   tracks/EW22/input/EW22.input.ucsc.bedGraph.sorted   /cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.hg19/genome/Homo_sapiens.hg19.fa.fai   tracks/EW22/input/bigWig/EW22.input.bw", 
+                        "id": "homer_make_ucsc_file_2_JOB_ID"
+                    }, 
+                    {
+                        "name": "homer_make_ucsc_file.EW22.H3K27ac", 
+                        "input_file": [
+                            "tags/EW22/EW22.H3K27ac/tagInfo.txt"
+                        ], 
+                        "output_file": [
+                            "tracks/EW22/H3K27ac", 
+                            "tracks/EW22/H3K27ac/EW22.H3K27ac.ucsc.bedGraph", 
+                            "tracks/EW22/H3K27ac/EW22.H3K27ac.ucsc.bedGraph.gz"
+                        ], 
+                        "dependency": [
+                            "homer_make_tag_directory_2_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/perl/5.22.1 mugqic/homer/4.11 && mkdir -p tracks/EW22/H3K27ac && touch tracks/EW22/H3K27ac && makeUCSCfile         tags/EW22/EW22.H3K27ac > tracks/EW22/H3K27ac/EW22.H3K27ac.ucsc.bedGraph &&         gzip -c tracks/EW22/H3K27ac/EW22.H3K27ac.ucsc.bedGraph > tracks/EW22/H3K27ac/EW22.H3K27ac.ucsc.bedGraph.gz", 
+                        "id": "homer_make_ucsc_file_3_JOB_ID"
+                    }, 
+                    {
+                        "name": "homer_make_ucsc_file_bigWig.EW22.H3K27ac", 
+                        "input_file": [
+                            "tracks/EW22/H3K27ac/EW22.H3K27ac.ucsc.bedGraph"
+                        ], 
+                        "output_file": [
+                            "tracks/EW22/H3K27ac/bigWig", 
+                            "tracks/EW22/H3K27ac/EW22.H3K27ac.ucsc.bedGraph.sorted", 
+                            "tracks/EW22/H3K27ac/bigWig/EW22.H3K27ac.bw"
+                        ], 
+                        "dependency": [
+                            "homer_make_ucsc_file_3_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/ucsc/v346 && mkdir -p tracks/EW22/H3K27ac/bigWig && touch tracks/EW22/H3K27ac/bigWig && export TMPDIR=${SLURM_TMPDIR} && cat tracks/EW22/H3K27ac/EW22.H3K27ac.ucsc.bedGraph | head -n 1 > tracks/EW22/H3K27ac/EW22.H3K27ac.ucsc.bedGraph.head.tmp && cat tracks/EW22/H3K27ac/EW22.H3K27ac.ucsc.bedGraph | awk ' NR > 1 ' | sort  --temporary-directory=${SLURM_TMPDIR} -k1,1 -k2,2n | awk '{if($0 !~ /^[A-W]/) print \"\"$0; else print $0}' | grep -v \"GL\\|lambda\\|pUC19\\|KI\\|\\KN\\|random\"  | awk '{printf \"%s\\t%d\\t%d\\t%4.4g\\n\", $1,$2,$3,$4}' > tracks/EW22/H3K27ac/EW22.H3K27ac.ucsc.bedGraph.body.tmp && cat tracks/EW22/H3K27ac/EW22.H3K27ac.ucsc.bedGraph.head.tmp tracks/EW22/H3K27ac/EW22.H3K27ac.ucsc.bedGraph.body.tmp > tracks/EW22/H3K27ac/EW22.H3K27ac.ucsc.bedGraph.sorted && rm tracks/EW22/H3K27ac/EW22.H3K27ac.ucsc.bedGraph.head.tmp tracks/EW22/H3K27ac/EW22.H3K27ac.ucsc.bedGraph.body.tmp && bedGraphToBigWig   tracks/EW22/H3K27ac/EW22.H3K27ac.ucsc.bedGraph.sorted   /cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.hg19/genome/Homo_sapiens.hg19.fa.fai   tracks/EW22/H3K27ac/bigWig/EW22.H3K27ac.bw", 
+                        "id": "homer_make_ucsc_file_4_JOB_ID"
+                    }, 
+                    {
+                        "name": "homer_make_ucsc_file.EW3.input", 
+                        "input_file": [
+                            "tags/EW3/EW3.input/tagInfo.txt"
+                        ], 
+                        "output_file": [
+                            "tracks/EW3/input", 
+                            "tracks/EW3/input/EW3.input.ucsc.bedGraph", 
+                            "tracks/EW3/input/EW3.input.ucsc.bedGraph.gz"
+                        ], 
+                        "dependency": [
+                            "homer_make_tag_directory_3_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/perl/5.22.1 mugqic/homer/4.11 && mkdir -p tracks/EW3/input && touch tracks/EW3/input && makeUCSCfile         tags/EW3/EW3.input > tracks/EW3/input/EW3.input.ucsc.bedGraph &&         gzip -c tracks/EW3/input/EW3.input.ucsc.bedGraph > tracks/EW3/input/EW3.input.ucsc.bedGraph.gz", 
+                        "id": "homer_make_ucsc_file_5_JOB_ID"
+                    }, 
+                    {
+                        "name": "homer_make_ucsc_file_bigWig.EW3.input", 
+                        "input_file": [
+                            "tracks/EW3/input/EW3.input.ucsc.bedGraph"
+                        ], 
+                        "output_file": [
+                            "tracks/EW3/input/bigWig", 
+                            "tracks/EW3/input/EW3.input.ucsc.bedGraph.sorted", 
+                            "tracks/EW3/input/bigWig/EW3.input.bw"
+                        ], 
+                        "dependency": [
+                            "homer_make_ucsc_file_5_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/ucsc/v346 && mkdir -p tracks/EW3/input/bigWig && touch tracks/EW3/input/bigWig && export TMPDIR=${SLURM_TMPDIR} && cat tracks/EW3/input/EW3.input.ucsc.bedGraph | head -n 1 > tracks/EW3/input/EW3.input.ucsc.bedGraph.head.tmp && cat tracks/EW3/input/EW3.input.ucsc.bedGraph | awk ' NR > 1 ' | sort  --temporary-directory=${SLURM_TMPDIR} -k1,1 -k2,2n | awk '{if($0 !~ /^[A-W]/) print \"\"$0; else print $0}' | grep -v \"GL\\|lambda\\|pUC19\\|KI\\|\\KN\\|random\"  | awk '{printf \"%s\\t%d\\t%d\\t%4.4g\\n\", $1,$2,$3,$4}' > tracks/EW3/input/EW3.input.ucsc.bedGraph.body.tmp && cat tracks/EW3/input/EW3.input.ucsc.bedGraph.head.tmp tracks/EW3/input/EW3.input.ucsc.bedGraph.body.tmp > tracks/EW3/input/EW3.input.ucsc.bedGraph.sorted && rm tracks/EW3/input/EW3.input.ucsc.bedGraph.head.tmp tracks/EW3/input/EW3.input.ucsc.bedGraph.body.tmp && bedGraphToBigWig   tracks/EW3/input/EW3.input.ucsc.bedGraph.sorted   /cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.hg19/genome/Homo_sapiens.hg19.fa.fai   tracks/EW3/input/bigWig/EW3.input.bw", 
+                        "id": "homer_make_ucsc_file_6_JOB_ID"
+                    }, 
+                    {
+                        "name": "homer_make_ucsc_file.EW3.H3K27ac", 
+                        "input_file": [
+                            "tags/EW3/EW3.H3K27ac/tagInfo.txt"
+                        ], 
+                        "output_file": [
+                            "tracks/EW3/H3K27ac", 
+                            "tracks/EW3/H3K27ac/EW3.H3K27ac.ucsc.bedGraph", 
+                            "tracks/EW3/H3K27ac/EW3.H3K27ac.ucsc.bedGraph.gz"
+                        ], 
+                        "dependency": [
+                            "homer_make_tag_directory_4_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/perl/5.22.1 mugqic/homer/4.11 && mkdir -p tracks/EW3/H3K27ac && touch tracks/EW3/H3K27ac && makeUCSCfile         tags/EW3/EW3.H3K27ac > tracks/EW3/H3K27ac/EW3.H3K27ac.ucsc.bedGraph &&         gzip -c tracks/EW3/H3K27ac/EW3.H3K27ac.ucsc.bedGraph > tracks/EW3/H3K27ac/EW3.H3K27ac.ucsc.bedGraph.gz", 
+                        "id": "homer_make_ucsc_file_7_JOB_ID"
+                    }, 
+                    {
+                        "name": "homer_make_ucsc_file_bigWig.EW3.H3K27ac", 
+                        "input_file": [
+                            "tracks/EW3/H3K27ac/EW3.H3K27ac.ucsc.bedGraph"
+                        ], 
+                        "output_file": [
+                            "tracks/EW3/H3K27ac/bigWig", 
+                            "tracks/EW3/H3K27ac/EW3.H3K27ac.ucsc.bedGraph.sorted", 
+                            "tracks/EW3/H3K27ac/bigWig/EW3.H3K27ac.bw"
+                        ], 
+                        "dependency": [
+                            "homer_make_ucsc_file_7_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/ucsc/v346 && mkdir -p tracks/EW3/H3K27ac/bigWig && touch tracks/EW3/H3K27ac/bigWig && export TMPDIR=${SLURM_TMPDIR} && cat tracks/EW3/H3K27ac/EW3.H3K27ac.ucsc.bedGraph | head -n 1 > tracks/EW3/H3K27ac/EW3.H3K27ac.ucsc.bedGraph.head.tmp && cat tracks/EW3/H3K27ac/EW3.H3K27ac.ucsc.bedGraph | awk ' NR > 1 ' | sort  --temporary-directory=${SLURM_TMPDIR} -k1,1 -k2,2n | awk '{if($0 !~ /^[A-W]/) print \"\"$0; else print $0}' | grep -v \"GL\\|lambda\\|pUC19\\|KI\\|\\KN\\|random\"  | awk '{printf \"%s\\t%d\\t%d\\t%4.4g\\n\", $1,$2,$3,$4}' > tracks/EW3/H3K27ac/EW3.H3K27ac.ucsc.bedGraph.body.tmp && cat tracks/EW3/H3K27ac/EW3.H3K27ac.ucsc.bedGraph.head.tmp tracks/EW3/H3K27ac/EW3.H3K27ac.ucsc.bedGraph.body.tmp > tracks/EW3/H3K27ac/EW3.H3K27ac.ucsc.bedGraph.sorted && rm tracks/EW3/H3K27ac/EW3.H3K27ac.ucsc.bedGraph.head.tmp tracks/EW3/H3K27ac/EW3.H3K27ac.ucsc.bedGraph.body.tmp && bedGraphToBigWig   tracks/EW3/H3K27ac/EW3.H3K27ac.ucsc.bedGraph.sorted   /cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.hg19/genome/Homo_sapiens.hg19.fa.fai   tracks/EW3/H3K27ac/bigWig/EW3.H3K27ac.bw", 
+                        "id": "homer_make_ucsc_file_8_JOB_ID"
+                    }, 
+                    {
+                        "name": "homer_make_ucsc_file.EW7.input", 
+                        "input_file": [
+                            "tags/EW7/EW7.input/tagInfo.txt"
+                        ], 
+                        "output_file": [
+                            "tracks/EW7/input", 
+                            "tracks/EW7/input/EW7.input.ucsc.bedGraph", 
+                            "tracks/EW7/input/EW7.input.ucsc.bedGraph.gz"
+                        ], 
+                        "dependency": [
+                            "homer_make_tag_directory_5_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/perl/5.22.1 mugqic/homer/4.11 && mkdir -p tracks/EW7/input && touch tracks/EW7/input && makeUCSCfile         tags/EW7/EW7.input > tracks/EW7/input/EW7.input.ucsc.bedGraph &&         gzip -c tracks/EW7/input/EW7.input.ucsc.bedGraph > tracks/EW7/input/EW7.input.ucsc.bedGraph.gz", 
+                        "id": "homer_make_ucsc_file_9_JOB_ID"
+                    }, 
+                    {
+                        "name": "homer_make_ucsc_file_bigWig.EW7.input", 
+                        "input_file": [
+                            "tracks/EW7/input/EW7.input.ucsc.bedGraph"
+                        ], 
+                        "output_file": [
+                            "tracks/EW7/input/bigWig", 
+                            "tracks/EW7/input/EW7.input.ucsc.bedGraph.sorted", 
+                            "tracks/EW7/input/bigWig/EW7.input.bw"
+                        ], 
+                        "dependency": [
+                            "homer_make_ucsc_file_9_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/ucsc/v346 && mkdir -p tracks/EW7/input/bigWig && touch tracks/EW7/input/bigWig && export TMPDIR=${SLURM_TMPDIR} && cat tracks/EW7/input/EW7.input.ucsc.bedGraph | head -n 1 > tracks/EW7/input/EW7.input.ucsc.bedGraph.head.tmp && cat tracks/EW7/input/EW7.input.ucsc.bedGraph | awk ' NR > 1 ' | sort  --temporary-directory=${SLURM_TMPDIR} -k1,1 -k2,2n | awk '{if($0 !~ /^[A-W]/) print \"\"$0; else print $0}' | grep -v \"GL\\|lambda\\|pUC19\\|KI\\|\\KN\\|random\"  | awk '{printf \"%s\\t%d\\t%d\\t%4.4g\\n\", $1,$2,$3,$4}' > tracks/EW7/input/EW7.input.ucsc.bedGraph.body.tmp && cat tracks/EW7/input/EW7.input.ucsc.bedGraph.head.tmp tracks/EW7/input/EW7.input.ucsc.bedGraph.body.tmp > tracks/EW7/input/EW7.input.ucsc.bedGraph.sorted && rm tracks/EW7/input/EW7.input.ucsc.bedGraph.head.tmp tracks/EW7/input/EW7.input.ucsc.bedGraph.body.tmp && bedGraphToBigWig   tracks/EW7/input/EW7.input.ucsc.bedGraph.sorted   /cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.hg19/genome/Homo_sapiens.hg19.fa.fai   tracks/EW7/input/bigWig/EW7.input.bw", 
+                        "id": "homer_make_ucsc_file_10_JOB_ID"
+                    }, 
+                    {
+                        "name": "homer_make_ucsc_file.EW7.H3K27ac", 
+                        "input_file": [
+                            "tags/EW7/EW7.H3K27ac/tagInfo.txt"
+                        ], 
+                        "output_file": [
+                            "tracks/EW7/H3K27ac", 
+                            "tracks/EW7/H3K27ac/EW7.H3K27ac.ucsc.bedGraph", 
+                            "tracks/EW7/H3K27ac/EW7.H3K27ac.ucsc.bedGraph.gz"
+                        ], 
+                        "dependency": [
+                            "homer_make_tag_directory_6_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/perl/5.22.1 mugqic/homer/4.11 && mkdir -p tracks/EW7/H3K27ac && touch tracks/EW7/H3K27ac && makeUCSCfile         tags/EW7/EW7.H3K27ac > tracks/EW7/H3K27ac/EW7.H3K27ac.ucsc.bedGraph &&         gzip -c tracks/EW7/H3K27ac/EW7.H3K27ac.ucsc.bedGraph > tracks/EW7/H3K27ac/EW7.H3K27ac.ucsc.bedGraph.gz", 
+                        "id": "homer_make_ucsc_file_11_JOB_ID"
+                    }, 
+                    {
+                        "name": "homer_make_ucsc_file_bigWig.EW7.H3K27ac", 
+                        "input_file": [
+                            "tracks/EW7/H3K27ac/EW7.H3K27ac.ucsc.bedGraph"
+                        ], 
+                        "output_file": [
+                            "tracks/EW7/H3K27ac/bigWig", 
+                            "tracks/EW7/H3K27ac/EW7.H3K27ac.ucsc.bedGraph.sorted", 
+                            "tracks/EW7/H3K27ac/bigWig/EW7.H3K27ac.bw"
+                        ], 
+                        "dependency": [
+                            "homer_make_ucsc_file_11_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/ucsc/v346 && mkdir -p tracks/EW7/H3K27ac/bigWig && touch tracks/EW7/H3K27ac/bigWig && export TMPDIR=${SLURM_TMPDIR} && cat tracks/EW7/H3K27ac/EW7.H3K27ac.ucsc.bedGraph | head -n 1 > tracks/EW7/H3K27ac/EW7.H3K27ac.ucsc.bedGraph.head.tmp && cat tracks/EW7/H3K27ac/EW7.H3K27ac.ucsc.bedGraph | awk ' NR > 1 ' | sort  --temporary-directory=${SLURM_TMPDIR} -k1,1 -k2,2n | awk '{if($0 !~ /^[A-W]/) print \"\"$0; else print $0}' | grep -v \"GL\\|lambda\\|pUC19\\|KI\\|\\KN\\|random\"  | awk '{printf \"%s\\t%d\\t%d\\t%4.4g\\n\", $1,$2,$3,$4}' > tracks/EW7/H3K27ac/EW7.H3K27ac.ucsc.bedGraph.body.tmp && cat tracks/EW7/H3K27ac/EW7.H3K27ac.ucsc.bedGraph.head.tmp tracks/EW7/H3K27ac/EW7.H3K27ac.ucsc.bedGraph.body.tmp > tracks/EW7/H3K27ac/EW7.H3K27ac.ucsc.bedGraph.sorted && rm tracks/EW7/H3K27ac/EW7.H3K27ac.ucsc.bedGraph.head.tmp tracks/EW7/H3K27ac/EW7.H3K27ac.ucsc.bedGraph.body.tmp && bedGraphToBigWig   tracks/EW7/H3K27ac/EW7.H3K27ac.ucsc.bedGraph.sorted   /cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.hg19/genome/Homo_sapiens.hg19.fa.fai   tracks/EW7/H3K27ac/bigWig/EW7.H3K27ac.bw", 
+                        "id": "homer_make_ucsc_file_12_JOB_ID"
+                    }, 
+                    {
+                        "name": "homer_make_ucsc_file.TC71.input", 
+                        "input_file": [
+                            "tags/TC71/TC71.input/tagInfo.txt"
+                        ], 
+                        "output_file": [
+                            "tracks/TC71/input", 
+                            "tracks/TC71/input/TC71.input.ucsc.bedGraph", 
+                            "tracks/TC71/input/TC71.input.ucsc.bedGraph.gz"
+                        ], 
+                        "dependency": [
+                            "homer_make_tag_directory_7_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/perl/5.22.1 mugqic/homer/4.11 && mkdir -p tracks/TC71/input && touch tracks/TC71/input && makeUCSCfile         tags/TC71/TC71.input > tracks/TC71/input/TC71.input.ucsc.bedGraph &&         gzip -c tracks/TC71/input/TC71.input.ucsc.bedGraph > tracks/TC71/input/TC71.input.ucsc.bedGraph.gz", 
+                        "id": "homer_make_ucsc_file_13_JOB_ID"
+                    }, 
+                    {
+                        "name": "homer_make_ucsc_file_bigWig.TC71.input", 
+                        "input_file": [
+                            "tracks/TC71/input/TC71.input.ucsc.bedGraph"
+                        ], 
+                        "output_file": [
+                            "tracks/TC71/input/bigWig", 
+                            "tracks/TC71/input/TC71.input.ucsc.bedGraph.sorted", 
+                            "tracks/TC71/input/bigWig/TC71.input.bw"
+                        ], 
+                        "dependency": [
+                            "homer_make_ucsc_file_13_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/ucsc/v346 && mkdir -p tracks/TC71/input/bigWig && touch tracks/TC71/input/bigWig && export TMPDIR=${SLURM_TMPDIR} && cat tracks/TC71/input/TC71.input.ucsc.bedGraph | head -n 1 > tracks/TC71/input/TC71.input.ucsc.bedGraph.head.tmp && cat tracks/TC71/input/TC71.input.ucsc.bedGraph | awk ' NR > 1 ' | sort  --temporary-directory=${SLURM_TMPDIR} -k1,1 -k2,2n | awk '{if($0 !~ /^[A-W]/) print \"\"$0; else print $0}' | grep -v \"GL\\|lambda\\|pUC19\\|KI\\|\\KN\\|random\"  | awk '{printf \"%s\\t%d\\t%d\\t%4.4g\\n\", $1,$2,$3,$4}' > tracks/TC71/input/TC71.input.ucsc.bedGraph.body.tmp && cat tracks/TC71/input/TC71.input.ucsc.bedGraph.head.tmp tracks/TC71/input/TC71.input.ucsc.bedGraph.body.tmp > tracks/TC71/input/TC71.input.ucsc.bedGraph.sorted && rm tracks/TC71/input/TC71.input.ucsc.bedGraph.head.tmp tracks/TC71/input/TC71.input.ucsc.bedGraph.body.tmp && bedGraphToBigWig   tracks/TC71/input/TC71.input.ucsc.bedGraph.sorted   /cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.hg19/genome/Homo_sapiens.hg19.fa.fai   tracks/TC71/input/bigWig/TC71.input.bw", 
+                        "id": "homer_make_ucsc_file_14_JOB_ID"
+                    }, 
+                    {
+                        "name": "homer_make_ucsc_file.TC71.H3K27ac", 
+                        "input_file": [
+                            "tags/TC71/TC71.H3K27ac/tagInfo.txt"
+                        ], 
+                        "output_file": [
+                            "tracks/TC71/H3K27ac", 
+                            "tracks/TC71/H3K27ac/TC71.H3K27ac.ucsc.bedGraph", 
+                            "tracks/TC71/H3K27ac/TC71.H3K27ac.ucsc.bedGraph.gz"
+                        ], 
+                        "dependency": [
+                            "homer_make_tag_directory_8_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/perl/5.22.1 mugqic/homer/4.11 && mkdir -p tracks/TC71/H3K27ac && touch tracks/TC71/H3K27ac && makeUCSCfile         tags/TC71/TC71.H3K27ac > tracks/TC71/H3K27ac/TC71.H3K27ac.ucsc.bedGraph &&         gzip -c tracks/TC71/H3K27ac/TC71.H3K27ac.ucsc.bedGraph > tracks/TC71/H3K27ac/TC71.H3K27ac.ucsc.bedGraph.gz", 
+                        "id": "homer_make_ucsc_file_15_JOB_ID"
+                    }, 
+                    {
+                        "name": "homer_make_ucsc_file_bigWig.TC71.H3K27ac", 
+                        "input_file": [
+                            "tracks/TC71/H3K27ac/TC71.H3K27ac.ucsc.bedGraph"
+                        ], 
+                        "output_file": [
+                            "tracks/TC71/H3K27ac/bigWig", 
+                            "tracks/TC71/H3K27ac/TC71.H3K27ac.ucsc.bedGraph.sorted", 
+                            "tracks/TC71/H3K27ac/bigWig/TC71.H3K27ac.bw"
+                        ], 
+                        "dependency": [
+                            "homer_make_ucsc_file_15_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/ucsc/v346 && mkdir -p tracks/TC71/H3K27ac/bigWig && touch tracks/TC71/H3K27ac/bigWig && export TMPDIR=${SLURM_TMPDIR} && cat tracks/TC71/H3K27ac/TC71.H3K27ac.ucsc.bedGraph | head -n 1 > tracks/TC71/H3K27ac/TC71.H3K27ac.ucsc.bedGraph.head.tmp && cat tracks/TC71/H3K27ac/TC71.H3K27ac.ucsc.bedGraph | awk ' NR > 1 ' | sort  --temporary-directory=${SLURM_TMPDIR} -k1,1 -k2,2n | awk '{if($0 !~ /^[A-W]/) print \"\"$0; else print $0}' | grep -v \"GL\\|lambda\\|pUC19\\|KI\\|\\KN\\|random\"  | awk '{printf \"%s\\t%d\\t%d\\t%4.4g\\n\", $1,$2,$3,$4}' > tracks/TC71/H3K27ac/TC71.H3K27ac.ucsc.bedGraph.body.tmp && cat tracks/TC71/H3K27ac/TC71.H3K27ac.ucsc.bedGraph.head.tmp tracks/TC71/H3K27ac/TC71.H3K27ac.ucsc.bedGraph.body.tmp > tracks/TC71/H3K27ac/TC71.H3K27ac.ucsc.bedGraph.sorted && rm tracks/TC71/H3K27ac/TC71.H3K27ac.ucsc.bedGraph.head.tmp tracks/TC71/H3K27ac/TC71.H3K27ac.ucsc.bedGraph.body.tmp && bedGraphToBigWig   tracks/TC71/H3K27ac/TC71.H3K27ac.ucsc.bedGraph.sorted   /cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.hg19/genome/Homo_sapiens.hg19.fa.fai   tracks/TC71/H3K27ac/bigWig/TC71.H3K27ac.bw", 
+                        "id": "homer_make_ucsc_file_16_JOB_ID"
+                    }
+                ], 
+                "name": "homer_make_ucsc_file"
+            }, 
+            {
+                "job": [
+                    {
+                        "name": "macs2_callpeak.EW22.H3K27ac", 
+                        "input_file": [
+                            "alignment/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.filtered.bam", 
+                            "alignment/EW22/input/EW22.input.sorted.dup.filtered.bam"
+                        ], 
+                        "output_file": [
+                            "peak_call/EW22/H3K27ac", 
+                            "peak_call/EW22/H3K27ac/EW22.H3K27ac_peaks.narrowPeak", 
+                            "peak_call/EW22/H3K27ac/EW22.H3K27ac_peaks.xls"
+                        ], 
+                        "dependency": [
+                            "sambamba_view_filter_1_JOB_ID", 
+                            "sambamba_view_filter_2_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/python/3.7.3 mugqic/MACS2/2.2.7.1 && mkdir -p peak_call/EW22/H3K27ac && touch peak_call/EW22/H3K27ac && macs2 callpeak --format BAM --nomodel   --tempdir ${SLURM_TMPDIR}   --gsize 2509729011.2   --treatment   alignment/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.filtered.bam   --control   alignment/EW22/input/EW22.input.sorted.dup.filtered.bam   --name peak_call/EW22/H3K27ac/EW22.H3K27ac   >& peak_call/EW22/H3K27ac/EW22.H3K27ac.diag.macs.out", 
+                        "id": "macs2_callpeak_1_JOB_ID"
+                    }, 
+                    {
+                        "name": "macs2_callpeak_bigBed.EW22.H3K27ac", 
+                        "input_file": [
+                            "peak_call/EW22/H3K27ac/EW22.H3K27ac_peaks.narrowPeak"
+                        ], 
+                        "output_file": [
+                            "peak_call/EW22/H3K27ac/EW22.H3K27ac_peaks.narrowPeak.bed", 
+                            "peak_call/EW22/H3K27ac/EW22.H3K27ac_peaks.narrowPeak.bb"
+                        ], 
+                        "dependency": [
+                            "macs2_callpeak_1_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/ucsc/v346 && awk '{if ($9 > 1000) {$9 = 1000}; printf( \"%s\\t%s\\t%s\\t%s\\t%0.f\\n\", $1,$2,$3,$4,$9)}' peak_call/EW22/H3K27ac/EW22.H3K27ac_peaks.narrowPeak > peak_call/EW22/H3K27ac/EW22.H3K27ac_peaks.narrowPeak.bed && bedToBigBed   peak_call/EW22/H3K27ac/EW22.H3K27ac_peaks.narrowPeak.bed   /cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.hg19/genome/Homo_sapiens.hg19.fa.fai   peak_call/EW22/H3K27ac/EW22.H3K27ac_peaks.narrowPeak.bb", 
+                        "id": "macs2_callpeak_2_JOB_ID"
+                    }, 
+                    {
+                        "name": "macs2_callpeak.EW3.H3K27ac", 
+                        "input_file": [
+                            "alignment/EW3/H3K27ac/EW3.H3K27ac.sorted.dup.filtered.bam", 
+                            "alignment/EW3/input/EW3.input.sorted.dup.filtered.bam"
+                        ], 
+                        "output_file": [
+                            "peak_call/EW3/H3K27ac", 
+                            "peak_call/EW3/H3K27ac/EW3.H3K27ac_peaks.narrowPeak", 
+                            "peak_call/EW3/H3K27ac/EW3.H3K27ac_peaks.xls"
+                        ], 
+                        "dependency": [
+                            "sambamba_view_filter_3_JOB_ID", 
+                            "sambamba_view_filter_4_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/python/3.7.3 mugqic/MACS2/2.2.7.1 && mkdir -p peak_call/EW3/H3K27ac && touch peak_call/EW3/H3K27ac && macs2 callpeak --format BAM --nomodel   --tempdir ${SLURM_TMPDIR}   --gsize 2509729011.2   --treatment   alignment/EW3/H3K27ac/EW3.H3K27ac.sorted.dup.filtered.bam   --control   alignment/EW3/input/EW3.input.sorted.dup.filtered.bam   --name peak_call/EW3/H3K27ac/EW3.H3K27ac   >& peak_call/EW3/H3K27ac/EW3.H3K27ac.diag.macs.out", 
+                        "id": "macs2_callpeak_3_JOB_ID"
+                    }, 
+                    {
+                        "name": "macs2_callpeak_bigBed.EW3.H3K27ac", 
+                        "input_file": [
+                            "peak_call/EW3/H3K27ac/EW3.H3K27ac_peaks.narrowPeak"
+                        ], 
+                        "output_file": [
+                            "peak_call/EW3/H3K27ac/EW3.H3K27ac_peaks.narrowPeak.bed", 
+                            "peak_call/EW3/H3K27ac/EW3.H3K27ac_peaks.narrowPeak.bb"
+                        ], 
+                        "dependency": [
+                            "macs2_callpeak_3_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/ucsc/v346 && awk '{if ($9 > 1000) {$9 = 1000}; printf( \"%s\\t%s\\t%s\\t%s\\t%0.f\\n\", $1,$2,$3,$4,$9)}' peak_call/EW3/H3K27ac/EW3.H3K27ac_peaks.narrowPeak > peak_call/EW3/H3K27ac/EW3.H3K27ac_peaks.narrowPeak.bed && bedToBigBed   peak_call/EW3/H3K27ac/EW3.H3K27ac_peaks.narrowPeak.bed   /cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.hg19/genome/Homo_sapiens.hg19.fa.fai   peak_call/EW3/H3K27ac/EW3.H3K27ac_peaks.narrowPeak.bb", 
+                        "id": "macs2_callpeak_4_JOB_ID"
+                    }, 
+                    {
+                        "name": "macs2_callpeak.EW7.H3K27ac", 
+                        "input_file": [
+                            "alignment/EW7/H3K27ac/EW7.H3K27ac.sorted.dup.filtered.bam", 
+                            "alignment/EW7/input/EW7.input.sorted.dup.filtered.bam"
+                        ], 
+                        "output_file": [
+                            "peak_call/EW7/H3K27ac", 
+                            "peak_call/EW7/H3K27ac/EW7.H3K27ac_peaks.narrowPeak", 
+                            "peak_call/EW7/H3K27ac/EW7.H3K27ac_peaks.xls"
+                        ], 
+                        "dependency": [
+                            "sambamba_view_filter_5_JOB_ID", 
+                            "sambamba_view_filter_6_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/python/3.7.3 mugqic/MACS2/2.2.7.1 && mkdir -p peak_call/EW7/H3K27ac && touch peak_call/EW7/H3K27ac && macs2 callpeak --format BAM --nomodel   --tempdir ${SLURM_TMPDIR}   --gsize 2509729011.2   --treatment   alignment/EW7/H3K27ac/EW7.H3K27ac.sorted.dup.filtered.bam   --control   alignment/EW7/input/EW7.input.sorted.dup.filtered.bam   --name peak_call/EW7/H3K27ac/EW7.H3K27ac   >& peak_call/EW7/H3K27ac/EW7.H3K27ac.diag.macs.out", 
+                        "id": "macs2_callpeak_5_JOB_ID"
+                    }, 
+                    {
+                        "name": "macs2_callpeak_bigBed.EW7.H3K27ac", 
+                        "input_file": [
+                            "peak_call/EW7/H3K27ac/EW7.H3K27ac_peaks.narrowPeak"
+                        ], 
+                        "output_file": [
+                            "peak_call/EW7/H3K27ac/EW7.H3K27ac_peaks.narrowPeak.bed", 
+                            "peak_call/EW7/H3K27ac/EW7.H3K27ac_peaks.narrowPeak.bb"
+                        ], 
+                        "dependency": [
+                            "macs2_callpeak_5_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/ucsc/v346 && awk '{if ($9 > 1000) {$9 = 1000}; printf( \"%s\\t%s\\t%s\\t%s\\t%0.f\\n\", $1,$2,$3,$4,$9)}' peak_call/EW7/H3K27ac/EW7.H3K27ac_peaks.narrowPeak > peak_call/EW7/H3K27ac/EW7.H3K27ac_peaks.narrowPeak.bed && bedToBigBed   peak_call/EW7/H3K27ac/EW7.H3K27ac_peaks.narrowPeak.bed   /cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.hg19/genome/Homo_sapiens.hg19.fa.fai   peak_call/EW7/H3K27ac/EW7.H3K27ac_peaks.narrowPeak.bb", 
+                        "id": "macs2_callpeak_6_JOB_ID"
+                    }, 
+                    {
+                        "name": "macs2_callpeak.TC71.H3K27ac", 
+                        "input_file": [
+                            "alignment/TC71/H3K27ac/TC71.H3K27ac.sorted.dup.filtered.bam", 
+                            "alignment/TC71/input/TC71.input.sorted.dup.filtered.bam"
+                        ], 
+                        "output_file": [
+                            "peak_call/TC71/H3K27ac", 
+                            "peak_call/TC71/H3K27ac/TC71.H3K27ac_peaks.narrowPeak", 
+                            "peak_call/TC71/H3K27ac/TC71.H3K27ac_peaks.xls"
+                        ], 
+                        "dependency": [
+                            "sambamba_view_filter_7_JOB_ID", 
+                            "sambamba_view_filter_8_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/python/3.7.3 mugqic/MACS2/2.2.7.1 && mkdir -p peak_call/TC71/H3K27ac && touch peak_call/TC71/H3K27ac && macs2 callpeak --format BAM --nomodel   --tempdir ${SLURM_TMPDIR}   --gsize 2509729011.2   --treatment   alignment/TC71/H3K27ac/TC71.H3K27ac.sorted.dup.filtered.bam   --control   alignment/TC71/input/TC71.input.sorted.dup.filtered.bam   --name peak_call/TC71/H3K27ac/TC71.H3K27ac   >& peak_call/TC71/H3K27ac/TC71.H3K27ac.diag.macs.out", 
+                        "id": "macs2_callpeak_7_JOB_ID"
+                    }, 
+                    {
+                        "name": "macs2_callpeak_bigBed.TC71.H3K27ac", 
+                        "input_file": [
+                            "peak_call/TC71/H3K27ac/TC71.H3K27ac_peaks.narrowPeak"
+                        ], 
+                        "output_file": [
+                            "peak_call/TC71/H3K27ac/TC71.H3K27ac_peaks.narrowPeak.bed", 
+                            "peak_call/TC71/H3K27ac/TC71.H3K27ac_peaks.narrowPeak.bb"
+                        ], 
+                        "dependency": [
+                            "macs2_callpeak_7_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/ucsc/v346 && awk '{if ($9 > 1000) {$9 = 1000}; printf( \"%s\\t%s\\t%s\\t%s\\t%0.f\\n\", $1,$2,$3,$4,$9)}' peak_call/TC71/H3K27ac/TC71.H3K27ac_peaks.narrowPeak > peak_call/TC71/H3K27ac/TC71.H3K27ac_peaks.narrowPeak.bed && bedToBigBed   peak_call/TC71/H3K27ac/TC71.H3K27ac_peaks.narrowPeak.bed   /cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.hg19/genome/Homo_sapiens.hg19.fa.fai   peak_call/TC71/H3K27ac/TC71.H3K27ac_peaks.narrowPeak.bb", 
+                        "id": "macs2_callpeak_8_JOB_ID"
+                    }
+                ], 
+                "name": "macs2_callpeak"
+            }, 
+            {
+                "job": [
+                    {
+                        "name": "homer_annotate_peaks.EW22.H3K27ac", 
+                        "input_file": [
+                            "peak_call/EW22/H3K27ac/EW22.H3K27ac_peaks.narrowPeak"
+                        ], 
+                        "output_file": [
+                            "annotation/EW22/H3K27ac", 
+                            "annotation/EW22/H3K27ac/EW22.H3K27ac.annotated.csv", 
+                            "annotation/EW22/H3K27ac/geneOntology.html", 
+                            "annotation/EW22/H3K27ac/GenomeOntology.html", 
+                            "annotation/EW22/H3K27ac/EW22.H3K27ac.tss.stats.csv", 
+                            "annotation/EW22/H3K27ac/EW22.H3K27ac.exon.stats.csv", 
+                            "annotation/EW22/H3K27ac/EW22.H3K27ac.intron.stats.csv", 
+                            "annotation/EW22/H3K27ac/EW22.H3K27ac.tss.distance.csv"
+                        ], 
+                        "dependency": [
+                            "macs2_callpeak_1_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/perl/5.22.1 mugqic/homer/4.11 mugqic/mugqic_tools/2.7.0 && mkdir -p annotation/EW22/H3K27ac && touch annotation/EW22/H3K27ac && annotatePeaks.pl     peak_call/EW22/H3K27ac/EW22.H3K27ac_peaks.narrowPeak     hg19     -gsize hg19     -cons -CpG     -go annotation/EW22/H3K27ac     -genomeOntology annotation/EW22/H3K27ac     > annotation/EW22/H3K27ac/EW22.H3K27ac.annotated.csv && perl -MReadMetrics -e 'ReadMetrics::parseHomerAnnotations(\n  \"annotation/EW22/H3K27ac/EW22.H3K27ac.annotated.csv\",\n  \"annotation/EW22/H3K27ac/EW22.H3K27ac\",\n  -2000,\n  -10000,\n  -10000,\n  -100000,\n  100000\n)'", 
+                        "id": "homer_annotate_peaks_1_JOB_ID"
+                    }, 
+                    {
+                        "name": "homer_annotate_peaks.EW3.H3K27ac", 
+                        "input_file": [
+                            "peak_call/EW3/H3K27ac/EW3.H3K27ac_peaks.narrowPeak"
+                        ], 
+                        "output_file": [
+                            "annotation/EW3/H3K27ac", 
+                            "annotation/EW3/H3K27ac/EW3.H3K27ac.annotated.csv", 
+                            "annotation/EW3/H3K27ac/geneOntology.html", 
+                            "annotation/EW3/H3K27ac/GenomeOntology.html", 
+                            "annotation/EW3/H3K27ac/EW3.H3K27ac.tss.stats.csv", 
+                            "annotation/EW3/H3K27ac/EW3.H3K27ac.exon.stats.csv", 
+                            "annotation/EW3/H3K27ac/EW3.H3K27ac.intron.stats.csv", 
+                            "annotation/EW3/H3K27ac/EW3.H3K27ac.tss.distance.csv"
+                        ], 
+                        "dependency": [
+                            "macs2_callpeak_3_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/perl/5.22.1 mugqic/homer/4.11 mugqic/mugqic_tools/2.7.0 && mkdir -p annotation/EW3/H3K27ac && touch annotation/EW3/H3K27ac && annotatePeaks.pl     peak_call/EW3/H3K27ac/EW3.H3K27ac_peaks.narrowPeak     hg19     -gsize hg19     -cons -CpG     -go annotation/EW3/H3K27ac     -genomeOntology annotation/EW3/H3K27ac     > annotation/EW3/H3K27ac/EW3.H3K27ac.annotated.csv && perl -MReadMetrics -e 'ReadMetrics::parseHomerAnnotations(\n  \"annotation/EW3/H3K27ac/EW3.H3K27ac.annotated.csv\",\n  \"annotation/EW3/H3K27ac/EW3.H3K27ac\",\n  -2000,\n  -10000,\n  -10000,\n  -100000,\n  100000\n)'", 
+                        "id": "homer_annotate_peaks_2_JOB_ID"
+                    }, 
+                    {
+                        "name": "homer_annotate_peaks.EW7.H3K27ac", 
+                        "input_file": [
+                            "peak_call/EW7/H3K27ac/EW7.H3K27ac_peaks.narrowPeak"
+                        ], 
+                        "output_file": [
+                            "annotation/EW7/H3K27ac", 
+                            "annotation/EW7/H3K27ac/EW7.H3K27ac.annotated.csv", 
+                            "annotation/EW7/H3K27ac/geneOntology.html", 
+                            "annotation/EW7/H3K27ac/GenomeOntology.html", 
+                            "annotation/EW7/H3K27ac/EW7.H3K27ac.tss.stats.csv", 
+                            "annotation/EW7/H3K27ac/EW7.H3K27ac.exon.stats.csv", 
+                            "annotation/EW7/H3K27ac/EW7.H3K27ac.intron.stats.csv", 
+                            "annotation/EW7/H3K27ac/EW7.H3K27ac.tss.distance.csv"
+                        ], 
+                        "dependency": [
+                            "macs2_callpeak_5_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/perl/5.22.1 mugqic/homer/4.11 mugqic/mugqic_tools/2.7.0 && mkdir -p annotation/EW7/H3K27ac && touch annotation/EW7/H3K27ac && annotatePeaks.pl     peak_call/EW7/H3K27ac/EW7.H3K27ac_peaks.narrowPeak     hg19     -gsize hg19     -cons -CpG     -go annotation/EW7/H3K27ac     -genomeOntology annotation/EW7/H3K27ac     > annotation/EW7/H3K27ac/EW7.H3K27ac.annotated.csv && perl -MReadMetrics -e 'ReadMetrics::parseHomerAnnotations(\n  \"annotation/EW7/H3K27ac/EW7.H3K27ac.annotated.csv\",\n  \"annotation/EW7/H3K27ac/EW7.H3K27ac\",\n  -2000,\n  -10000,\n  -10000,\n  -100000,\n  100000\n)'", 
+                        "id": "homer_annotate_peaks_3_JOB_ID"
+                    }, 
+                    {
+                        "name": "homer_annotate_peaks.TC71.H3K27ac", 
+                        "input_file": [
+                            "peak_call/TC71/H3K27ac/TC71.H3K27ac_peaks.narrowPeak"
+                        ], 
+                        "output_file": [
+                            "annotation/TC71/H3K27ac", 
+                            "annotation/TC71/H3K27ac/TC71.H3K27ac.annotated.csv", 
+                            "annotation/TC71/H3K27ac/geneOntology.html", 
+                            "annotation/TC71/H3K27ac/GenomeOntology.html", 
+                            "annotation/TC71/H3K27ac/TC71.H3K27ac.tss.stats.csv", 
+                            "annotation/TC71/H3K27ac/TC71.H3K27ac.exon.stats.csv", 
+                            "annotation/TC71/H3K27ac/TC71.H3K27ac.intron.stats.csv", 
+                            "annotation/TC71/H3K27ac/TC71.H3K27ac.tss.distance.csv"
+                        ], 
+                        "dependency": [
+                            "macs2_callpeak_7_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/perl/5.22.1 mugqic/homer/4.11 mugqic/mugqic_tools/2.7.0 && mkdir -p annotation/TC71/H3K27ac && touch annotation/TC71/H3K27ac && annotatePeaks.pl     peak_call/TC71/H3K27ac/TC71.H3K27ac_peaks.narrowPeak     hg19     -gsize hg19     -cons -CpG     -go annotation/TC71/H3K27ac     -genomeOntology annotation/TC71/H3K27ac     > annotation/TC71/H3K27ac/TC71.H3K27ac.annotated.csv && perl -MReadMetrics -e 'ReadMetrics::parseHomerAnnotations(\n  \"annotation/TC71/H3K27ac/TC71.H3K27ac.annotated.csv\",\n  \"annotation/TC71/H3K27ac/TC71.H3K27ac\",\n  -2000,\n  -10000,\n  -10000,\n  -100000,\n  100000\n)'", 
+                        "id": "homer_annotate_peaks_4_JOB_ID"
+                    }
+                ], 
+                "name": "homer_annotate_peaks"
+            }, 
+            {
+                "job": [
+                    {
+                        "name": "homer_find_motifs_genome.EW22.H3K27ac", 
+                        "input_file": [
+                            "peak_call/EW22/H3K27ac/EW22.H3K27ac_peaks.narrowPeak"
+                        ], 
+                        "output_file": [
+                            "annotation/EW22/H3K27ac", 
+                            "annotation/EW22/H3K27ac/homerResults.html", 
+                            "annotation/EW22/H3K27ac/knownResults.html"
+                        ], 
+                        "dependency": [
+                            "macs2_callpeak_1_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/perl/5.22.1 mugqic/homer/4.11 mugqic/weblogo/3.3 && mkdir -p annotation/EW22/H3K27ac && touch annotation/EW22/H3K27ac && findMotifsGenome.pl   peak_call/EW22/H3K27ac/EW22.H3K27ac_peaks.narrowPeak   hg19   annotation/EW22/H3K27ac   -preparsedDir annotation/EW22/H3K27ac/preparsed   -p 4", 
+                        "id": "homer_find_motifs_genome_1_JOB_ID"
+                    }, 
+                    {
+                        "name": "homer_find_motifs_genome.EW3.H3K27ac", 
+                        "input_file": [
+                            "peak_call/EW3/H3K27ac/EW3.H3K27ac_peaks.narrowPeak"
+                        ], 
+                        "output_file": [
+                            "annotation/EW3/H3K27ac", 
+                            "annotation/EW3/H3K27ac/homerResults.html", 
+                            "annotation/EW3/H3K27ac/knownResults.html"
+                        ], 
+                        "dependency": [
+                            "macs2_callpeak_3_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/perl/5.22.1 mugqic/homer/4.11 mugqic/weblogo/3.3 && mkdir -p annotation/EW3/H3K27ac && touch annotation/EW3/H3K27ac && findMotifsGenome.pl   peak_call/EW3/H3K27ac/EW3.H3K27ac_peaks.narrowPeak   hg19   annotation/EW3/H3K27ac   -preparsedDir annotation/EW3/H3K27ac/preparsed   -p 4", 
+                        "id": "homer_find_motifs_genome_2_JOB_ID"
+                    }, 
+                    {
+                        "name": "homer_find_motifs_genome.EW7.H3K27ac", 
+                        "input_file": [
+                            "peak_call/EW7/H3K27ac/EW7.H3K27ac_peaks.narrowPeak"
+                        ], 
+                        "output_file": [
+                            "annotation/EW7/H3K27ac", 
+                            "annotation/EW7/H3K27ac/homerResults.html", 
+                            "annotation/EW7/H3K27ac/knownResults.html"
+                        ], 
+                        "dependency": [
+                            "macs2_callpeak_5_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/perl/5.22.1 mugqic/homer/4.11 mugqic/weblogo/3.3 && mkdir -p annotation/EW7/H3K27ac && touch annotation/EW7/H3K27ac && findMotifsGenome.pl   peak_call/EW7/H3K27ac/EW7.H3K27ac_peaks.narrowPeak   hg19   annotation/EW7/H3K27ac   -preparsedDir annotation/EW7/H3K27ac/preparsed   -p 4", 
+                        "id": "homer_find_motifs_genome_3_JOB_ID"
+                    }, 
+                    {
+                        "name": "homer_find_motifs_genome.TC71.H3K27ac", 
+                        "input_file": [
+                            "peak_call/TC71/H3K27ac/TC71.H3K27ac_peaks.narrowPeak"
+                        ], 
+                        "output_file": [
+                            "annotation/TC71/H3K27ac", 
+                            "annotation/TC71/H3K27ac/homerResults.html", 
+                            "annotation/TC71/H3K27ac/knownResults.html"
+                        ], 
+                        "dependency": [
+                            "macs2_callpeak_7_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/perl/5.22.1 mugqic/homer/4.11 mugqic/weblogo/3.3 && mkdir -p annotation/TC71/H3K27ac && touch annotation/TC71/H3K27ac && findMotifsGenome.pl   peak_call/TC71/H3K27ac/TC71.H3K27ac_peaks.narrowPeak   hg19   annotation/TC71/H3K27ac   -preparsedDir annotation/TC71/H3K27ac/preparsed   -p 4", 
+                        "id": "homer_find_motifs_genome_4_JOB_ID"
+                    }
+                ], 
+                "name": "homer_find_motifs_genome"
+            }, 
+            {
+                "job": [
+                    {
+                        "name": "run_spp.EW22.input", 
+                        "input_file": [
+                            "alignment/EW22/input/EW22.input.sorted.dup.filtered.bam"
+                        ], 
+                        "output_file": [
+                            "ihec_metrics/EW22/input", 
+                            "ihec_metrics/EW22/input/EW22.input.crosscor"
+                        ], 
+                        "dependency": [
+                            "sambamba_view_filter_1_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/samtools/1.12 mugqic/mugqic_tools/2.7.0 mugqic/R_Bioconductor/4.0.3_3.12 && mkdir -p ihec_metrics/EW22/input && touch ihec_metrics/EW22/input && cat /dev/null > ihec_metrics/EW22/input/EW22.input.crosscor && Rscript $R_TOOLS/run_spp.R -c=alignment/EW22/input/EW22.input.sorted.dup.filtered.bam -savp -out=ihec_metrics/EW22/input/EW22.input.crosscor -rf -tmpdir=${SLURM_TMPDIR}", 
+                        "id": "run_spp_1_JOB_ID"
+                    }, 
+                    {
+                        "name": "run_spp.EW22.H3K27ac", 
+                        "input_file": [
+                            "alignment/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.filtered.bam"
+                        ], 
+                        "output_file": [
+                            "ihec_metrics/EW22/H3K27ac", 
+                            "ihec_metrics/EW22/H3K27ac/EW22.H3K27ac.crosscor"
+                        ], 
+                        "dependency": [
+                            "sambamba_view_filter_2_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/samtools/1.12 mugqic/mugqic_tools/2.7.0 mugqic/R_Bioconductor/4.0.3_3.12 && mkdir -p ihec_metrics/EW22/H3K27ac && touch ihec_metrics/EW22/H3K27ac && cat /dev/null > ihec_metrics/EW22/H3K27ac/EW22.H3K27ac.crosscor && Rscript $R_TOOLS/run_spp.R -c=alignment/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.filtered.bam -savp -out=ihec_metrics/EW22/H3K27ac/EW22.H3K27ac.crosscor -rf -tmpdir=${SLURM_TMPDIR}", 
+                        "id": "run_spp_2_JOB_ID"
+                    }, 
+                    {
+                        "name": "run_spp.EW3.input", 
+                        "input_file": [
+                            "alignment/EW3/input/EW3.input.sorted.dup.filtered.bam"
+                        ], 
+                        "output_file": [
+                            "ihec_metrics/EW3/input", 
+                            "ihec_metrics/EW3/input/EW3.input.crosscor"
+                        ], 
+                        "dependency": [
+                            "sambamba_view_filter_3_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/samtools/1.12 mugqic/mugqic_tools/2.7.0 mugqic/R_Bioconductor/4.0.3_3.12 && mkdir -p ihec_metrics/EW3/input && touch ihec_metrics/EW3/input && cat /dev/null > ihec_metrics/EW3/input/EW3.input.crosscor && Rscript $R_TOOLS/run_spp.R -c=alignment/EW3/input/EW3.input.sorted.dup.filtered.bam -savp -out=ihec_metrics/EW3/input/EW3.input.crosscor -rf -tmpdir=${SLURM_TMPDIR}", 
+                        "id": "run_spp_3_JOB_ID"
+                    }, 
+                    {
+                        "name": "run_spp.EW3.H3K27ac", 
+                        "input_file": [
+                            "alignment/EW3/H3K27ac/EW3.H3K27ac.sorted.dup.filtered.bam"
+                        ], 
+                        "output_file": [
+                            "ihec_metrics/EW3/H3K27ac", 
+                            "ihec_metrics/EW3/H3K27ac/EW3.H3K27ac.crosscor"
+                        ], 
+                        "dependency": [
+                            "sambamba_view_filter_4_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/samtools/1.12 mugqic/mugqic_tools/2.7.0 mugqic/R_Bioconductor/4.0.3_3.12 && mkdir -p ihec_metrics/EW3/H3K27ac && touch ihec_metrics/EW3/H3K27ac && cat /dev/null > ihec_metrics/EW3/H3K27ac/EW3.H3K27ac.crosscor && Rscript $R_TOOLS/run_spp.R -c=alignment/EW3/H3K27ac/EW3.H3K27ac.sorted.dup.filtered.bam -savp -out=ihec_metrics/EW3/H3K27ac/EW3.H3K27ac.crosscor -rf -tmpdir=${SLURM_TMPDIR}", 
+                        "id": "run_spp_4_JOB_ID"
+                    }, 
+                    {
+                        "name": "run_spp.EW7.input", 
+                        "input_file": [
+                            "alignment/EW7/input/EW7.input.sorted.dup.filtered.bam"
+                        ], 
+                        "output_file": [
+                            "ihec_metrics/EW7/input", 
+                            "ihec_metrics/EW7/input/EW7.input.crosscor"
+                        ], 
+                        "dependency": [
+                            "sambamba_view_filter_5_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/samtools/1.12 mugqic/mugqic_tools/2.7.0 mugqic/R_Bioconductor/4.0.3_3.12 && mkdir -p ihec_metrics/EW7/input && touch ihec_metrics/EW7/input && cat /dev/null > ihec_metrics/EW7/input/EW7.input.crosscor && Rscript $R_TOOLS/run_spp.R -c=alignment/EW7/input/EW7.input.sorted.dup.filtered.bam -savp -out=ihec_metrics/EW7/input/EW7.input.crosscor -rf -tmpdir=${SLURM_TMPDIR}", 
+                        "id": "run_spp_5_JOB_ID"
+                    }, 
+                    {
+                        "name": "run_spp.EW7.H3K27ac", 
+                        "input_file": [
+                            "alignment/EW7/H3K27ac/EW7.H3K27ac.sorted.dup.filtered.bam"
+                        ], 
+                        "output_file": [
+                            "ihec_metrics/EW7/H3K27ac", 
+                            "ihec_metrics/EW7/H3K27ac/EW7.H3K27ac.crosscor"
+                        ], 
+                        "dependency": [
+                            "sambamba_view_filter_6_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/samtools/1.12 mugqic/mugqic_tools/2.7.0 mugqic/R_Bioconductor/4.0.3_3.12 && mkdir -p ihec_metrics/EW7/H3K27ac && touch ihec_metrics/EW7/H3K27ac && cat /dev/null > ihec_metrics/EW7/H3K27ac/EW7.H3K27ac.crosscor && Rscript $R_TOOLS/run_spp.R -c=alignment/EW7/H3K27ac/EW7.H3K27ac.sorted.dup.filtered.bam -savp -out=ihec_metrics/EW7/H3K27ac/EW7.H3K27ac.crosscor -rf -tmpdir=${SLURM_TMPDIR}", 
+                        "id": "run_spp_6_JOB_ID"
+                    }, 
+                    {
+                        "name": "run_spp.TC71.input", 
+                        "input_file": [
+                            "alignment/TC71/input/TC71.input.sorted.dup.filtered.bam"
+                        ], 
+                        "output_file": [
+                            "ihec_metrics/TC71/input", 
+                            "ihec_metrics/TC71/input/TC71.input.crosscor"
+                        ], 
+                        "dependency": [
+                            "sambamba_view_filter_7_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/samtools/1.12 mugqic/mugqic_tools/2.7.0 mugqic/R_Bioconductor/4.0.3_3.12 && mkdir -p ihec_metrics/TC71/input && touch ihec_metrics/TC71/input && cat /dev/null > ihec_metrics/TC71/input/TC71.input.crosscor && Rscript $R_TOOLS/run_spp.R -c=alignment/TC71/input/TC71.input.sorted.dup.filtered.bam -savp -out=ihec_metrics/TC71/input/TC71.input.crosscor -rf -tmpdir=${SLURM_TMPDIR}", 
+                        "id": "run_spp_7_JOB_ID"
+                    }, 
+                    {
+                        "name": "run_spp.TC71.H3K27ac", 
+                        "input_file": [
+                            "alignment/TC71/H3K27ac/TC71.H3K27ac.sorted.dup.filtered.bam"
+                        ], 
+                        "output_file": [
+                            "ihec_metrics/TC71/H3K27ac", 
+                            "ihec_metrics/TC71/H3K27ac/TC71.H3K27ac.crosscor"
+                        ], 
+                        "dependency": [
+                            "sambamba_view_filter_8_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/samtools/1.12 mugqic/mugqic_tools/2.7.0 mugqic/R_Bioconductor/4.0.3_3.12 && mkdir -p ihec_metrics/TC71/H3K27ac && touch ihec_metrics/TC71/H3K27ac && cat /dev/null > ihec_metrics/TC71/H3K27ac/TC71.H3K27ac.crosscor && Rscript $R_TOOLS/run_spp.R -c=alignment/TC71/H3K27ac/TC71.H3K27ac.sorted.dup.filtered.bam -savp -out=ihec_metrics/TC71/H3K27ac/TC71.H3K27ac.crosscor -rf -tmpdir=${SLURM_TMPDIR}", 
+                        "id": "run_spp_8_JOB_ID"
+                    }
+                ], 
+                "name": "run_spp"
+            }, 
+            {
+                "job": [
+                    {
+                        "name": "differential_binding.diffbind.contrast_EW22_EW3_vs_EW7_TC71", 
+                        "input_file": [
+                            "alignment/EW22/input/EW22.input.sorted.dup.filtered.bam", 
+                            "alignment/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.filtered.bam", 
+                            "peak_call/EW22/H3K27ac/EW22.H3K27ac_peaks.xls", 
+                            "alignment/EW3/input/EW3.input.sorted.dup.filtered.bam", 
+                            "alignment/EW3/H3K27ac/EW3.H3K27ac.sorted.dup.filtered.bam", 
+                            "peak_call/EW3/H3K27ac/EW3.H3K27ac_peaks.xls", 
+                            "alignment/EW7/input/EW7.input.sorted.dup.filtered.bam", 
+                            "alignment/EW7/H3K27ac/EW7.H3K27ac.sorted.dup.filtered.bam", 
+                            "peak_call/EW7/H3K27ac/EW7.H3K27ac_peaks.xls", 
+                            "alignment/TC71/input/TC71.input.sorted.dup.filtered.bam", 
+                            "alignment/TC71/H3K27ac/TC71.H3K27ac.sorted.dup.filtered.bam", 
+                            "peak_call/TC71/H3K27ac/TC71.H3K27ac_peaks.xls"
+                        ], 
+                        "output_file": [
+                            "differential_binding/diffbind_EW22_EW3_vs_EW7_TC71_DBA_DESEQ2_dba.txt", 
+                            "differential_binding/diffbind_EW22_EW3_vs_EW7_TC71_DBA_DESEQ2_dba.html"
+                        ], 
+                        "dependency": [
+                            "sambamba_view_filter_1_JOB_ID", 
+                            "sambamba_view_filter_2_JOB_ID", 
+                            "sambamba_view_filter_3_JOB_ID", 
+                            "sambamba_view_filter_4_JOB_ID", 
+                            "sambamba_view_filter_5_JOB_ID", 
+                            "sambamba_view_filter_6_JOB_ID", 
+                            "sambamba_view_filter_7_JOB_ID", 
+                            "sambamba_view_filter_8_JOB_ID", 
+                            "macs2_callpeak_1_JOB_ID", 
+                            "macs2_callpeak_3_JOB_ID", 
+                            "macs2_callpeak_5_JOB_ID", 
+                            "macs2_callpeak_7_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/mugqic_tools/2.7.0 mugqic/R_Bioconductor/4.0.3_3.12 &&         mkdir -p differential_binding &&\ncp $R_TOOLS/DiffBind.R differential_binding/diffbind_EW22_EW3_vs_EW7_TC71_DBA_DESEQ2_dba.R &&\nRscript -e 'cur_dir=getwd();library(knitr);rmarkdown::render(\"differential_binding/diffbind_EW22_EW3_vs_EW7_TC71_DBA_DESEQ2_dba.R\",params=list(cur_wd=cur_dir,d=\"design.chipseq.txt\",r=\"readset.chipseq.txt\",c=\"EW22_EW3_vs_EW7_TC71\",o=\"differential_binding/diffbind_EW22_EW3_vs_EW7_TC71_DBA_DESEQ2_dba.txt\",b=\"alignment\",p=\"peak_call\",dir=\"differential_binding\",minOverlap=\"2\",minMembers=\"2\",method=\"DBA_DESEQ2\"),output_file=file.path(cur_dir,\"differential_binding/diffbind_EW22_EW3_vs_EW7_TC71_DBA_DESEQ2_dba.html\"));' &&\nrm differential_binding/diffbind_EW22_EW3_vs_EW7_TC71_DBA_DESEQ2_dba.R", 
+                        "id": "differential_binding_1_JOB_ID"
+                    }
+                ], 
+                "name": "differential_binding"
+            }, 
+            {
+                "job": [
+                    {
+                        "name": "IHEC_chipseq_metrics.EW22.H3K27ac", 
+                        "input_file": [
+                            "alignment/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.bam", 
+                            "alignment/EW22/input/EW22.input.sorted.dup.bam", 
+                            "peak_call/EW22/H3K27ac/EW22.H3K27ac_peaks.narrowPeak.bed", 
+                            "ihec_metrics/EW22/EW22.crosscor"
+                        ], 
+                        "output_file": [
+                            "ihec_metrics/EW22", 
+                            "ihec_metrics/EW22/H3K27ac/IHEC_chipseq_metrics.EW22.H3K27ac.tsv", 
+                            "ihec_metrics/EW22/H3K27ac/EW22.H3K27ac.fingerprint.tsv", 
+                            "ihec_metrics/EW22/H3K27ac/EW22.H3K27ac.fingerprint.png", 
+                            "ihec_metrics/EW22/H3K27ac/EW22.H3K27ac.dedup.bam", 
+                            "ihec_metrics/EW22/H3K27ac/EW22.H3K27ac.dedup.bam.bai", 
+                            "ihec_metrics/EW22/H3K27ac/EW22.H3K27ac.markDup_flagstat.txt", 
+                            "ihec_metrics/EW22/input/EW22.Input.dedup.bam", 
+                            "ihec_metrics/EW22/input/EW22.Input.dedup.bam.bai"
+                        ], 
+                        "dependency": [
+                            "sambamba_mark_duplicates_1_JOB_ID", 
+                            "sambamba_mark_duplicates_2_JOB_ID", 
+                            "macs2_callpeak_2_JOB_ID", 
+                            "run_spp_9_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/mugqic_tools/2.7.0 mugqic/samtools/1.12 mugqic/sambamba/0.8.0 mugqic/deepTools/3.5.0 && mkdir -p ihec_metrics/EW22 && touch ihec_metrics/EW22 && IHEC_chipseq_metrics_max.sh     -d alignment/EW22/H3K27ac/EW22.H3K27ac.sorted.dup.bam     -i alignment/EW22/input/EW22.input.sorted.dup.bam     -s EW22     -j input     -t narrow     -c H3K27ac     -n 6     -p peak_call/EW22/H3K27ac/EW22.H3K27ac_peaks.narrowPeak.bed     -o ihec_metrics/EW22     -a hg19", 
+                        "id": "ihec_metrics_1_JOB_ID"
+                    }, 
+                    {
+                        "name": "IHEC_chipseq_metrics.EW3.H3K27ac", 
+                        "input_file": [
+                            "alignment/EW3/H3K27ac/EW3.H3K27ac.sorted.dup.bam", 
+                            "alignment/EW3/input/EW3.input.sorted.dup.bam", 
+                            "peak_call/EW3/H3K27ac/EW3.H3K27ac_peaks.narrowPeak.bed", 
+                            "ihec_metrics/EW3/EW3.crosscor"
+                        ], 
+                        "output_file": [
+                            "ihec_metrics/EW3", 
+                            "ihec_metrics/EW3/H3K27ac/IHEC_chipseq_metrics.EW3.H3K27ac.tsv", 
+                            "ihec_metrics/EW3/H3K27ac/EW3.H3K27ac.fingerprint.tsv", 
+                            "ihec_metrics/EW3/H3K27ac/EW3.H3K27ac.fingerprint.png", 
+                            "ihec_metrics/EW3/H3K27ac/EW3.H3K27ac.dedup.bam", 
+                            "ihec_metrics/EW3/H3K27ac/EW3.H3K27ac.dedup.bam.bai", 
+                            "ihec_metrics/EW3/H3K27ac/EW3.H3K27ac.markDup_flagstat.txt", 
+                            "ihec_metrics/EW3/input/EW3.Input.dedup.bam", 
+                            "ihec_metrics/EW3/input/EW3.Input.dedup.bam.bai"
+                        ], 
+                        "dependency": [
+                            "sambamba_mark_duplicates_3_JOB_ID", 
+                            "sambamba_mark_duplicates_4_JOB_ID", 
+                            "macs2_callpeak_4_JOB_ID", 
+                            "run_spp_9_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/mugqic_tools/2.7.0 mugqic/samtools/1.12 mugqic/sambamba/0.8.0 mugqic/deepTools/3.5.0 && mkdir -p ihec_metrics/EW3 && touch ihec_metrics/EW3 && IHEC_chipseq_metrics_max.sh     -d alignment/EW3/H3K27ac/EW3.H3K27ac.sorted.dup.bam     -i alignment/EW3/input/EW3.input.sorted.dup.bam     -s EW3     -j input     -t narrow     -c H3K27ac     -n 6     -p peak_call/EW3/H3K27ac/EW3.H3K27ac_peaks.narrowPeak.bed     -o ihec_metrics/EW3     -a hg19", 
+                        "id": "ihec_metrics_2_JOB_ID"
+                    }, 
+                    {
+                        "name": "IHEC_chipseq_metrics.EW7.H3K27ac", 
+                        "input_file": [
+                            "alignment/EW7/H3K27ac/EW7.H3K27ac.sorted.dup.bam", 
+                            "alignment/EW7/input/EW7.input.sorted.dup.bam", 
+                            "peak_call/EW7/H3K27ac/EW7.H3K27ac_peaks.narrowPeak.bed", 
+                            "ihec_metrics/EW7/EW7.crosscor"
+                        ], 
+                        "output_file": [
+                            "ihec_metrics/EW7", 
+                            "ihec_metrics/EW7/H3K27ac/IHEC_chipseq_metrics.EW7.H3K27ac.tsv", 
+                            "ihec_metrics/EW7/H3K27ac/EW7.H3K27ac.fingerprint.tsv", 
+                            "ihec_metrics/EW7/H3K27ac/EW7.H3K27ac.fingerprint.png", 
+                            "ihec_metrics/EW7/H3K27ac/EW7.H3K27ac.dedup.bam", 
+                            "ihec_metrics/EW7/H3K27ac/EW7.H3K27ac.dedup.bam.bai", 
+                            "ihec_metrics/EW7/H3K27ac/EW7.H3K27ac.markDup_flagstat.txt", 
+                            "ihec_metrics/EW7/input/EW7.Input.dedup.bam", 
+                            "ihec_metrics/EW7/input/EW7.Input.dedup.bam.bai"
+                        ], 
+                        "dependency": [
+                            "sambamba_mark_duplicates_5_JOB_ID", 
+                            "sambamba_mark_duplicates_6_JOB_ID", 
+                            "macs2_callpeak_6_JOB_ID", 
+                            "run_spp_9_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/mugqic_tools/2.7.0 mugqic/samtools/1.12 mugqic/sambamba/0.8.0 mugqic/deepTools/3.5.0 && mkdir -p ihec_metrics/EW7 && touch ihec_metrics/EW7 && IHEC_chipseq_metrics_max.sh     -d alignment/EW7/H3K27ac/EW7.H3K27ac.sorted.dup.bam     -i alignment/EW7/input/EW7.input.sorted.dup.bam     -s EW7     -j input     -t narrow     -c H3K27ac     -n 6     -p peak_call/EW7/H3K27ac/EW7.H3K27ac_peaks.narrowPeak.bed     -o ihec_metrics/EW7     -a hg19", 
+                        "id": "ihec_metrics_3_JOB_ID"
+                    }, 
+                    {
+                        "name": "IHEC_chipseq_metrics.TC71.H3K27ac", 
+                        "input_file": [
+                            "alignment/TC71/H3K27ac/TC71.H3K27ac.sorted.dup.bam", 
+                            "alignment/TC71/input/TC71.input.sorted.dup.bam", 
+                            "peak_call/TC71/H3K27ac/TC71.H3K27ac_peaks.narrowPeak.bed", 
+                            "ihec_metrics/TC71/TC71.crosscor"
+                        ], 
+                        "output_file": [
+                            "ihec_metrics/TC71", 
+                            "ihec_metrics/TC71/H3K27ac/IHEC_chipseq_metrics.TC71.H3K27ac.tsv", 
+                            "ihec_metrics/TC71/H3K27ac/TC71.H3K27ac.fingerprint.tsv", 
+                            "ihec_metrics/TC71/H3K27ac/TC71.H3K27ac.fingerprint.png", 
+                            "ihec_metrics/TC71/H3K27ac/TC71.H3K27ac.dedup.bam", 
+                            "ihec_metrics/TC71/H3K27ac/TC71.H3K27ac.dedup.bam.bai", 
+                            "ihec_metrics/TC71/H3K27ac/TC71.H3K27ac.markDup_flagstat.txt", 
+                            "ihec_metrics/TC71/input/TC71.Input.dedup.bam", 
+                            "ihec_metrics/TC71/input/TC71.Input.dedup.bam.bai"
+                        ], 
+                        "dependency": [
+                            "sambamba_mark_duplicates_7_JOB_ID", 
+                            "sambamba_mark_duplicates_8_JOB_ID", 
+                            "macs2_callpeak_8_JOB_ID", 
+                            "run_spp_9_JOB_ID"
+                        ], 
+                        "command": "module purge && module load mugqic/mugqic_tools/2.7.0 mugqic/samtools/1.12 mugqic/sambamba/0.8.0 mugqic/deepTools/3.5.0 && mkdir -p ihec_metrics/TC71 && touch ihec_metrics/TC71 && IHEC_chipseq_metrics_max.sh     -d alignment/TC71/H3K27ac/TC71.H3K27ac.sorted.dup.bam     -i alignment/TC71/input/TC71.input.sorted.dup.bam     -s TC71     -j input     -t narrow     -c H3K27ac     -n 6     -p peak_call/TC71/H3K27ac/TC71.H3K27ac_peaks.narrowPeak.bed     -o ihec_metrics/TC71     -a hg19", 
+                        "id": "ihec_metrics_4_JOB_ID"
+                    }
+                ], 
+                "name": "ihec_metrics"
+            }, 
+            {
+                "job": [
+                    {
+                        "status": "success", 
+                        "name": "qc_plots_R", 
+                        "input_file": [
+                            "tags/EW22/EW22.input/tagInfo.txt", 
+                            "tags/EW22/EW22.H3K27ac/tagInfo.txt", 
+                            "tags/EW3/EW3.input/tagInfo.txt", 
+                            "tags/EW3/EW3.H3K27ac/tagInfo.txt", 
+                            "tags/EW7/EW7.input/tagInfo.txt", 
+                            "tags/EW7/EW7.H3K27ac/tagInfo.txt", 
+                            "tags/TC71/TC71.input/tagInfo.txt", 
+                            "tags/TC71/TC71.H3K27ac/tagInfo.txt"
+                        ], 
+                        "output_file": [
+                            "graphs/EW22.input_QC_Metrics.ps", 
+                            "graphs/EW22.H3K27ac_QC_Metrics.ps", 
+                            "graphs/EW3.input_QC_Metrics.ps", 
+                            "graphs/EW3.H3K27ac_QC_Metrics.ps", 
+                            "graphs/EW7.input_QC_Metrics.ps", 
+                            "graphs/EW7.H3K27ac_QC_Metrics.ps", 
+                            "graphs/TC71.input_QC_Metrics.ps", 
+                            "graphs/TC71.H3K27ac_QC_Metrics.ps", 
+                            "report/yaml/ChipSeq.qc_metrics.yaml"
+                        ], 
+                        "job_end_date": "2021-08-19 10:57:30", 
+                        "id": "qc_metrics_1_JOB_ID", 
+                        "done_file": "job_output/qc_metrics/qc_plots_R.24b563b424d812ba78b3e83a9f602204.mugqic.done", 
+                        "dependency": [], 
+                        "command": "module purge && module load mugqic/mugqic_tools/2.7.0 mugqic/R_Bioconductor/4.0.3_3.12 && mkdir -p graphs && Rscript $R_TOOLS/chipSeqGenerateQCMetrics.R readset.chipseq.txt /lustre04/scratch/newtonma/chipseq_test_2 && mkdir -p report/yaml && cp /home/newtonma/apps/genpipes/bfx/report/ChipSeq.qc_metrics.yaml report/yaml/ChipSeq.qc_metrics.yaml && declare -A samples_associative_array=([\"EW22\"]=\"input H3K27ac\" [\"EW3\"]=\"input H3K27ac\" [\"EW7\"]=\"input H3K27ac\" [\"TC71\"]=\"input H3K27ac\") && for sample in ${!samples_associative_array[@]}\ndo\n  for mark_name in ${samples_associative_array[$sample]}\n  do\n    cp --parents graphs/${sample}.${mark_name}_QC_Metrics.ps report/\n    convert -rotate 90 graphs/${sample}.${mark_name}_QC_Metrics.ps report/graphs/${sample}.${mark_name}_QC_Metrics.png\n    echo -e \"\\n\\n\\t----\\n\\t![](graphs/${sample}.${mark_name}_QC_Metrics.png)\\n\\n\\tQC Metrics for Sample $sample and Mark $mark_name \\([download high-res image](graphs/${sample}.${mark_name}_QC_Metrics.ps)\\)\" >> report/yaml/ChipSeq.qc_metrics.yaml\n  done\ndone", 
+                        "log_file": "job_output/qc_metrics/qc_plots_R_2021-08-19T10.54.51.o", 
+                        "job_start_date": "2021-08-19 10:56:23"
+                    }
+                ], 
+                "name": "qc_metrics"
+            }
+        ], 
+        "general_information": {
+            "assembly_used": "hg19", 
+            "assembly_source": "UCSC", 
+            "analysis_folder": "/lustre04/scratch/newtonma/chipseq_test_2/", 
+            "server": "abacus.genome.mcgill.ca", 
+            "analysed_species": "Homo_sapiens", 
+            "pipeline_version": "3.6.0"
+        }, 
+        "name": "ChipSeq", 
+        "software": [
+            {
+                "version": "0.7.17", 
+                "name": "bwa"
+            }, 
+            {
+                "version": "3.5.0", 
+                "name": "deepTools"
+            }, 
+            {
+                "version": "4.1.2.0", 
+                "name": "GenomeAnalysisTK"
+            }, 
+            {
+                "version": "4.11", 
+                "name": "homer"
+            }, 
+            {
+                "version": "openjdk-jdk1.8.0_72", 
+                "name": "java"
+            }, 
+            {
+                "version": "2.2.7.1", 
+                "name": "MACS2"
+            }, 
+            {
+                "version": "1.0.5", 
+                "name": "mugqic_R_packages"
+            }, 
+            {
+                "version": "2.7.0", 
+                "name": "mugqic_tools"
+            }, 
+            {
+                "version": "1.9", 
+                "name": "MultiQC"
+            }, 
+            {
+                "version": "1.15.2", 
+                "name": "pandoc"
+            }, 
+            {
+                "version": "5.22.1", 
+                "name": "perl"
+            }, 
+            {
+                "version": "2.0.1", 
+                "name": "picard"
+            }, 
+            {
+                "version": "3.7.3", 
+                "name": "python"
+            }, 
+            {
+                "version": "4.0.3_3.12", 
+                "name": "R_Bioconductor"
+            }, 
+            {
+                "version": "1.12", 
+                "name": "samtools"
+            }, 
+            {
+                "version": "0.8.0", 
+                "name": "sambamba"
+            }, 
+            {
+                "version": "0.39", 
+                "name": "trimmomatic"
+            }, 
+            {
+                "version": "v346", 
+                "name": "ucsc"
+            }, 
+            {
+                "version": "3.3", 
+                "name": "weblogo"
+            }, 
+            {
+                "version": "3.7.3", 
+                "name": "python"
+            }
+        ]
+    }, 
+    "project": "chipseq_test_2", 
+    "version": "1.0.1", 
+    "readset": [
+        {
+            "lane": "1", 
+            "run": "2965", 
+            "name": "EW22_A787C17_input", 
+            "qualityoffset": 33, 
+            "library": "", 
+            "bed": [], 
+            "runType": "SINGLE_END", 
+            "fastq2": "", 
+            "fastq1": "/cvmfs/ref.mugqic/testdata/chipseq/raw_data/EW22_A787C17_input_chr19.fastq.gz", 
+            "bam": "", 
+            "adapter2": "AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT", 
+            "adapter1": "AGATCGGAAGAGCACACGTCTGAACTCCAGTCA"
+        }, 
+        {
+            "lane": "1", 
+            "run": "2962", 
+            "name": "EW22_A787C20_H3K27ac", 
+            "qualityoffset": 33, 
+            "library": "", 
+            "bed": [], 
+            "runType": "SINGLE_END", 
+            "fastq2": "", 
+            "fastq1": "/cvmfs/ref.mugqic/testdata/chipseq/raw_data/EW22_A787C20_H3K27ac_chr19.fastq.gz", 
+            "bam": "", 
+            "adapter2": "AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT", 
+            "adapter1": "AGATCGGAAGAGCACACGTCTGAACTCCAGTCA"
+        }
+    ], 
+    "sample_name": "EW22"
+}

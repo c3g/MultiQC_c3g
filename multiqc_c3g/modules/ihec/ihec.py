@@ -54,11 +54,15 @@ class MultiqcModule(BaseMultiqcModule, ChIPSeqReportMixin, RNASeqReportMixin):
         n['chipseq'] = self.ihec_chipseq()
         if n['chipseq'] > 0:
             log.info("Found {} IHEC chipseq reports".format(n['chipseq']))
+        else:
+            log.info("No IHEC chipseq reports")
 
     
         n['rnaseq'] = self.ihec_rnaseq()
         if n['rnaseq'] > 0:
             log.info("Found {} IHEC rnaseq reports".format(n['rnaseq']))
+        else:
+            log.info("No IHEC rnaseq reports")
 
         # Exit if we didn't find anything
         if sum(n.values()) == 0:

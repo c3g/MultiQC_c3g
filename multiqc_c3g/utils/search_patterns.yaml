@@ -1,0 +1,4 @@
+# These are the search parameters for the multiqc_c3g modules
+
+readtsv:
+    fn: "*_mqc.tsv"

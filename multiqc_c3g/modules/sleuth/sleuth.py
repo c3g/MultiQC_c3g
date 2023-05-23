@@ -24,12 +24,12 @@ class MultiqcModule(BaseMultiqcModule):
 
         # Initialise the parent object
         super(MultiqcModule, self).__init__(
-            name='Sleuth', 
+            name='Sleuth',
             anchor='sleuth',
             href='https://pachterlab.github.io/sleuth/about.html',
             info="sleuth is a program for analysis of RNA-Seq experiments for which transcript abundances have been quantified with kallisto")
-            
+
 
 ## Start Code here:
-    
-    log.info('Hello World! Sleuth is Alive!')
+
+    # log.info('Hello World! Sleuth is Alive!')

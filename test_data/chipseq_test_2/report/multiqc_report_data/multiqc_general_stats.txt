@@ -1,0 +1,9 @@
+Sample	Samtools_mqc-generalstats-samtools-flagstat_total	Samtools_mqc-generalstats-samtools-mapped_passed	HOMER_mqc-generalstats-homer-UniqPositions	HOMER_mqc-generalstats-homer-TotalPositions	HOMER_mqc-generalstats-homer-fragmentLengthEstimate	HOMER_mqc-generalstats-homer-peakSizeEstimate	HOMER_mqc-generalstats-homer-tagsPerBP	HOMER_mqc-generalstats-homer-averageTagLength	HOMER_mqc-generalstats-homer-averageFragmentGCcontent	Picard_mqc-generalstats-picard-PCT_PF_READS_ALIGNED
+EW22.H3K27ac	595419	595419	558417.0	595419.0	158.0	305.0	0.000199	100.15	0.535	1.0
+EW22.input	398958	398958	381957.0	398958.0	106.0	186.0	0.000131	99.964	0.529	1.0
+EW3.H3K27ac	581356	581356	546027.0	581356.0	148.0	380.0	0.000193	141.786	0.536	1.0
+EW3.input	692790	692790	660752.0	692790.0	318.0	318.0	0.000228	138.346	0.468	1.0
+EW7.H3K27ac	765451	765451	716965.0	765451.0	189.0	324.0	0.000258	100.16	0.54	1.0
+EW7.input	289576	289576	282832.0	289576.0	165.0	165.0	9.7e-05	100.036	0.478	1.0
+TC71.H3K27ac	400229	400229	369951.0	400229.0	159.0	414.0	0.000135	100.081	0.528	1.0
+TC71.input	258917	258917	235964.0	258917.0	148.0	148.0	8.7e-05	99.858	0.462	1.0

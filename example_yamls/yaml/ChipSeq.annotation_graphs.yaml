@@ -1,0 +1,58 @@
+peak_stats_narrow:
+  id: peak_stats_narrow
+  parent_title: "Annotation and Peak Location Statistics for Narrow Peaks"
+  section_title: "Peak Statistics for Narrow Peaks"
+  content: "The table below contains different peak statistics such as: number of peaks called by [[macs]], percentage of peaks near the transcription start sites ([-1000;1000], bp), peak height metrics and average peak width."
+  table_title: "Peak Statistics for Narrow Peaks"
+  table_path:
+    - annotation/peak_stats_AllSamples.csv
+  header_descriptions:
+    Sample: "Name of sample"
+    Mark Name: "Name of Histone mark"
+    Number of peaks: "Number of peaks called"
+    Percent near tss: "Percentage of peaks close to a Transcriptional Start Site (TSS)"
+    Median peak height: "Median peak height"
+    Highest peak: "Highest peak height"
+    Lowest peak: "Lowest peak height"
+    Avg peak width: "Avg peak width"
+  table_adjustments:
+    - scale: 'PuOr'
+
+peak_location_stats:
+  id: peak_location_stats
+  section_title: "Peak Location Statistics"
+  content: |
+    The following figures show different peak location statistics per design. The first figure consists of a pie chart that shows the proportions of the genomic locations of the peaks. The locations are:
+
+    1. Gene (exon or intron)
+    2. Proximal (2 kb upstream of a Transcription Start Site)
+    3. Distal (between 10 kb upstream and 2 kb upstream of a Transcription Start Site)
+    4. 5d (between 100 kb upstream and 10 kb upstream of a Transcription Start Site)
+    5. Gene Desert (>= 100 kb upstream or downstream of a Transcription Start Site)
+    6. Other (anything not included in the above categories)
+
+    The second and third figures illustrate the distribution of peaks found within exons and introns. The last figure shows the distribution of peak distance relative to the Transcription Start Sites (TSS).
+
+
+    ----
+    ![](graphs/TC71.H3K27ac_Misc_Graphs.png)
+
+    Annotation Statistics for Sample TC71 and Mark H3K27ac \([download high-res image](graphs/TC71.H3K27ac_Misc_Graphs.ps)\)
+
+
+    ----
+    ![](graphs/EW3.H3K27ac_Misc_Graphs.png)
+
+    Annotation Statistics for Sample EW3 and Mark H3K27ac \([download high-res image](graphs/EW3.H3K27ac_Misc_Graphs.ps)\)
+
+
+    ----
+    ![](graphs/EW22.H3K27ac_Misc_Graphs.png)
+
+    Annotation Statistics for Sample EW22 and Mark H3K27ac \([download high-res image](graphs/EW22.H3K27ac_Misc_Graphs.ps)\)
+
+
+    ----
+    ![](graphs/EW7.H3K27ac_Misc_Graphs.png)
+
+    Annotation Statistics for Sample EW7 and Mark H3K27ac \([download high-res image](graphs/EW7.H3K27ac_Misc_Graphs.ps)\)

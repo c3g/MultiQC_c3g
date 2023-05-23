@@ -1,0 +1,27 @@
+peaks_annotation:
+  id: peaks_annotation
+  parent_title: Peaks Annotation
+  content: |
+    The peaks called previously are annotated with [[homer]] using RefSeq annotations. Gene ontology and genome ontology analyses are also performed at this stage.
+    
+    ----
+    ####TC71
+    * [Gene Annotations for Sample TC71 and Mark H3K27ac](annotation/TC71/H3K27ac/TC71.H3K27ac.annotated.csv)
+    * [HOMER Gene Ontology Annotations for Sample TC71 and Mark H3K27ac](annotation/TC71/H3K27ac/geneOntology.html)
+    * [HOMER Genome Ontology Annotations for Sample TC71 and Mark H3K27ac](annotation/TC71/H3K27ac/GenomeOntology.html)
+    ----
+    ####EW3
+    * [Gene Annotations for Sample EW3 and Mark H3K27ac](annotation/EW3/H3K27ac/EW3.H3K27ac.annotated.csv)
+    * [HOMER Gene Ontology Annotations for Sample EW3 and Mark H3K27ac](annotation/EW3/H3K27ac/geneOntology.html)
+    * [HOMER Genome Ontology Annotations for Sample EW3 and Mark H3K27ac](annotation/EW3/H3K27ac/GenomeOntology.html)
+    ----
+    ####EW22
+    * [Gene Annotations for Sample EW22 and Mark H3K27ac](annotation/EW22/H3K27ac/EW22.H3K27ac.annotated.csv)
+    * [HOMER Gene Ontology Annotations for Sample EW22 and Mark H3K27ac](annotation/EW22/H3K27ac/geneOntology.html)
+    * [HOMER Genome Ontology Annotations for Sample EW22 and Mark H3K27ac](annotation/EW22/H3K27ac/GenomeOntology.html)
+    ----
+    ####EW7
+    * [Gene Annotations for Sample EW7 and Mark H3K27ac](annotation/EW7/H3K27ac/EW7.H3K27ac.annotated.csv)
+    * [HOMER Gene Ontology Annotations for Sample EW7 and Mark H3K27ac](annotation/EW7/H3K27ac/geneOntology.html)
+    * [HOMER Genome Ontology Annotations for Sample EW7 and Mark H3K27ac](annotation/EW7/H3K27ac/GenomeOntology.html)
+

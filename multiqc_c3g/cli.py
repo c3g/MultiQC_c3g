@@ -11,6 +11,11 @@ enable_c3g = click.option('-c3g', '--enable-c3g', 'enable_c3g',
     help = "Enable the MultiQC_C3G plugin on this run"
 )
 
+runprocessing = click.option('-r', '--runprocessing',
+    is_flag = True,
+    help = "Enable options and modules for parsing Run Processing report"
+)
+
 project_c3g = click.option('--project', 'project',
     default = "default",
     help = "Defines the technology type in order to customize the report"

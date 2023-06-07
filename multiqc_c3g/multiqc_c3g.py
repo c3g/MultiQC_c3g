@@ -132,6 +132,7 @@ def c3g_summaries():
     if 'FastP' in [mod.name for mod in report.modules_output]:
         yields_by_lane = dict()
         clusters_by_lane = dict()
+        clusters_by_sample = []
         foo = next(x for x in report.general_stats_data for name, d in x.items() if "yield" in d and "clusters" in d)
         # for name, d in report.general_stats_data[0].items():
         for name, d in foo.items():
@@ -140,6 +141,7 @@ def c3g_summaries():
             sample_clusters = d['clusters']
             yields_by_lane[lane] = yields_by_lane.get(lane, []) + [sample_yield]
             clusters_by_lane[lane] = clusters_by_lane.get(lane, []) + [sample_clusters]
+            clusters_by_sample.append(sample_clusters)
         spreads_by_lane = [(lane, max(vals) / min(vals) if min(vals) else (lane, max(vals))) for lane, vals in yields_by_lane.items()]
         spreads_by_lane.sort(key=lambda tupl: tupl[0])
         clusters_by_lane = [(lane, sum(vals)) for lane, vals in clusters_by_lane.items()]

@@ -52,6 +52,7 @@ class ValidationReport(UserDict):
     @property
     def readsets(self):
         proj_by_sample = {x.get('sample'):x.get('project') for x in self.data.get('run_validation')}
+        index_dct_by_sample = {x.get('sample'):x.get('index') for x in self.data.get('run_validation')}
         align_dct_by_sample = {x.get('sample'):x.get('alignment') for x in self.data.get('run_validation')}
         if self.version == '2.0':
             reported_sex_by_sample = {x.get('sample'):x.get('alignment').get('reported_sex') for x in self.data.get('run_validation')}
@@ -64,6 +65,7 @@ class ValidationReport(UserDict):
             .with_name(name)
             .with_reported_sex(reported_sex_by_sample.get(name))
             .with_project(proj_by_sample.get(name))
+            .with_index_dict(index_dct_by_sample.get(name))
             .with_align_dict(align_dct_by_sample.get(name))
             .with_version(self.data.get('version'))
             for name, dct in self.data.get('readsets').items()
@@ -89,6 +91,10 @@ class Readset(UserDict):
 
     def with_project(self, project_name):
         self.data['Project'] = project_name
+        return self
+
+    def with_index_dict(self, index_dict):
+        self.data['PF Clusters'] = index_dict['pf_clusters']
         return self
 
     def with_align_dict(self, align_dict):

@@ -7,6 +7,7 @@ import json
 import logging
 
 from multiqc.utils import config
+from multiqc.plots import linegraph
 from multiqc_c3g.runprocessing_base import RunProcessingBaseModule
 from .validationreport import ValidationReport
 
@@ -18,11 +19,11 @@ class MultiqcModule(RunProcessingBaseModule):
     def __init__(self):
         # Initialise the parent module Class object
         super(MultiqcModule, self).__init__(
-            name="Runprocessing",
-            target="c3g_runprocessing",
+            name="Quick overview",
+            # target="c3g_runprocessing",
             anchor="c3g_runprocessing",
-            href="https://genpipes.readthedocs.io",
-            info=" outputs presented in more detail.",
+            # href="https://genpipes.readthedocs.io",
+            info=" of the run processing output.",
         )
 
         # Halt execution if we don't have the runprocessing flag set.
@@ -79,6 +80,20 @@ class MultiqcModule(RunProcessingBaseModule):
         self.generaljson_data = self.ignore_samples(self.generaljson_data)
         self.general_stats_addcols(self.generaljson_data, headers)
 
+        pf_cluster_curve = {}
+        pf_cluster_curve["PF Clusters"] = {sample: sample_data[sample]['PF Clusters'] for sample in sample_data}
+        if (len(pf_cluster_curve) > 0):
+            self.add_section (
+                name = 'Clusters',
+                anchor = 'c3g_runprocessing-overview',
+                plot = linegraph.plot(
+                    [pf_cluster_curve],
+                    {
+                        'ymin': 0,
+                        'data_labels': [{'name': 'PF Clusters', 'ylab': 'Clusters Per Sample', 'xlab': 'Samples'}]
+                    }
+                )
+            )
 
     def parse_genpipes_run_processing_json(self, f):
         try:

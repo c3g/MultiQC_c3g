@@ -47,6 +47,10 @@ class MultiqcModule(RunProcessingBaseModule):
         n["DemuxFastqs"] = DemuxFastqs.parse_reports(self)
         if n["DemuxFastqs"] > 0:
             log.info("Found {} DemuxFastqs reports".format(n["DemuxFastqs"]))
+        
+        n["SplitBarcode"] = SplitBarcode.parse_reports(self)
+        if n["SplitBarcode"] > 0:
+            log.info("Found {} SplitBarcode reports".format(n["SplitBarcode"]))
 
         n["MatchUndetermined"] = MatchUndetermined.parse_reports(self)
         if n["MatchUndetermined"] > 0:

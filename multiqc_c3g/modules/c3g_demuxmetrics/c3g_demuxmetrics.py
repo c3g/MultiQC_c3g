@@ -15,6 +15,7 @@ from . import DemuxFastqs
 from . import CountIlluminaBarcodes
 from . import bcl2fastq
 from . import MatchUndetermined
+from . import SplitBarcode
 
 # Initialise the main MultiQC logger
 log = logging.getLogger("multiqc")

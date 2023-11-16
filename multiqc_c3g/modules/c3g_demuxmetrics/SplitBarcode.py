@@ -22,10 +22,11 @@ def parse_reports(self):
     report_found = []
 
     for f in self.find_log_files("c3g_demuxmetrics/splitbarcode"): 
-        lane_data = expected_metrics(self, f)
+       # lane_data = expected_metrics(self, f)
         lane = self.get_lane(f)
+        lane_data = expected_metrics(self, f)
         self.unexpected_per_lane[f"L{lane}"] = unexpected_metrics(f)
-        self.barcode_data = {**self.barcode_data, **lane_data}
+        self.barcode_data= {**self.barcode_data, **lane_data}
         report_found.append(f['fn'])
 
     if report_found:
@@ -68,11 +69,10 @@ def expected_metrics(self, f):
         if barcode_name != "Total":
            # sample_name = row['Sample_ID']
            # barcode_name = get_clean_barcode_name(barcode_name, row['library_name'])
-            # s_name = self.clean_s_name(sample_name, f)
            # s_name = self.clean_s_name(barcode_name, f)
             # row = {**row, **{'barcode_name': barcode_name}}
-           # row = {**row, **{'sample_name': sample_name}}
-            metrics[barcode_name] = row
+            row = {**row, **{'BarcodeName': barcode_name}}
+            metrics[s_name] = row #{ 'Sample_ID' : row['Sample_ID'], 'Correct' : row['Correct'], 'Corrected' : row['Corrected'], 'Total' : row['Total']}
 
     return metrics
 

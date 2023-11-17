@@ -52,7 +52,7 @@ def unexpected_metrics(f):
         barcode_name = row.pop('BarcodeName')
         if barcode_name == "Total":
             expected_total += int(row['Total'])
-            percentage += float(row['Percentage(%)'])
+            percentage += float(row['Percentage'])
     return {
         "expected": expected_total,
         "unexpected": ((100 / percentage) * expected_total) - expected_total,
@@ -67,52 +67,22 @@ def expected_metrics(self, f):
     for row in reader:
         barcode_name = row.pop('BarcodeName')
         if barcode_name != "Total":
-           # sample_name = row['Sample_ID']
-           # barcode_name = get_clean_barcode_name(barcode_name, row['library_name'])
-           # s_name = self.clean_s_name(barcode_name, f)
-            # row = {**row, **{'barcode_name': barcode_name}}
+            s_name = self.clean_s_name(barcode_name, f)
             row = {**row, **{'BarcodeName': barcode_name}}
-            metrics[s_name] = row #{ 'Sample_ID' : row['Sample_ID'], 'Correct' : row['Correct'], 'Corrected' : row['Corrected'], 'Total' : row['Total']}
+            metrics[s_name] = row
 
     return metrics
-
-#def get_clean_sample_name(barcode, library):
-#    raw_sample = barcode.split(f"_{library}_")[0]
-#    clean_sample = f"{raw_sample}_{library}"
-#    return clean_sample
-
-#def get_clean_barcode_name(barcode, library):
-#    raw_barcode = barcode.split(f"_{library}_")[1]
-#    prefix_matcher = re.compile("(?P<prefix>[A-Z])_(?P<barcode>.+)")
-#    m = prefix_matcher.search(raw_barcode)
-#    if m:
-#        barcode = m.group("barcode")
-#        suffix = m.group("prefix")
-#        barcode = f"{barcode}_{suffix}"
-#    else:
-#        barcode = raw_barcode
-#    return barcode
 
 def expected_barcodes_table(self):
     headers = OrderedDict()
     # longest_name = max([len(y['barcode_name']) for (_,y) in self.barcode_data.items()])
     longest_name = max([len(y['Sample_ID']) for (_,y) in self.barcode_data.items()])
-    # headers['barcode_name'] = {
-    #     'title' : "Barcode ID",
-    #     'description': 'Barcode Name',
-    #     'max': longest_name,
-    #     'format': '{:s}',
-    # }
     headers['Sample_ID'] = {
         'title' : "Sample Name",
         'description': 'Sample Name',
         'max': longest_name,
         'format': '{:s}',
     }
-#    headers['barcode'] = {
-#        'title' : "Barcode Sequence",
-#        'description': 'Barcode sequence',
-#    }
     largest_total = max([y['Total'] for (_,y) in self.barcode_data.items()])
     headers['Correct'] = {
         'title': 'Perfect',
@@ -139,12 +109,10 @@ def expected_barcodes_table(self):
         'title' : "Lane composition (%)",
         'description': 'Percentage of the lane assigned to this barcode',
         'suffix': '%',
-        'modify': lambda x: float(x) * 100,
         'format': '{:,.1f}',
         'min': 0,
         'max': 100
     }
-    # return table.plot(self.barcode_data, headers, {"col1_header": "Lane | Sample Name"})
     return table.plot(self.barcode_data, headers, {"col1_header": "Lane | Barcode ID"})
 
 def lane_overview_table(self):

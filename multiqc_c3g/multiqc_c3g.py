@@ -67,6 +67,8 @@ def c3g_execution():
             config.update_dict( config.sp, {"c3g_demuxmetrics/count_illumina_barcodes": {"fn": "*_[12345678].metrics"}} )
         if "c3g_demuxmetrics/bcl2fastq" not in config.sp:
             config.update_dict( config.sp, {"c3g_demuxmetrics/bcl2fastq": {"fn": "Stats.json"}} )
+        if "c3g_demuxmetrics/splitbarcode" not in config.sp:
+            config.update_dict( config.sp, {"c3g_demuxmetrics/splitbarcode": {"fn": "*BarcodeStat_*_multiqc.txt"}} )
         if "c3g_demuxmetrics/unassigned" not in config.sp:
             config.update_dict( config.sp, {"c3g_demuxmetrics/unassigned": {"fn": "Undetermined_*.counts.txt"}} )
         if "c3g_demuxmetrics/matchedundetermined" not in config.sp:

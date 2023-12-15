@@ -44,7 +44,7 @@ def parse_reports(self):
 
 
     self.general_stats_headers["MeanCoverage"] = {
-        "title": "Mean Coveage",
+        "title": "Mean Coverage",
         "description": "Mean coverage of genome with mapped reads (X)",
         "min": 0,
         "suffix": "X",

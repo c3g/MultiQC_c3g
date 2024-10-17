@@ -121,9 +121,10 @@ def c3g_execution():
             config.run_modules = set(rp_modules)
 
         # Buttons to show/hide by lane
-        config.show_hide_buttons = ["All lanes"] + [f"Lane {lane}" for lane in [1,2,3,4]]
-        config.show_hide_patterns = [[]] + [f"L{lane} | " for lane in [1,2,3,4]]
-        config.show_hide_mode = ['hide'] + ["show" for lane in [1,2,3,4]]
+        # TODO dynamic lane list
+        config.show_hide_buttons = ["All lanes"] + [f"Lane {lane}" for lane in [1,2,3,4,5,6,7,8]]
+        config.show_hide_patterns = [[]] + [f"L{lane} | " for lane in [1,2,3,4,5,6,7,8]]
+        config.show_hide_mode = ['hide'] + ["show" for lane in [1,2,3,4,5,6,7,8]]
 
         # Set module order
         config.module_order = list(rp_modules)

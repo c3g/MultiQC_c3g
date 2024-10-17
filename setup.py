@@ -12,7 +12,7 @@ For more information about MultiQC, see http://multiqc.info
 from setuptools import setup, find_packages
 
 
-version = '1.0.1'
+version = '1.0.2'
 
 
 print("""-----------------------------------
@@ -36,7 +36,7 @@ setup(
     packages = find_packages(),
     include_package_data = True,
     install_requires = [
-        'multiqc>=1.12',
+        'multiqc==1.17',
         'bs4>=0.0.1',
         'pybtex>=0.24.0'
     ],

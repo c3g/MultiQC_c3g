@@ -111,7 +111,7 @@ def parse_reports(self):
 
         # Add to general stats table
         self.general_stats_headers["summed_median"] = {
-            "title": "Insert Size",
+            "title": "Median Insert Size",
             "description": "Median Insert Size, all read orientations (bp)",
             "min": 0,
             "suffix": " bp",

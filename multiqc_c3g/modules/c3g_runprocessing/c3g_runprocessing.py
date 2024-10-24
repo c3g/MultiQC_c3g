@@ -49,7 +49,8 @@ class MultiqcModule(RunProcessingBaseModule):
         headers = OrderedDict()
         headers['Project'] = {
             'title': 'Project',
-            'description': 'Project ID'
+            'description': 'Project ID',
+            'hidden': True
         }
         headers['Lane'] = {
             'title': 'Lane',
@@ -64,15 +65,15 @@ class MultiqcModule(RunProcessingBaseModule):
             'description': 'Reported Sex',
             'hidden': True
         }
-        headers['Inferred Gender'] = {
+        headers['Inferred Sex'] = {
             'title': 'Inferred Sex',
             'description': 'Inferred Sex',
             'hidden': True
         }
-        headers['Gender Concordance'] = {
+        headers['Sex Concordance'] = {
             'title': 'Sex Concordance',
             'description': 'Sex Concordance',
-            'hidden': True
+            'hidden': False
         }
 
         for (s_name, data) in sample_data.items():
@@ -150,6 +151,8 @@ class MultiqcModule(RunProcessingBaseModule):
                 s_name = self.clean_s_name(obj["sample"], f)
                 data[s_name]["Project"] = obj["project"]
                 data[s_name]["Reported Sex"] = obj["alignment"]["reported_sex"]
+                data[s_name]["Inferred Sex"] = obj["alignment"]["inferred_sex"]
+                data[s_name]["Sex concordance"] = obj["alignment"]["sex_concordance"]
         else:
             log.warn("Genpipes JSON did not have 'run_validation' key: '{}'".format(f["fn"]))
             for readset_name, lst in parsed_json["barcodes"].items():

@@ -54,10 +54,13 @@ class ValidationReport(UserDict):
         proj_by_sample = {x.get('sample'):x.get('project') for x in self.data.get('run_validation')}
         index_dct_by_sample = {x.get('sample'):x.get('index') for x in self.data.get('run_validation')}
         align_dct_by_sample = {x.get('sample'):x.get('alignment') for x in self.data.get('run_validation')}
-        if self.version == '2.0':
+
+        if self.version == '1.0':
+            reported_sex_by_sample = {x.get('sample'):x.get('reported_sex') for x in self.data.get('run_validation')}
+        elif self.version == '2.0':
             reported_sex_by_sample = {x.get('sample'):x.get('alignment').get('reported_sex') for x in self.data.get('run_validation')}
         else:
-            reported_sex_by_sample = {x.get('sample'):x.get('reported_sex') for x in self.data.get('run_validation')}
+            reported_sex_by_sample = {x:self.data.get('readsets')[x].get('reported_sex') for x in self.data.get('readsets')}
 
         return [
             Readset

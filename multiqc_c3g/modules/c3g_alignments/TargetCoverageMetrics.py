@@ -70,7 +70,7 @@ def parse_reports(self):
         "suffix": "%",
         "format": "{:,.1f}",
         "scale": "GnBu",
-        "hidden": False,
+        "hidden": True,
     }
 
     for s_name in self.target_coverage_metrics:

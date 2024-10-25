@@ -9,7 +9,7 @@ import logging
 import os
 
 from multiqc_c3g.modules.c3g_runprocessing import ValidationReport
-from multiqc.utils import report, config
+from multiqc import report, config
 
 # Initialise the main MultiQC logger
 log = logging.getLogger('multiqc')
@@ -24,7 +24,7 @@ def c3g_execution():
     This setuptools hook is the earliest that will be able
     to use custom command line flags.
     """
-
+    log.info("Made it to c3g_execution")
     # Halt execution if we've disabled the plugin
     if config.kwargs.get('enable_c3g', False):
 
@@ -55,7 +55,7 @@ def c3g_execution():
         ])
 
     # Runprocessing-specific args and options
-    elif config.kwargs.get('runprocessing', False):
+    elif config.kwargs.get('runprocessing', False) is True:
 
         log.info("Running C3G Runprocessing Plugin v{}".format(config.c3g_plugin_version))
         # Search patterns used by Run Processing

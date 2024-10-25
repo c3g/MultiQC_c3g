@@ -4,7 +4,7 @@
 Overloading the clean_s_name to pull out the lane name from the file path.
 """
 
-from multiqc.modules.base_module import BaseMultiqcModule
+from multiqc.base_module import BaseMultiqcModule
 from multiqc.utils import config
 import logging
 

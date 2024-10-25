@@ -86,8 +86,8 @@ setup(
         'multiqc.hooks.v1': [
             'before_config =  multiqc_c3g.multiqc_c3g:c3g_config'
             'execution_start = multiqc_c3g.multiqc_c3g:c3g_execution',
-            'before_modules = multiqc_c3g.multiqc_c3g:before_modules',
-            'after_modules = multiqc_c3g.multiqc_c3g:c3g_summaries'
+            'before_modules = multiqc_c3g.multiqc_c3g:before_modules'
+            #'after_modules = multiqc_c3g.multiqc_c3g:c3g_summaries'
         ]
     },
     classifiers = [

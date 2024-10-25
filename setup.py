@@ -36,7 +36,7 @@ setup(
     packages = find_packages(),
     include_package_data = True,
     install_requires = [
-        'multiqc==1.17',
+        'multiqc>=1.17',
         'bs4>=0.0.1',
         'pybtex>=0.24.0'
     ],

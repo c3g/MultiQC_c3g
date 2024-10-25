@@ -9,7 +9,7 @@ from itertools import islice
 
 from multiqc import config
 from multiqc.plots import bargraph, table
-from multiqc.modules.base_module import BaseMultiqcModule
+from multiqc.base_module import BaseMultiqcModule
 
 log = logging.getLogger(__name__)
 

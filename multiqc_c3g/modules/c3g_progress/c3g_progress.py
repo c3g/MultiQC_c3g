@@ -11,7 +11,7 @@ import re
 from typing import OrderedDict
 
 from multiqc.plots import table
-from multiqc.modules.base_module import BaseMultiqcModule
+from multiqc.base_module import BaseMultiqcModule
 
 # Initialise the main MultiQC logger
 log = logging.getLogger("multiqc")

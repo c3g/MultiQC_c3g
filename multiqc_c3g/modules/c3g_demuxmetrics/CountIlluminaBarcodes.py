@@ -18,7 +18,7 @@ from multiqc.plots import table
 log = logging.getLogger("multiqc")
 
 def get_lane_from_file_name(f_name):
-    matcher = re.compile(".*_(?P<lane>\d+)\.metrics")
+    matcher = re.compile(r".*_(?P<lane>\d+)\.metrics")
     m = matcher.search(f_name)
     if m:
         return m.group("lane")

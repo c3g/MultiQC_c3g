@@ -533,9 +533,9 @@ def lane_stats_table(self):
     table_config = {
         "namespace": "bcl2fastq",
         "id": "bcl2fastq-lane-stats-table",
-        "table_title": "bcl2fastq Lane Statistics",
+        "title": "bcl2fastq Lane Statistics",
         "col1_header": "Run ID - Lane",
-        "no_beeswarm": True,
+        "no_violin": True,
     }
     return table.plot(self.bcl2fastq_bylane, headers, table_config)
 

@@ -159,7 +159,7 @@ def parse_reports(self):
                 "title": "Picard: Insert Size",
                 "ylab": "Count",
                 "xlab": "Insert Size (bp)",
-                "xDecimals": False,
+                "x_decimals": False,
                 "tt_label": "<b>{point.x} bp</b>: {point.y:.0f}",
                 "ymin": 0,
                 "data_labels": [

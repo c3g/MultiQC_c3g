@@ -89,7 +89,7 @@ def parse_reports(self):
         self.add_section(
             name = "Expected Barcodes - Read counts",
             description = "The counts for expected barcodes are shown below. Note that percentage is relative to the lane, not the run as a whole.",
-            plot = table.plot(expected_count_data, headers, {"id": "TBDexpected", "title": "TBDexpected"})
+            plot = table.plot(expected_count_data, headers, {"id": "TBDexpected", "title": "TBDexpected", "no_violin": True})
         )
 
         largest_total = max([y['read_count'] for (_,y) in expected_breakdown_data.items()])
@@ -109,7 +109,7 @@ def parse_reports(self):
         self.add_section(
             name = "Expected Barcodes - Breakdown per index",
             description = "CountIlluminaBarcodes breakdown per index, top 20 per index.",
-            plot = table.plot(expected_breakdown_data, headers, {"id": "TBDperindex", "title": "TBDperindex"})
+            plot = table.plot(expected_breakdown_data, headers, {"id": "TBDperindex", "title": "TBDperindex", "no_violin": True})
         )
 
         largest_total = max([y['read_count'] for (_,y) in unexpected_data.items()])
@@ -129,7 +129,7 @@ def parse_reports(self):
         self.add_section(
             name = "Barcodes - Unexpected",
             description = "Overview of number of clusters assigned to expected barcodes.",
-            plot = table.plot(unexpected_data, headers, {"id": "TBDunexpected", "title": "TBDunexpected"})
+            plot = table.plot(unexpected_data, headers, {"id": "TBDunexpected", "title": "TBDunexpected", "no_violin": True})
         )
 
     # Return the number of detected samples to the parent module

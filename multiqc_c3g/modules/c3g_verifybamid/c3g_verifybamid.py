@@ -271,7 +271,8 @@ class MultiqcModule(BaseMultiqcModule):
             "namespace": "C3G VerifyBAMID",
             "title": "verifybamid_results",
             "id": "verifybamid-results",
-            "col1_header": "Lane | Sample Name"
+            "col1_header": "Lane | Sample Name",
+            "no_violin": True
         }
 
         # send the plot to add section function with data dict and headers

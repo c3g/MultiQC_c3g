@@ -163,7 +163,9 @@ class MultiqcModule(RunProcessingBaseModule):
                     quality_curves,
                     {
                         'ymin': 0,
-                        'data_labels': data_labels
+                        'data_labels': data_labels,
+                        'id': 'TBDfastp',
+                        'title': 'TBDfastp'
                     }
                 )
             )
@@ -176,7 +178,7 @@ class MultiqcModule(RunProcessingBaseModule):
             return None
 
         if "summary" not in parsed_json:
-            log.warn("Could not find 'summary' section in fastp json '{}'".format(f['fn']))
+            log.warning("Could not find 'summary' section in fastp json '{}'".format(f['fn']))
             return None
 
         data = {}

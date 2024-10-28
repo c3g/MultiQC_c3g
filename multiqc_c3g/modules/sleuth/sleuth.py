@@ -3,7 +3,7 @@
 
 import logging
 from multiqc import config
-from multiqc.modules.base_module import BaseMultiqcModule
+from multiqc.base_module import BaseMultiqcModule
 
 
 # Initialise the logger

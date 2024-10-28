@@ -10,7 +10,7 @@ import json
 import re
 
 from multiqc.utils import config
-from multiqc.modules.base_module import BaseMultiqcModule
+from multiqc.base_module import BaseMultiqcModule
 from multiqc.plots import linegraph, table
 
 # Initialise the main MultiQC logger

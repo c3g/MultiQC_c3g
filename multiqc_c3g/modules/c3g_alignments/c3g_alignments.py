@@ -8,7 +8,7 @@ from pathlib import PurePath
 import re
 from typing import OrderedDict
 
-from multiqc.modules.base_module import BaseMultiqcModule
+from multiqc.base_module import BaseMultiqcModule
 
 from . import InsertSizeMetrics
 from . import AlignmentSummaryMetrics

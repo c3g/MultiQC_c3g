@@ -9,7 +9,7 @@ from multiqc_c3g.modules.c3g_counter import c3g_counter
 from . import readtsv
 
 from multiqc import config
-from multiqc.modules.base_module import BaseMultiqcModule
+from multiqc.base_module import BaseMultiqcModule
 from multiqc.plots import table
 from multiqc.modules.homer import homer
 

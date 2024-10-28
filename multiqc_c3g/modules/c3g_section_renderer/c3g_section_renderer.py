@@ -6,7 +6,7 @@ import logging
 from multiqc_c3g.modules.c3g_yaml_parser import c3g_yaml_parser
 
 from multiqc import config
-from multiqc.modules.base_module import BaseMultiqcModule
+from multiqc.base_module import BaseMultiqcModule
 
 # Start the logger
 log = logging.getLogger(__name__)

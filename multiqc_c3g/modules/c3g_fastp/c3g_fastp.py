@@ -22,7 +22,7 @@ class MultiqcModule(RunProcessingBaseModule):
         super(MultiqcModule, self).__init__(
             name="FastP",
             target="FastP",
-            anchor="fastp",
+            anchor="c3g_fastp",
             href="https://github.com/OpenGene/fastp",
             info=" outputs presented in more detail.",
             doi = ["10.1093/bioinformatics/bty560"]

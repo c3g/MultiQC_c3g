@@ -76,16 +76,16 @@ def c3g_config():
 
         # If no modules are specified using --modules, limit to just the c3g run processing modules.
         rp_modules = [
-            'c3g_runprocessing',
             'c3g_demuxmetrics',
             'c3g_fastp',
             'c3g_blastresults',
             'c3g_alignments',
+            'c3g_runprocessing',
             'c3g_verifybamid',
             'c3g_progress'
         ]
         if not config.run_modules:
-            config.run_modules = set(rp_modules)
+            config.run_modules = list(rp_modules)
 
         # increase threshold to turn tables into violin plots
         config.max_table_rows = 10000
@@ -95,17 +95,31 @@ def c3g_config():
         config.show_hide_buttons = ["All lanes"] + [f"Lane {lane}" for lane in [1,2,3,4,5,6,7,8]]
         config.show_hide_patterns = [[]] + [f"L{lane} | " for lane in [1,2,3,4,5,6,7,8]]
         config.show_hide_mode = ['hide'] + ["show" for lane in [1,2,3,4,5,6,7,8]]
-
+        
         # Set module order
-        config.module_order = [
-            'c3g_demuxmetrics',
-            'c3g_fastp',
-            'c3g_blastresults',
-            'c3g_alignments',
-            'c3g_runprocessing',
-            'c3g_verifybamid',
-            'c3g_progress'
-        ]
+        config.report_section_order = {
+                'c3g_demuxmetrics' : {
+                    'order' : 100
+                    },
+                'c3g_fastp' : {
+                    'order' : 90
+                    },
+                'c3g_blastresults' : {
+                    'order' : 80
+                    },
+                'c3g_alignments' : {
+                    'order' : 70
+                    },
+                'c3g_runprocessing' : {
+                    'order' : 60
+                    },
+                'c3g_verifybamid' : {
+                    'order' : 50
+                    },
+                'c3g_progress' : {
+                    'order' : 10
+                    }
+                }
         
     else:
         return None
@@ -200,16 +214,16 @@ def c3g_execution():
 
         # If no modules are specified using --modules, limit to just the c3g run processing modules.
         rp_modules = [
-            'c3g_runprocessing',
             'c3g_demuxmetrics',
             'c3g_fastp',
             'c3g_blastresults',
             'c3g_alignments',
+            'c3g_runprocessing',
             'c3g_verifybamid',
             'c3g_progress'
         ]
         if not config.run_modules:
-            config.run_modules = set(rp_modules)
+            config.run_modules = list(rp_modules)
 
         # increase threshold to turn tables into violin plots
         config.max_table_rows = 10000
@@ -221,15 +235,29 @@ def c3g_execution():
         config.show_hide_mode = ['hide'] + ["show" for lane in [1,2,3,4,5,6,7,8]]
 
         # Set module order
-        config.module_order = [
-            'c3g_demuxmetrics',
-            'c3g_fastp',
-            'c3g_blastresults',
-            'c3g_alignments',
-            'c3g_runprocessing',
-            'c3g_verifybamid',
-            'c3g_progress'
-        ]
+        config.report_section_order = {
+                'c3g_demuxmetrics' : {
+                    'order' : 100
+                    },
+                'c3g_fastp' : {
+                    'order' : 90
+                    },
+                'c3g_blastresults' : {
+                    'order' : 80
+                    },
+                'c3g_alignments' : {
+                    'order' : 70
+                    },
+                'c3g_runprocessing' : {
+                    'order' : 60
+                    },
+                'c3g_verifybamid' : {
+                    'order' : 50
+                    },
+                'c3g_progress' : {
+                    'order' : 10
+                    }
+                }
 
     else:
         return None

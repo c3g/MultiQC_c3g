@@ -100,7 +100,7 @@ def parse_reports(self):
             # 'modify': lambda x: x * config.read_count_multiplier,
             # 'suffix': config.read_count_prefix,
             'format': '{:,.0f}',
-            'max': largest_total
+            'max': float(largest_total)
         }
         headers['sequence'] = {
             'title': 'Sequence',
@@ -120,7 +120,7 @@ def parse_reports(self):
             # 'modify': lambda x: x * config.read_count_multiplier,
             # 'suffix': config.read_count_prefix,
             'format': '{:,.0f}',
-            'max': largest_total
+            'max': float(largest_total)
         }
         headers['sequence'] = {
             'title': 'Sequence',

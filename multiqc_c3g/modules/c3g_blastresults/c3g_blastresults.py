@@ -24,7 +24,7 @@ class MultiqcModule(RunProcessingBaseModule):
         super(MultiqcModule, self).__init__(
             name="Blast",
             target="Blast",
-            anchor="blast",
+            anchor="c3g_blastresults",
             href="https://github.com/c3g/runprocesing_plugin",
             info=" files from run processing blast output",
         )

@@ -23,7 +23,7 @@ class MultiqcModule(BaseMultiqcModule):
         super(MultiqcModule, self).__init__(
             name="Job Progress",
             target="Progress",
-            anchor="progress",
+            anchor="c3g_progress",
             href="https://bitbucket.org/mugqic/multiqc_c3g/src/runprocessing/multiqc_c3g/modules/c3g_progress/",
             info="of the run processing pipeline",
         )

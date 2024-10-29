@@ -164,8 +164,8 @@ class MultiqcModule(RunProcessingBaseModule):
                     {
                         'ymin': 0,
                         'data_labels': data_labels,
-                        'id': 'TBDfastp',
-                        'title': 'TBDfastp'
+                        'id': 'fastp',
+                        'title': 'fastp'
                     }
                 )
             )

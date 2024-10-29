@@ -72,7 +72,7 @@ class MultiqcModule(BaseMultiqcModule):
         self.add_section(
             name = "Jobs",
             description = "Job statuses.",
-            plot = table.plot(jobs_by_step, headers, {"col1_header": "Pipeline Step", "id": "TBDsteps", "title": "TBDsteps"})
+            plot = table.plot(jobs_by_step, headers, {"col1_header": "Pipeline Step", "id": "JobStatuses", "title": "Steps"})
         )
 
 class Job:

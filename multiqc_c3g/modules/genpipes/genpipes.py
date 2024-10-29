@@ -9,7 +9,7 @@ import logging
 import json
 import re
 
-from multiqc.utils import config
+from multiqc import config
 from multiqc.base_module import BaseMultiqcModule
 from multiqc.plots import linegraph, table
 

@@ -51,7 +51,7 @@ class MultiqcModule(RunProcessingBaseModule):
         if(len(blast_data)>0):
             self.add_section(
                 name = "Blast hits",
-                plot = table.plot(blast_data, headers, {"id": "TBD", "title": "TBD", "col1_header": "Lane | Sample Name"})
+                plot = table.plot(blast_data, headers, {"id": "BLAST", "title": "Blast hits", "col1_header": "Lane | Sample Name"})
             )
 
         blast_data = dict()

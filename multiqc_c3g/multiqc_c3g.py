@@ -23,7 +23,7 @@ def c3g_config():
     Set config options specific to c3g runprocessing.
     Hook for before_config.
     """
-    log.info("Made it to c3g_config")
+    log.info("Setting C3G Run Processing Configurations")
 
     if config.kwargs.get('runprocessing', False) is True:
         if "c3g_runprocessing" not in config.sp:
@@ -68,7 +68,7 @@ def c3g_config():
                 "*.fasta",
                 "*.blastresRrna",
                 "*.qual",
-                "*.html"
+                "*.html",
                 "*.reportupdated",
                 "*.filter"
             ]
@@ -84,8 +84,11 @@ def c3g_config():
             'c3g_verifybamid',
             'c3g_progress'
         ]
-        if not hasattr(config, 'run_modules'):
+        if not config.run_modules:
             config.run_modules = set(rp_modules)
+
+        # increase threshold to turn tables into violin plots
+        config.max_table_rows = 10000
 
         # Buttons to show/hide by lane
         # TODO dynamic lane list
@@ -105,7 +108,6 @@ def c3g_execution():
     This setuptools hook is the earliest that will be able
     to use custom command line flags.
     """
-    log.info("Made it to c3g_execution")
     # Halt execution if we've disabled the plugin
     if config.kwargs.get('enable_c3g', False):
 
@@ -182,7 +184,7 @@ def c3g_execution():
                 "*.fasta",
                 "*.blastresRrna",
                 "*.qual",
-                "*.html"
+                "*.html",
                 "*.reportupdated",
                 "*.filter"
             ]
@@ -198,8 +200,11 @@ def c3g_execution():
             'c3g_verifybamid',
             'c3g_progress'
         ]
-        if not hasattr(config, 'run_modules'):
+        if not config.run_modules:
             config.run_modules = set(rp_modules)
+
+        # increase threshold to turn tables into violin plots
+        config.max_table_rows = 10000
 
         # Buttons to show/hide by lane
         # TODO dynamic lane list
@@ -215,7 +220,7 @@ def c3g_execution():
 
 def c3g_summaries():
     """ Add run-level metrics to the report header """
-    if 'FastP' in [mod.name for mod in report.modules_output]:
+    if 'FastP' in [mod.name for mod in report.modules]:
         yields_by_lane = dict()
         clusters_by_lane = dict()
         clusters_by_sample = []

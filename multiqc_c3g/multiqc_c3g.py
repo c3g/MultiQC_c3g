@@ -97,7 +97,15 @@ def c3g_config():
         config.show_hide_mode = ['hide'] + ["show" for lane in [1,2,3,4,5,6,7,8]]
 
         # Set module order
-        config.module_order = list(rp_modules)
+        config.module_order = [
+            'c3g_demuxmetrics',
+            'c3g_fastp',
+            'c3g_blastresults',
+            'c3g_alignments',
+            'c3g_runprocessing',
+            'c3g_verifybamid',
+            'c3g_progress'
+        ]
         
     else:
         return None
@@ -213,7 +221,15 @@ def c3g_execution():
         config.show_hide_mode = ['hide'] + ["show" for lane in [1,2,3,4,5,6,7,8]]
 
         # Set module order
-        config.module_order = list(rp_modules)
+        config.module_order = [
+            'c3g_demuxmetrics',
+            'c3g_fastp',
+            'c3g_blastresults',
+            'c3g_alignments',
+            'c3g_runprocessing',
+            'c3g_verifybamid',
+            'c3g_progress'
+        ]
 
     else:
         return None

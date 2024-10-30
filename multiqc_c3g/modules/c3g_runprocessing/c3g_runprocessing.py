@@ -73,7 +73,9 @@ class MultiqcModule(RunProcessingBaseModule):
         headers['Sex Concordance'] = {
             'title': 'Sex Concordance',
             'description': 'Sex Concordance',
-            'hidden': False
+            'hidden': False,
+            'modify': lambda x: "True" if x == 1.0 else "False"
+
         }
 
         for (s_name, data) in sample_data.items():

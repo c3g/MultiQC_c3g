@@ -236,29 +236,62 @@ def c3g_execution():
 
         # Set module order
         config.report_section_order = {
-                'c3g_demuxmetrics' : {
+                'c3g_runprocessing' : {
                     'order' : 100
                     },
-                'c3g_fastp' : {
-                    'order' : 90
+                'c3g_demuxmetrics' : {
+                    'order': 90
                     },
-                'c3g_blastresults' : {
+                'c3g_fastp' : {
                     'order' : 80
                     },
-                'c3g_alignments' : {
+                'c3g_blastresults' : {
                     'order' : 70
                     },
-                'c3g_runprocessing' : {
+                'c3g_alignments' : {
                     'order' : 60
                     },
                 'c3g_verifybamid' : {
-                    'order' : 50
+                    'order' : 40
                     },
                 'c3g_progress' : {
                     'order' : 10
                     }
                 }
-
+        
+        # customize column order of General Stats table
+        config.table_columns_placement = {
+                'general_stats_table' : {
+                    'Project' : 100,
+                    'Lane' : 110,
+                    'Reported Sex' : 120,
+                    'Inferred Sex' : 130,
+                    'Sex Concordance' : 140,
+                    'total' : 200,
+                    'yieldQ30' : 210,
+                    'percent_R1_Q30' : 220,
+                    'percent_R2_Q30' : 230,
+                    'perfectPercent' : 240,
+                    'R1_trimmed_bases' : 250,
+                    'R2_trimmed_bases' : 260,
+                    'PCT_PF_READS_ALIGNED' : 300,
+                    'summed_median' : 310,
+                    'summed_mean' : 320,
+                    'MeanCoverage' : 330,
+                    'PctBasesCoveredAt10x' : 340,
+                    'PctBasesCoveredAt25x' : 350,
+                    'clusters' : 400,
+                    'yield' : 410,
+                    'gc' : 420,
+                    'Duplication' : 430,
+                    'q30_rate' : 440,
+                    'q20_rate' : 450,
+                    'blast_hit_1' : 500,
+                    'blast_hit_2' : 510,
+                    'blast_hit_3' : 520,
+                    'FREEMIX' : 600
+                    }
+                }
     else:
         return None
 

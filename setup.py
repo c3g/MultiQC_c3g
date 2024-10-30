@@ -38,7 +38,8 @@ setup(
     install_requires = [
         'multiqc>=1.23',
         'bs4>=0.0.1',
-        'pybtex>=0.24.0'
+        'pybtex>=0.24.0',
+        'setuptools'
     ],
     entry_points = {
         'multiqc.modules.v1': [

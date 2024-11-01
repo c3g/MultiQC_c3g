@@ -24,7 +24,7 @@ class MultiqcModule(RunProcessingBaseModule):
         super(MultiqcModule, self).__init__(
             name="Blast",
             target="Blast",
-            anchor="blast",
+            anchor="c3g_blastresults",
             href="https://github.com/c3g/runprocesing_plugin",
             info=" files from run processing blast output",
         )
@@ -51,7 +51,7 @@ class MultiqcModule(RunProcessingBaseModule):
         if(len(blast_data)>0):
             self.add_section(
                 name = "Blast hits",
-                plot = table.plot(blast_data, headers, {"col1_header": "Lane | Sample Name"})
+                plot = table.plot(blast_data, headers, {"id": "BLAST", "title": "Blast hits", "col1_header": "Lane | Sample Name"})
             )
 
         blast_data = dict()

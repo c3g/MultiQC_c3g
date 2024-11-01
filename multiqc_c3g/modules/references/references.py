@@ -15,7 +15,7 @@ from bs4 import BeautifulSoup
 import shutil, os, yaml, re, io
 
 from multiqc import config
-from multiqc.modules.base_module import BaseMultiqcModule
+from multiqc.base_module import BaseMultiqcModule
 
 # Start the logger
 log = logging.getLogger('multiqc')

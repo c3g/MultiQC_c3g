@@ -22,7 +22,7 @@ class MultiqcModule(RunProcessingBaseModule):
         super(MultiqcModule, self).__init__(
             name="FastP",
             target="FastP",
-            anchor="fastp",
+            anchor="c3g_fastp",
             href="https://github.com/OpenGene/fastp",
             info=" outputs presented in more detail.",
             doi = ["10.1093/bioinformatics/bty560"]
@@ -163,7 +163,9 @@ class MultiqcModule(RunProcessingBaseModule):
                     quality_curves,
                     {
                         'ymin': 0,
-                        'data_labels': data_labels
+                        'data_labels': data_labels,
+                        'id': 'fastp',
+                        'title': 'fastp'
                     }
                 )
             )
@@ -176,7 +178,7 @@ class MultiqcModule(RunProcessingBaseModule):
             return None
 
         if "summary" not in parsed_json:
-            log.warn("Could not find 'summary' section in fastp json '{}'".format(f['fn']))
+            log.warning("Could not find 'summary' section in fastp json '{}'".format(f['fn']))
             return None
 
         data = {}

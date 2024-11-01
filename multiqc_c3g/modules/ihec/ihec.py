@@ -5,7 +5,7 @@ from collections import OrderedDict
 import logging
 
 from multiqc import config
-from multiqc.modules.base_module import BaseMultiqcModule
+from multiqc.base_module import BaseMultiqcModule
 
 # Import the HOMER submodules
 from .ihec_chipseq import ChIPSeqReportMixin

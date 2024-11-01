@@ -18,7 +18,7 @@ from multiqc.plots import table
 log = logging.getLogger("multiqc")
 
 def get_lane_from_file_name(f_name):
-    matcher = re.compile(".*_(?P<lane>\d+)\.metrics")
+    matcher = re.compile(r".*_(?P<lane>\d+)\.metrics")
     m = matcher.search(f_name)
     if m:
         return m.group("lane")
@@ -89,7 +89,7 @@ def parse_reports(self):
         self.add_section(
             name = "Expected Barcodes - Read counts",
             description = "The counts for expected barcodes are shown below. Note that percentage is relative to the lane, not the run as a whole.",
-            plot = table.plot(expected_count_data, headers)
+            plot = table.plot(expected_count_data, headers, {"id": "ExpectedBarcodes", "title": "Expected Barcodes", "no_violin": True})
         )
 
         largest_total = max([y['read_count'] for (_,y) in expected_breakdown_data.items()])
@@ -100,7 +100,7 @@ def parse_reports(self):
             # 'modify': lambda x: x * config.read_count_multiplier,
             # 'suffix': config.read_count_prefix,
             'format': '{:,.0f}',
-            'max': largest_total
+            'max': float(largest_total)
         }
         headers['sequence'] = {
             'title': 'Sequence',
@@ -109,7 +109,7 @@ def parse_reports(self):
         self.add_section(
             name = "Expected Barcodes - Breakdown per index",
             description = "CountIlluminaBarcodes breakdown per index, top 20 per index.",
-            plot = table.plot(expected_breakdown_data, headers)
+            plot = table.plot(expected_breakdown_data, headers, {"id": "ExpectedPerIndex", "title": "Expected Barcodes Per Index", "no_violin": True})
         )
 
         largest_total = max([y['read_count'] for (_,y) in unexpected_data.items()])
@@ -120,16 +120,16 @@ def parse_reports(self):
             # 'modify': lambda x: x * config.read_count_multiplier,
             # 'suffix': config.read_count_prefix,
             'format': '{:,.0f}',
-            'max': largest_total
+            'max': float(largest_total)
         }
         headers['sequence'] = {
             'title': 'Sequence',
-            'description': 'Unexpeceted found barcode sequence',
+            'description': 'Unexpected found barcode sequence',
         }
         self.add_section(
             name = "Barcodes - Unexpected",
-            description = "Overview of number of clusters assigned to expected barcodes.",
-            plot = table.plot(unexpected_data, headers)
+            description = "Overview of number of clusters assigned to unexpected barcodes.",
+            plot = table.plot(unexpected_data, headers, {"id": "UnexpectedBarcodes", "title": "Unexpected Barcodes", "no_violin": True})
         )
 
     # Return the number of detected samples to the parent module

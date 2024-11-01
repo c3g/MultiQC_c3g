@@ -36,9 +36,10 @@ setup(
     packages = find_packages(),
     include_package_data = True,
     install_requires = [
-        'multiqc==1.17',
+        'multiqc>=1.23',
         'bs4>=0.0.1',
-        'pybtex>=0.24.0'
+        'pybtex>=0.24.0',
+        'setuptools'
     ],
     entry_points = {
         'multiqc.modules.v1': [
@@ -84,6 +85,7 @@ setup(
         # 'before_template'
         # 'execution_finish'
         'multiqc.hooks.v1': [
+            'before_config =  multiqc_c3g.multiqc_c3g:c3g_config',
             'execution_start = multiqc_c3g.multiqc_c3g:c3g_execution',
             'before_modules = multiqc_c3g.multiqc_c3g:before_modules',
             'after_modules = multiqc_c3g.multiqc_c3g:c3g_summaries'

@@ -11,7 +11,7 @@ import re
 from typing import OrderedDict
 
 from multiqc.plots import table
-from multiqc.modules.base_module import BaseMultiqcModule
+from multiqc.base_module import BaseMultiqcModule
 
 # Initialise the main MultiQC logger
 log = logging.getLogger("multiqc")
@@ -23,7 +23,7 @@ class MultiqcModule(BaseMultiqcModule):
         super(MultiqcModule, self).__init__(
             name="Job Progress",
             target="Progress",
-            anchor="progress",
+            anchor="c3g_progress",
             href="https://bitbucket.org/mugqic/multiqc_c3g/src/runprocessing/multiqc_c3g/modules/c3g_progress/",
             info="of the run processing pipeline",
         )
@@ -72,7 +72,7 @@ class MultiqcModule(BaseMultiqcModule):
         self.add_section(
             name = "Jobs",
             description = "Job statuses.",
-            plot = table.plot(jobs_by_step, headers, {"col1_header": "Pipeline Step"})
+            plot = table.plot(jobs_by_step, headers, {"col1_header": "Pipeline Step", "id": "JobStatuses", "title": "Steps"})
         )
 
 class Job:

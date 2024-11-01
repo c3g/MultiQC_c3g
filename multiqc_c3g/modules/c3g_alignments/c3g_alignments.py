@@ -8,7 +8,7 @@ from pathlib import PurePath
 import re
 from typing import OrderedDict
 
-from multiqc.modules.base_module import BaseMultiqcModule
+from multiqc.base_module import BaseMultiqcModule
 
 from . import InsertSizeMetrics
 from . import AlignmentSummaryMetrics
@@ -24,7 +24,7 @@ class MultiqcModule(BaseMultiqcModule):
         super(MultiqcModule, self).__init__(
             name="Alignment Metrics",
             target="Alignments",
-            anchor="alignments",
+            anchor="c3g_alignments",
             href="https://github.com/c3g/runprocesing_plugin",
             info=" files from run processing output",
         )

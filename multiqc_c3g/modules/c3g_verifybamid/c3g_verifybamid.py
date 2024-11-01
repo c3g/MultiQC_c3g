@@ -9,7 +9,7 @@ from pathlib import PurePath
 import re
 from multiqc import config
 from multiqc.plots import table
-from multiqc.modules.base_module import BaseMultiqcModule
+from multiqc.base_module import BaseMultiqcModule
 
 # Initialise the logger
 log = logging.getLogger("multiqc")
@@ -269,8 +269,10 @@ class MultiqcModule(BaseMultiqcModule):
 
         tconfig = {
             "namespace": "C3G VerifyBAMID",
+            "title": "verifybamid_results",
             "id": "verifybamid-results",
-            "col1_header": "Lane | Sample Name"
+            "col1_header": "Lane | Sample Name",
+            "no_violin": True
         }
 
         # send the plot to add section function with data dict and headers
@@ -315,7 +317,7 @@ class MultiqcModule(BaseMultiqcModule):
         if lane:
             return "L{} | {}".format(lane, s_name)
         lane = None
-        dirmatcher = re.compile("[(Una)(A)]ligned\.(?P<lane>\d+)")
+        dirmatcher = re.compile(r"[(Una)(A)]ligned\.(?P<lane>\d+)")
         for dir in PurePath(f["root"]).parts:
             m = dirmatcher.search(dir)
             if m:

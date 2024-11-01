@@ -6,7 +6,7 @@ from collections import OrderedDict
 import json
 import logging
 
-from multiqc.utils import config
+from multiqc import config
 from multiqc.plots import linegraph
 from multiqc_c3g.runprocessing_base import RunProcessingBaseModule
 from .validationreport import ValidationReport
@@ -73,7 +73,9 @@ class MultiqcModule(RunProcessingBaseModule):
         headers['Sex Concordance'] = {
             'title': 'Sex Concordance',
             'description': 'Sex Concordance',
-            'hidden': False
+            'hidden': False,
+            'modify': lambda x: "True" if x == 1.0 else "False"
+
         }
 
         for (s_name, data) in sample_data.items():
@@ -90,6 +92,8 @@ class MultiqcModule(RunProcessingBaseModule):
                 plot = linegraph.plot(
                     [pf_cluster_curve],
                     {
+                        'id': 'c3g_runprocessing-overview',
+                        'title': 'Clusters',
                         'ymin': 0,
                         'data_labels': [{'name': 'PF Clusters', 'ylab': 'Clusters Per Sample', 'xlab': 'Samples'}]
                     }
@@ -154,7 +158,7 @@ class MultiqcModule(RunProcessingBaseModule):
                 data[s_name]["Inferred Sex"] = obj["alignment"]["inferred_sex"]
                 data[s_name]["Sex concordance"] = obj["alignment"]["sex_concordance"]
         else:
-            log.warn("Genpipes JSON did not have 'run_validation' key: '{}'".format(f["fn"]))
+            log.warning("Genpipes JSON did not have 'run_validation' key: '{}'".format(f["fn"]))
             for readset_name, lst in parsed_json["barcodes"].items():
                 first_barcode = lst[0]
                 s_name = self.clean_s_name(readset_name, f)

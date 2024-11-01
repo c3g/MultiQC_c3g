@@ -7,7 +7,7 @@ from multiqc_c3g.modules.c3g_yaml_parser import c3g_yaml_parser
 from multiqc_c3g.modules.c3g_counter import c3g_counter
 
 from multiqc import config
-from multiqc.modules.base_module import BaseMultiqcModule
+from multiqc.base_module import BaseMultiqcModule
 #from multiqc_c3g.utils import search_patterns.yaml
 
 # Start the logger

@@ -177,7 +177,7 @@ def c3g_execution():
                 'c3g_alignments' : {
                     'order' : 60
                     },
-                'c3g_rnaseqc' : {
+                'c3g_rna_seqc' : {
                     'order' : 50
                     },
                 'c3g_verifybamid' : {

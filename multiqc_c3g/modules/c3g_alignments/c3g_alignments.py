@@ -13,6 +13,7 @@ from multiqc.base_module import BaseMultiqcModule
 from . import InsertSizeMetrics
 from . import AlignmentSummaryMetrics
 from . import TargetCoverageMetrics
+from . import AlignmentDuplicationMetrics
 
 # Initialise the main MultiQC logger
 log = logging.getLogger("multiqc")
@@ -42,6 +43,9 @@ class MultiqcModule(BaseMultiqcModule):
         n["TargetCoverageMetrics"] = TargetCoverageMetrics.parse_reports(self)
         if n["TargetCoverageMetrics"] > 0:
             log.info("Found {} TargetCoverageMetrics reports".format(n["TargetCoverageMetrics"]))
+        n["AlignmentDuplicationMetrics"] = AlignmentDuplicationMetrics.parse_reports(self)
+        if n["AlignmentDuplicationMetrics"] > 0:
+            log.info("Found {} AlignmentDuplicationMetrics reports".format(n["AlignmentDuplicationMetrics"]))
 
         self.general_stats_addcols(self.general_stats_data, self.general_stats_headers)
 

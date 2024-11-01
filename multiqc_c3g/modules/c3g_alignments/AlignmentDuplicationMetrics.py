@@ -71,7 +71,7 @@ def parse_reports(self):
 
         # Add to general stats table
         self.general_stats_headers["PERCENT_DUPLICATION"] = {
-            "title": "% Aligned Duplication",
+            "title": "% Aligned Duplicate Rate",
             "description": "Percent of aligned duplicate reads",
             "max": 100,
             "min": 0,

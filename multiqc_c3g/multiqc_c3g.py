@@ -177,11 +177,11 @@ def c3g_execution():
                 'c3g_alignments' : {
                     'order' : 60
                     },
+                'c3g_rnaseqc' : {
+                    'order' : 50
+                    },
                 'c3g_verifybamid' : {
                     'order' : 40
-                    },
-                'c3g_rnaseqc' : {
-                    'order' : 30
                     },
                 'c3g_progress' : {
                     'order' : 10
@@ -204,11 +204,12 @@ def c3g_execution():
                     'R1_trimmed_bases' : 250,
                     'R2_trimmed_bases' : 260,
                     'PCT_PF_READS_ALIGNED' : 300,
-                    'summed_median' : 310,
-                    'summed_mean' : 320,
-                    'MeanCoverage' : 330,
-                    'PctBasesCoveredAt10x' : 340,
-                    'PctBasesCoveredAt25x' : 350,
+                    'PERCENT_DUPLICATION' : 310,
+                    'summed_median' : 320,
+                    'summed_mean' : 330,
+                    'MeanCoverage' : 340,
+                    'PctBasesCoveredAt10x' : 350,
+                    'PctBasesCoveredAt25x' : 360,
                     'clusters' : 400,
                     'yield' : 410,
                     'gc' : 420,

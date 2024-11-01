@@ -3,6 +3,7 @@
 """ C3G MultiQC module for rnaseqc. Modified from MultiQC RNASEQC module. """
 
 import logging
+import re
 
 from multiqc import config
 from multiqc.base_module import ModuleNoSamplesFound
@@ -113,7 +114,8 @@ class MultiqcModule(RunProcessingBaseModule):
             if headers is None:
                 headers = s
             else:
-                s_name = s[headers.index("Sample")]
+                #s_name = s[headers.index("Sample")]
+                s_name = re.sub(r'.rnaseqc.sorted.dup.metrics.tsv', '', f['fn'])
                 data = dict()
                 for idx, h in enumerate(headers):
                     try:

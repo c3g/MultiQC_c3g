@@ -58,6 +58,7 @@ setup(
             'c3g_fastp = multiqc_c3g.modules.c3g_fastp:MultiqcModule',
             'c3g_demuxmetrics = multiqc_c3g.modules.c3g_demuxmetrics:MultiqcModule',
             'c3g_blastresults = multiqc_c3g.modules.c3g_blastresults:MultiqcModule',
+            'c3g_rnaseqc = multiqc_c3g.modules.c3g_rnaseqc:MultiqcModule'
         ],
 
         'multiqc.templates.v1': [

@@ -90,8 +90,8 @@ class MultiqcModule(RunProcessingBaseModule):
 
         for line in f["f"]:
             if "Reads file" in line:
-                parts = re.split(r"[:=]", line)
-                s_name = self.clean_s_name(parts[-1], f)
+                s_name = re.sub(r'.aligned.log', '', f['fn'])
+                s_name = self.clean_s_name(s_name, f)
                 self.sortmerna[s_name] = dict()
             if "Results:" in line and not post_results_start:  # old versions
                 post_results_start = True

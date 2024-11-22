@@ -114,7 +114,6 @@ class MultiqcModule(RunProcessingBaseModule):
             if headers is None:
                 headers = s
             else:
-                #s_name = s[headers.index("Sample")]
                 s_name = re.sub(r'.rnaseqc.sorted.dup.metrics.tsv', '', f['fn'])
                 data = dict()
                 for idx, h in enumerate(headers):

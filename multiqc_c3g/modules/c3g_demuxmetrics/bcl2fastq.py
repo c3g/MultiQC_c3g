@@ -453,6 +453,7 @@ def add_general_stats(self):
         "description": "Number of bases with a Phred score of 30 or higher ({})".format(config.base_count_desc),
         "scale": "Greens",
         "shared_key": "base_count",
+        "hidden": True
     }
     # If no data for a column, header will be automatically ignored
     for r in range(1, 5):

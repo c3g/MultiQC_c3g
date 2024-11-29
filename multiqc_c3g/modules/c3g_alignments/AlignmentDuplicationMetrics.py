@@ -79,6 +79,7 @@ def parse_reports(self):
             "format": "{:,.2f}",
             "scale": "RdYlGn",
             "modify": lambda x: self.multiply_hundred(x),
+            "hidden": True
         }
         for s_name in self.picard_duplication_metrics:
             if s_name not in self.general_stats_data:

@@ -69,7 +69,8 @@ class MultiqcModule(RunProcessingBaseModule):
         headers['yield'] = {
             'title': 'Sample Yield',
             'floor' : 0,
-            'format': '{:,.0f}'
+            'format': '{:,.0f}',
+            'hidden': True
         }
         headers['gc'] = {
             'title': 'Raw GC',

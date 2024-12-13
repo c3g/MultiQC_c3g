@@ -17,7 +17,7 @@ This plugin allows C3G to write MultiQC extensions for custom pipeline reporting
 
 1- You will need to pip install this branch. You may modify the `load_tem_scr.sh` bash script above and use it to install multiqc_c3g.
 
-2- If it does not work, contact [Mareike Janiak](mareike.janiak@computationalgenomics.ca) to dicuss the tool and its uses and to decide if it goes in the main MultiQC repo or in the C3G plugin. You may also contact [Paul Stretenowich](paul.stretenowich@mcgill.ca) for the questions related to C3G sections.
+2- If it does not work, contact [Mareike Janiak](mailto:mareike.janiak@computationalgenomics.ca) to dicuss the tool and its uses and to decide if it goes in the main MultiQC repo or in the C3G plugin. You may also contact [Paul Stretenowich](mailto:paul.stretenowich@mcgill.ca) for the questions related to C3G sections.
 
 
 ### How to run the plugin? ###

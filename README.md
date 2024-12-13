@@ -1,10 +1,10 @@
 # README #
 
-MultiQC_c3g is a plugin for MultiQC, providing additional tools which are specific to the GenPipes pipelines developed at the Canadian Centre for Computational Genomics (C3G).
+MultiQC_c3g is a plugin for MultiQC, providing additional tools which are specific to the GenPipes pipelines developed at the Canadian Centre for Computational Genomics (C3G). At the moment, it is used mostly for reporting for our internal run processing pipeline.
 
 For more information about C3G, see http://www.computationalgenomics.ca/
 
-For more information about GenPipes, see https://bitbucket.org/mugqic/genpipes
+For more information about GenPipes, see https://genpipes.readthedocs.io/en/latest/
 
 For more information about MultiQC, see http://multiqc.info
 
@@ -17,16 +17,16 @@ This plugin allows C3G to write MultiQC extensions for custom pipeline reporting
 
 1- You will need to pip install this branch. You may modify the `load_tem_scr.sh` bash script above and use it to install multiqc_c3g.
 
-2- If it does not work, contact [Rola Dali](rola.dali@mail.mcgill.ca) to dicuss the tool and its uses and to decide if it goes in the main MultiQC repo or in the C3G plugin. You may also contact Paul Stretenowich or Édouard Henrion for the questions related to C3G sections.
+2- If it does not work, contact [Mareike Janiak](mareike.janiak@computationalgenomics.ca) to dicuss the tool and its uses and to decide if it goes in the main MultiQC repo or in the C3G plugin. You may also contact [Paul Stretenowich](paul.stretenowich@mcgill.ca) for the questions related to C3G sections.
 
 
-### How to run the test data? ###
+### How to run the plugin? ###
 
-1- First `git clone` the newton_c3g branch.
+1- First `git clone` the repository and pip install it. Alternatively, if you are working on the abacus cluster, you can load the latest module with `module load mugqic_dev/MultiQC_C3G`
 
-2- Run  `cd test_data/chipseq_test_2/report`.
+2- Run `multiqc .` to search the current directory for log files and create a report.
 
-3- Use the `test_data/chipseq_test_2/multiqc_run.sh` bash script to run multiqc. The module loading should already be inculded in the script.
+3- For use with the c3g run processing template and modules run `multiqc . --template c3g --runprocessing --interactive` 
 
 ### Where are the example yamls? ###
 
@@ -35,8 +35,6 @@ The example yamls are located in the `example_yamls` folder. Follow the document
 ### 	MultiQc Resources: ###
 
 [Basic intro](https://www.youtube.com/watch?v=t2lV0ucrD2s&feature=youtu.be)
-
-[MultiQc Report of all modules (as of May 2018)](https://drive.google.com/open?id=1mDW6jIV0pKv1XCQSlyXF-pjqM3PeSyYX)
 
 [MultiQc Core modules](http://multiqc.info/docs/#writing-new-modules)
 
@@ -58,22 +56,18 @@ The example yamls are located in the `example_yamls` folder. Follow the document
 
 [bcbio](https://github.com/MultiQC/MultiQC_bcbio)
 
-[C3G multiQC main repo](https://bitbucket.org/mugqic/multiqc)
-
-[C3G multiQC_C3G plugin repo](https://bitbucket.org/mugqic/multiqc_c3g)
+[C3G multiQC_C3G plugin repo](https://github.com/c3g/MultiQC_c3g)
 
 [MultiQC gitter](https://gitter.im/ewels/MultiQC)
 
 
 
 
-
-
 ### Contribution guidelines ###
 
-MultiQC and the MultiQc C3G plugin are written in python. Contributors must check the [contribution guildines for C3G](https://bitbucket.org/mugqic/genpipes/src/master/README-GenAP_coding_standards.txt), as well as those for [MultiQC](http://multiqc.info/docs/#coding-with-multiqc).
+MultiQC and the MultiQc C3G plugin are written in python. Contributors must check the [contribution guildines for C3G](https://github.com/c3g/GenPipes/blob/master/README-GenAP_coding_standards.txt), as well as those for [MultiQC](http://multiqc.info/docs/#coding-with-multiqc).
 
 
 ### Who do I talk to? ###
 
-Within C3G, please talk to Rola Dali (rola.dali@mail.mcgill.ca), Mathieu Bourgey (mathieu.bourgey@mcgill.ca) or Edouard Henrion (edouard.henrion@mcgill.ca).
+Within C3G, please talk to Mareike Janiak (mareike.janiak@computationalgenomics.ca), Paul Stretenowich (paul.stretenowich@mcgill.ca) or Jean-Michel Garant (jean-michel.garant@mcgill.ca).

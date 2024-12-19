@@ -113,20 +113,23 @@ def parse_reports(self):
         )
 
         # Add section with undetermined barcodes
+        headers = OrderedDict()
+        for r in range(1,9):
+            headers["L{}".format(r)] = {
+                "title": "L{}".format(r),
+                "description": "Barcode count for Lane {}".format(r),
+                }
         self.add_section(
             name="Undetermined barcodes by lane",
             anchor="undetermine_by_lane",
             description="Count of the top twenty most abundant undetermined barcodes by lanes",
             plot=bargraph.plot(
                 get_bar_data_from_undetermined(self.bcl2fastq_bylane),
-                None,
+                headers,
                 {
                     "id": "bcl2fastq_undetermined",
                     "title": "bcl2fastq: Undetermined barcodes by lane",
-                    "ylab": "Count",
-                    "tt_percentages": False,
-                    "use_legend": True,
-                    "tt_suffix": "reads",
+                    "col1_header": "Sequence"
                 }
             )
         )
@@ -559,9 +562,10 @@ def get_bar_data_from_undetermined(flowcells):
     bar_data = defaultdict(dict)
     # get undetermined barcodes for each lanes
     for lane_id, lane in flowcells.items():
+        lane_header = lane_id.split(" ")[2]
         try:
             for barcode, count in islice(lane["unknown_barcodes"].items(), 20):
-                bar_data[barcode][lane_id] = count
+                bar_data[barcode][lane_header] = count
         except AttributeError:
             pass
 

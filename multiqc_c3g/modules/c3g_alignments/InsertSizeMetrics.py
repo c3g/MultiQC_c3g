@@ -19,6 +19,7 @@ def parse_reports(self):
     for f in self.find_log_files("c3g_alignments/insert_size_metrics", filehandles=True):
         in_hist = False
         s_name = self.clean_s_name(f['fn'], f)
+        s_name = re.sub(r'_L00[1-8]$', '', s_name)
         for l in f["f"]:
             if "InsertSizeMetrics" in l and "## METRICS CLASS" in l:
                 self.add_data_source(f, s_name, section="InsertSizeMetrics")

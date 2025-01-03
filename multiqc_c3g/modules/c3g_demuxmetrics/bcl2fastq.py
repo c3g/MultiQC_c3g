@@ -88,10 +88,6 @@ def parse_reports(self):
 
         # Add section for counts by sample
         # get cats for per-lane tab
-        lcats = set()
-        for s_name in self.bcl2fastq_bysample_lane:
-            lcats.update(self.bcl2fastq_bysample_lane[s_name].keys())
-        lcats = sorted(list(lcats))
         self.add_section(
             name="Clusters by sample",
             anchor="bcl2fastq-bysample",
@@ -100,8 +96,8 @@ def parse_reports(self):
                 All samples are aggregated across lanes combinned. Undetermined reads are ignored.
                 Undetermined reads are treated as a separate sample.""",
             plot=bargraph.plot(
-                [get_bar_data_from_counts(self.bcl2fastq_bysample), self.bcl2fastq_bysample_lane],
-                [cats, lcats],
+                [get_bar_data_from_counts(self.bcl2fastq_bysample)],
+                [cats],
                 {
                     "id": "bcl2fastq_sample_counts",
                     "title": "bcl2fastq: Clusters by sample",
@@ -112,21 +108,83 @@ def parse_reports(self):
             ),
         )
 
+        headers = OrderedDict()
+        headers["indexSequence"] = {
+            "title": "Index Sequence",
+            "description": "Index Sequence for this sample"
+            }
+        
+        headers["total"] = {
+            "title": "{} Clusters".format(config.read_count_prefix),
+            "description": "Total number of reads for this sample as determined by bcl2fastq demultiplexing ({})".format(config.read_count_desc),
+            "scale": "Blues",
+            "shared_key": "read_count",
+            }
+        
+        headers["percent_perfectIndex"] = {
+            "title": "% Perfect Index",
+            "description": "Percent of reads with perfect index (0 mismatches)",
+            "max": 100,
+            "min": 0,
+            "scale": "RdYlGn",
+            "suffix": "%",
+            }
+        
+        headers["total_yield"] = {
+            "title": "Yield ({})".format(config.base_count_prefix),
+            "description": "Total number of bases ({})".format(config.base_count_desc),
+            "scale": "Greens",
+            "shared_key": "base_count",
+            "hidden": True
+            }
+        
+        headers["percent_Q30"] = {
+            "title": "% Q30 bases",
+            "description": "Percent of bases with score of q30 or higher",
+            "max": 100,
+            "min": 0,
+            "scale": "RdYlGn",
+            "suffix": "%",
+            }
+        
+        headers["mean_qscore"] = {
+            "title": "Mean Quality Score",
+            "description": "Mean quality score for bases in this sample"
+        }
+        
+        self.add_section(
+                name="Summary by sample",
+                anchor="bcl2fastq-summary-bysample",
+                description="bcl2fastq summary per per sample.",
+                plot=table.plot(
+                    [self.bcl2fastq_bysample],
+                    headers,
+                    {
+                        "id": "bcl2fastq_summary",
+                        "title": "bcl2fastq: Summary by sample",
+                        "col1_header": "Lane | Sample Name"
+                        }
+                    )
+                )
+
         # Add section with undetermined barcodes
+        headers = OrderedDict()
+        for r in range(1,9):
+            headers["L{}".format(r)] = {
+                "title": "L{}".format(r),
+                "description": "Barcode count for Lane {}".format(r),
+                }
         self.add_section(
             name="Undetermined barcodes by lane",
             anchor="undetermine_by_lane",
             description="Count of the top twenty most abundant undetermined barcodes by lanes",
-            plot=bargraph.plot(
+            plot=table.plot(
                 get_bar_data_from_undetermined(self.bcl2fastq_bylane),
-                None,
+                headers,
                 {
                     "id": "bcl2fastq_undetermined",
                     "title": "bcl2fastq: Undetermined barcodes by lane",
-                    "ylab": "Count",
-                    "tt_percentages": False,
-                    "use_legend": True,
-                    "tt_suffix": "reads",
+                    "col1_header": "Sequence"
                 }
             )
         )
@@ -190,6 +248,7 @@ def parse_file_as_json(self, f):
             run_data[lane]["samples"][sample] = {
                 "total": 0,
                 "total_yield": 0,
+                "indexSequence": "",
                 "perfectIndex": 0,
                 "filename": os.path.join(f["root"], f["fn"]),
                 "yieldQ30": 0,
@@ -208,6 +267,7 @@ def parse_file_as_json(self, f):
             for indexMetric in demuxResult.get("IndexMetrics", []):
                 rlane["perfectIndex"] += indexMetric["MismatchCounts"]["0"]
                 lsample["perfectIndex"] += indexMetric["MismatchCounts"]["0"]
+                lsample["indexSequence"] = indexMetric["IndexSequence"]
             for readMetric in demuxResult.get("ReadMetrics", []):
                 r = readMetric["ReadNumber"]
                 rlane["yieldQ30"] += readMetric["YieldQ30"]
@@ -238,6 +298,7 @@ def parse_file_as_json(self, f):
             run_data[lane]["samples"][f"{lane} | Undetermined"] = {
                 "total": conversionResult["Undetermined"]["NumberReads"],
                 "total_yield": conversionResult["Undetermined"]["Yield"],
+                "indexSequence": "Unknown",
                 "perfectIndex": 0,
                 "yieldQ30": undeterminedYieldQ30,
                 "qscore_sum": undeterminedQscoreSum,
@@ -298,6 +359,7 @@ def split_data_by_lane_and_sample(self):
                     self.bcl2fastq_bysample[sample_id] = {
                         "total": 0,
                         "total_yield": 0,
+                        "indexSequence": "",
                         "perfectIndex": 0,
                         "yieldQ30": 0,
                         "qscore_sum": 0,
@@ -310,6 +372,7 @@ def split_data_by_lane_and_sample(self):
                 s["total"] += sample["total"]
                 s["total_yield"] += sample["total_yield"]
                 s["perfectIndex"] += sample["perfectIndex"]
+                s["indexSequence"] = sample["indexSequence"]
                 s["yieldQ30"] += sample["yieldQ30"]
                 s["qscore_sum"] += sample["qscore_sum"]
                 # Undetermined samples did not have R1 and R2 information
@@ -559,9 +622,10 @@ def get_bar_data_from_undetermined(flowcells):
     bar_data = defaultdict(dict)
     # get undetermined barcodes for each lanes
     for lane_id, lane in flowcells.items():
+        lane_header = lane_id.split(" ")[2]
         try:
             for barcode, count in islice(lane["unknown_barcodes"].items(), 20):
-                bar_data[barcode][lane_id] = count
+                bar_data[barcode][lane_header] = count
         except AttributeError:
             pass
 

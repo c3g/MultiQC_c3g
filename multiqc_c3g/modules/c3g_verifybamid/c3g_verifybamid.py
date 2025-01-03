@@ -97,6 +97,7 @@ class MultiqcModule(BaseMultiqcModule):
             else:
                 # clean the sample name (first column) and assign to s_name
                 s_name = self.clean_s_name(f['fn'], f)
+                s_name = re.sub(r'_L00[1-8]$', '', s_name)
                 # create a dictionary entry with the first column as a key (sample name) and empty dictionary as a value
                 parsed_data[s_name] = {}
                 # for each item in list of items in the row

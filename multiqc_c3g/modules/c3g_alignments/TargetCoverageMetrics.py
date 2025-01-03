@@ -20,6 +20,7 @@ def parse_reports(self):
     # Go through logs and find Metrics
     for f in self.find_log_files("c3g_alignments/target_coverage_metrics", filehandles=True):
         s_name = self.clean_s_name(f['fn'], f)
+        s_name = re.sub(r'_L00[1-8]$', '', s_name)
         parsed_data = dict()
         keys = None
         keys = f["f"].readline().strip("\n").split("\t")

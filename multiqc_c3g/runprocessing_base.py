@@ -37,5 +37,7 @@ class RunProcessingBaseModule(BaseMultiqcModule):
         lane_from_path = self.get_lane(f)
         if lane_from_path:
             return "L{} | {}".format(lane_from_path, s_name)
+        
+        s_name = re.sub(r'_L00[1-8]$', '', s_name)
 
         return s_name

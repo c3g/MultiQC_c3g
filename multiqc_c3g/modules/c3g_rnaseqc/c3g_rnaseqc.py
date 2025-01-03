@@ -122,6 +122,7 @@ class MultiqcModule(RunProcessingBaseModule):
                     except ValueError:
                         data[h] = s[idx]
                 s_name = self.clean_s_name(s_name, f)
+                s_name = re.sub(r'_L00[1-8]$', '', s_name)
                 if s_name in self.rna_seqc_metrics:
                     log.debug(f"Duplicate sample name found! Overwriting: {s_name}")
                 self.rna_seqc_metrics[s_name] = data

@@ -178,7 +178,7 @@ def parse_reports(self):
             name="Undetermined barcodes by lane",
             anchor="undetermine_by_lane",
             description="Count of the top twenty most abundant undetermined barcodes by lanes",
-            plot=bargraph.plot(
+            plot=table.plot(
                 get_bar_data_from_undetermined(self.bcl2fastq_bylane),
                 headers,
                 {

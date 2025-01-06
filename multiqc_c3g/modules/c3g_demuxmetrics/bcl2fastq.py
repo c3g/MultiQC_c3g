@@ -121,6 +121,15 @@ def parse_reports(self):
             "shared_key": "read_count",
             }
         
+        headers["percent_lane"] = {
+            "title": "% of lane",
+            "description": "Percent of reads on this lane belonging to this sample barcode",
+            "max": 100,
+            "min": 0,
+            "scale": "RdYlGn",
+            "suffix": "%"
+                }
+        
         headers["percent_perfectIndex"] = {
             "title": "% Perfect Index",
             "description": "Percent of reads with perfect index (0 mismatches)",
@@ -210,6 +219,7 @@ def parse_file_as_json(self, f):
                 "Duplicate runId/lane combination found! Overwriting: {}".format(prepend_runid(runId, lane))
             )
         run_data[lane] = {
+            "total_with_undetermined": conversionResult["TotalClustersPF"],
             "total": 0,
             "total_yield": 0,
             "perfectIndex": 0,
@@ -395,6 +405,10 @@ def split_data_by_lane_and_sample(self):
                     s["mean_qscore"] = float(s["qscore_sum"]) / float(s["total_yield"])
                 except ZeroDivisionError:
                     s["mean_qscore"] = "NA"
+                try:
+                    s["percent_lane"] = float(s["total"]) / float(lane["total_with_undetermined"]) * 100.0
+                except ZeroDivisionError:
+                    s["percent_lane"] = "NA"
                 if sample_id != f"{lane_id} | Undetermined":
                     if sample_id not in self.source_files:
                         self.source_files[sample_id] = []

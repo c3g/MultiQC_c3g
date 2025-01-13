@@ -122,8 +122,10 @@ def c3g_execution():
 
         # We replace the default RNASeq-QC module with our own version
         config.avail_modules.pop('rna_seqc', None)
-        if "c3g_rnaseqc" not in config.sp:
-            config.update_dict( config.sp, {"c3g_rnaseqc": {"fn": "*.rnaseqc.*.metrics.tsv"}} )
+        if "c3g_rnaseqc/metrics_v1" not in config.sp:
+            config.update_dict( config.sp, {"c3g_rnaseqc/metrics_v1": {"fn": "*.rnaseqc.*.metrics.tsv"}} )
+        if "c3g_rnaseqc/metrics_v1" not in config.sp:
+            config.update_dict( config.sp, {"c3g_rnaseqc/metrics_v2": {"fn": "*metrics.tsv", "contents": "High Quality Ambiguous Alignment Rate"}} )
 
         # We replace the default SortMeRNA module with our own version
         config.avail_modules.pop('sortmerna', None)

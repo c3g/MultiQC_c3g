@@ -137,6 +137,7 @@ class MultiqcModule(RunProcessingBaseModule):
             s = line.split("\t")
             if s[0] == "Sample":
                 s_name = self.clean_s_name(s[1], f)
+                s_name = re.sub(r'_L00[1-8]$', '', s_name)
             if s[0] == "Total Reads":
                 s[0] = "Total Read Number"
             if s[0] == "rRNA Rate":

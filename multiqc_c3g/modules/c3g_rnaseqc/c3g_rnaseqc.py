@@ -45,12 +45,12 @@ class MultiqcModule(RunProcessingBaseModule):
 
         # Parse metrics from RNA-SeQC v1
         self.rna_seqc_metrics = dict()
-        for f in self.find_log_files("c3g_rnaseqc", filehandles=True):
+        for f in self.find_log_files("c3g_rnaseqc/metrics_v1", filehandles=True):
             self.parse_metrics_rnaseqc_v1(f)
             self.add_data_source(f, section="v1")
 
         # Parse metrics from RNA-SeQC v2
-        for f in self.find_log_files("rna_seqc/metrics_v2", filehandles=True):
+        for f in self.find_log_files("c3g_rnaseqc/metrics_v2", filehandles=True):
             self.parse_metrics_rnaseqc_v2(f)
             self.add_data_source(f, section="v2")
 
@@ -137,6 +137,7 @@ class MultiqcModule(RunProcessingBaseModule):
             s = line.split("\t")
             if s[0] == "Sample":
                 s_name = self.clean_s_name(s[1], f)
+                s_name = re.sub(r'_L00[1-8]$', '', s_name)
             if s[0] == "Total Reads":
                 s[0] = "Total Read Number"
             if s[0] == "rRNA Rate":

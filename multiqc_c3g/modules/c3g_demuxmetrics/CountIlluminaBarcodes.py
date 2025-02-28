@@ -212,10 +212,10 @@ def unexpected_metrics(self, records, expected_barcodes, lane):
     for _, d in expected_barcodes.items():
         for row in records:
             if row['BARCODE_NAMES'] and int(row['PF_READS']) > 5000 and not len(list(filter(lambda barcode_name: d['barcode'] in barcode_name, row['BARCODE_NAMES'].split(',')))):
-                s_name = self.clean_s_name(row['BARCODE_NAMES'], lane=lane)
+                s_name = self.clean_s_name(row['BARCODE'], lane=lane)
                 unexpected_metrics[s_name] = {
                     'read_count': row['PF_READS'],
-                    'sequence': row['BARCODE']
+                    'sequence': row['BARCODE_NAMES']
                 }
 
     return unexpected_metrics

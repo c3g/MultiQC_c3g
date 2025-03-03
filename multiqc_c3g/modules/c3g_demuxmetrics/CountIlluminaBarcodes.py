@@ -215,7 +215,7 @@ def unexpected_metrics(self, records, expected_barcodes, lane):
                 s_name = self.clean_s_name(row['BARCODE'], lane=lane)
                 unexpected_metrics[s_name] = {
                     'read_count': row['PF_READS'],
-                    'barcodes_names': row['BARCODE_NAMES']
+                    'barcode_names': row['BARCODE_NAMES']
                 }
 
     return unexpected_metrics

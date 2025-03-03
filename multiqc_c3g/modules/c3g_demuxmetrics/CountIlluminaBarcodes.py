@@ -122,9 +122,9 @@ def parse_reports(self):
             'format': '{:,.0f}',
             'max': float(largest_total)
         }
-        headers['sequence'] = {
-            'title': 'Sequence',
-            'description': 'Unexpected found barcode sequence',
+        headers['bardcode_names'] = {
+            'title': 'Barcode name(s)',
+            'description': 'Name of unexpected found barcode sequence',
         }
         self.add_section(
             name = "Barcodes - Unexpected",
@@ -211,11 +211,11 @@ def unexpected_metrics(self, records, expected_barcodes, lane):
 
     for _, d in expected_barcodes.items():
         for row in records:
-            if row['BARCODE_NAMES'] and int(row['PF_READS']) > 5000 and not len(list(filter(lambda barcode_name: d['barcode'] in barcode_name, row['BARCODE_NAMES'].split(',')))):
+            if row['BARCODE_NAMES'] and int(row['PF_READS']) > 50000 and not len(list(filter(lambda barcode_name: d['barcode'] in barcode_name, row['BARCODE_NAMES'].split(',')))):
                 s_name = self.clean_s_name(row['BARCODE'], lane=lane)
                 unexpected_metrics[s_name] = {
                     'read_count': row['PF_READS'],
-                    'sequence': row['BARCODE_NAMES']
+                    'barcodes_names': row['BARCODE_NAMES']
                 }
 
     return unexpected_metrics

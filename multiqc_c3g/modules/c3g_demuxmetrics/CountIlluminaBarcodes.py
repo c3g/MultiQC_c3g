@@ -122,7 +122,7 @@ def parse_reports(self):
             'format': '{:,.0f}',
             'max': float(largest_total)
         }
-        headers['bardcode_names'] = {
+        headers['barcode_names'] = {
             'title': 'Barcode name(s)',
             'description': 'Name of unexpected found barcode sequence',
         }

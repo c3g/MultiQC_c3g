@@ -161,6 +161,7 @@ def c3g_execution():
 
         # increase threshold to turn tables into violin plots
         config.max_table_rows = 10000
+        config.violin_downsample_after = 10000
 
         # Buttons to show/hide by lane
         # TODO dynamic lane list

@@ -128,7 +128,7 @@ def parse_reports(self):
         }
         self.add_section(
             name = "Barcodes - Unexpected",
-            description = "Overview of number of clusters assigned to unexpected barcodes. Only showing barcodes with ≥50k reads.",
+            description = "Overview of number of clusters assigned to unexpected barcodes. Only showing top 20 unexpected barcodes per lane.",
             plot = table.plot(unexpected_data, headers, {"id": "UnexpectedBarcodes", "title": "Unexpected Barcodes", "no_violin": True})
         )
         print(unexpected_data)
@@ -212,10 +212,12 @@ def unexpected_metrics(self, records, expected_barcodes, lane):
 
     for _, d in expected_barcodes.items():
         for row in records:
-            if row['BARCODE_NAMES'] and int(row['PF_READS']) > 50000 and not len(list(filter(lambda barcode_name: d['barcode'] in barcode_name, row['BARCODE_NAMES'].split(',')))):
+            if row['BARCODE_NAMES'] and int(row['PF_READS']) > 0 and not len(list(filter(lambda barcode_name: d['barcode'] in barcode_name, row['BARCODE_NAMES'].split(',')))):
                 s_name = self.clean_s_name(row['BARCODE'], lane=lane)
                 unexpected_metrics[s_name] = {
                     'read_count': row['PF_READS'],
                     'barcode_names': row['BARCODE_NAMES']
                 }
+    # keep only top 20 most common unexpected barcodes per lane
+    unexpected_metrics = OrderedDict(sorted(unexpected_metrics.items(), key=lambda x: x[1]['PF_READS'], reverse=True)[:20])
     return unexpected_metrics

@@ -66,7 +66,7 @@ class MultiqcModule(BaseMultiqcModule):
         headers['Running'] = {'description': 'Jobs currently running', 'format': '{:,.0f}'}
         headers['Complete'] = {'description': 'Jobs complete', 'format': '{:,.0f}'}
         headers['Error'] = {'description': 'Jobs with errors', 'format': '{:,.0f}'}
-        headers['Cancelled'] = {'description': 'Jobs manually cancelled', 'format': '{:,.0f}', 'hidden': True }
+        headers['Cancelled'] = {'description': 'Jobs manually cancelled', 'format': '{:,.0f}'}
         headers['Unknown'] = {'description': 'Jobs manually unknown', 'format': '{:,.0f}', 'hidden': True }
 
         self.add_section(
@@ -157,7 +157,7 @@ class Job:
                 # Job is finished, but we don't know the exit status
                 # Note that here, the exit status is missing, so we
                 # can't be confident that the job finished without error.
-                return "Complete"
+                return "Error"
             elif self.queue_status == 'R':
                 return "Running"
             elif self.queue_status == 'Y':

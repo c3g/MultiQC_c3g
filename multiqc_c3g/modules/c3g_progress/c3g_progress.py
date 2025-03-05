@@ -66,7 +66,7 @@ class MultiqcModule(BaseMultiqcModule):
         headers['Running'] = {'description': 'Jobs currently running', 'format': '{:,.0f}'}
         headers['Complete'] = {'description': 'Jobs complete', 'format': '{:,.0f}'}
         headers['Error'] = {'description': 'Jobs with errors', 'format': '{:,.0f}'}
-        headers['Cancelled'] = {'description': 'Jobs manually cancelled', 'format': '{:,.0f}', 'hidden': True }
+        headers['Cancelled'] = {'description': 'Jobs manually cancelled', 'format': '{:,.0f}'}
         headers['Unknown'] = {'description': 'Jobs manually unknown', 'format': '{:,.0f}', 'hidden': True }
 
         self.add_section(

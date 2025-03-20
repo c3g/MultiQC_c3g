@@ -210,7 +210,6 @@ def unexpected_metrics(self, records, expected_barcodes, lane):
     unexpected_metrics = dict()
 
     for _, d in expected_barcodes.items():
-        print(expected_barcodes.items())
         for row in records:
             if row['BARCODE_NAMES'] and int(row['PF_READS']) > 50000 and not len(list(filter(lambda barcode_name: d['barcode'] in barcode_name, row['BARCODE_NAMES'].split(',')))):
                 s_name = self.clean_s_name(row['BARCODE'], lane=lane)

@@ -9,4 +9,4 @@ git clone git@github.com:c3g/MultiQC_c3g.git -b ${commit} $MUGQIC_INSTALL_HOME_D
 
 module purge
 module load python/3.12.2
-pip install --prefix=$MUGQIC_INSTALL_HOME_DEV/software/MultiQC/MultiQC_C3G-${version}_${commit} -U multiqc==${version} git+file:$MUGQIC_INSTALL_HOME_DEV/software/MultiQC_C3G/MultiQC_C3G-${commit}
+pip install --prefix=$MUGQIC_INSTALL_HOME_DEV/software/MultiQC_C3G/MultiQC_C3G-${version}_${commit} -U multiqc==${version} git+file:$MUGQIC_INSTALL_HOME_DEV/software/MultiQC_C3G/MultiQC_C3G-${commit}

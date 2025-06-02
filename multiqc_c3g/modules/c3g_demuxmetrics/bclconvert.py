@@ -14,7 +14,7 @@ from multiqc.plots import bargraph, table
 log = logging.getLogger(__name__)
 
 
-def __init__(self):
+def parse_reports(self):
 
     # Set up and collate bclconvert run and demux files
     demuxes, qmetrics, multiple_sequencing_runs, last_run_id = self._collate_log_files()

@@ -175,31 +175,34 @@ def parse_reports(self):
     )
 
     # Add section with undetermined barcodes
-    if create_undetermined_barplots:
-        undetermined_data = get_bar_data_from_undetermined(bclconvert_by_lane)
-        if undetermined_data:
-            self.add_section(
-                name="Undetermined barcodes by lane",
-                anchor="undetermine_by_lane",
-                description="Undetermined barcodes by lanes",
-                plot=bargraph.plot(
-                    undetermined_data,
-                    None,
-                    {
-                        "id": "bclconvert_undetermined",
-                        "title": "bclconvert: Undetermined barcodes by lane",
-                        "ylab": "Count",
-                        "use_legend": True,
-                        "tt_suffix": "reads",
-                    },
-                ),
+    undetermined_data = get_bar_data_from_undetermined(bclconvert_by_lane)
+    headers = OrderedDict()
+    for r in range(1,9):
+        headers["L{}".format(r)] = {
+            "title": "L{}".format(r),
+            "description": "Barcode count for Lane {}".format(r),
+            }
+    if undetermined_data:
+        self.add_section(
+            name="Undetermined barcodes by lane",
+            anchor="undetermine_by_lane",
+            description="Count of the top twenty most abundant undetermined barcodes by lanes",
+            plot=table.plot(
+                get_bar_data_from_undetermined(self.bcl2fastq_bylane),
+                headers,
+                {
+                    "id": "bcl2fastq_undetermined",
+                    "title": "bcl2fastq: Undetermined barcodes by lane",
+                    "col1_header": "Sequence"
+                }
             )
-        else:
-            self.add_section(
-                name="Undetermined barcodes by lane",
-                anchor="undetermine_by_lane",
-                content="<div class='alert alert-info'>No undetermined barcodes found</div>",
-            )
+        )
+    else:
+        self.add_section(
+            name="Undetermined barcodes by lane",
+            anchor="undetermine_by_lane",
+            content="<div class='alert alert-info'>No undetermined barcodes found</div>",
+        )
     return(len(bclconvert_by_lane))
 
 @staticmethod
@@ -631,8 +634,7 @@ def sample_stats_table(self, bclconvert_data, bclconvert_by_sample):
     headers["index"] = {
         "title": "Index Sequence",
         "description": "Sample index sequence",
-        "scale": False,
-        "hidden": False,
+        "scale": False
     }
     headers["clusters"] = {
         "title": f"{config.read_count_prefix} Clusters",

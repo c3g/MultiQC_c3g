@@ -42,13 +42,9 @@ class MultiqcModule(RunProcessingBaseModule):
         if n["Bcl2Fastq"] > 0:
             log.info("Found {} Bcl2Fastq reports".format(n["Bcl2Fastq"]))
 
-        n["BclConvertDemux"] = bclconvert.parse_demux_data(self)
-        if n["BclConvertDemux"] > 0:
-            log.info("Found {} BclConvert demux reports".format(n["BclConvertDemux"]))
-
-        n["BclConvertQual"] = bclconvert.parse_qmetrics_data(self)
-        if n["BclConvertQual"] > 0:
-            log.info("Found {} BclConvert quality reports".format(n["BclConvertQual"]))
+        n["BclConvert"] = bclconvert.parse_reports(self)
+        if n["BclConvert"] > 0:
+            log.info("Found {} BclConvert reports".format(n["BclConvert"]))
 
         n["CountIlluminaBarcodes"] = CountIlluminaBarcodes.parse_reports(self)
         if n["CountIlluminaBarcodes"] > 0:

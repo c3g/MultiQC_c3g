@@ -6,6 +6,7 @@ from collections import OrderedDict, defaultdict
 import functools
 from itertools import islice
 from typing import Tuple, Dict, Optional
+import re
 
 from multiqc import config
 from multiqc.base_module import ModuleNoSamplesFound
@@ -101,14 +102,14 @@ def parse_reports(self):
         name="Sample Statistics",
         anchor="bclconvert-samplestats",
         description="Statistics about each sample for each flowcell",
-        plot=self.sample_stats_table(bclconvert_data, bclconvert_by_sample),
+        plot=sample_stats_table(self, bclconvert_data, bclconvert_by_sample),
     )
 
     self.add_section(
         name="Lane Statistics",
         anchor="bclconvert-lanestats",
         description="Statistics about each lane for each flowcell",
-        plot=self.lane_stats_table(bclconvert_by_lane),
+        plot=lane_stats_table(self, bclconvert_by_lane),
     )
 
     # Add section for counts by lane
@@ -441,20 +442,19 @@ def parse_qmetrics_data(self, bclconvert_data, qmetrics_file):
             module="bclconvert",
             section="bclconvert-runinfo-quality-metrics-csv",
         )
-        if "Undetermined" not in sample:  # don't include undetermined reads at all in any of the calculations...
-            if sample not in run_data[lane_id]["samples"]:
-                log.warning(f"Found unrecognised sample {sample} in Quality Metrics file, skipping")
-                continue
-            lane_sample = run_data[lane_id]["samples"][sample]  # this sample in this lane
+        if sample not in run_data[lane_id]["samples"]:
+            log.warning(f"Found unrecognised sample {sample} in Quality Metrics file, skipping")
+            continue
+        lane_sample = run_data[lane_id]["samples"][sample]  # this sample in this lane
 
-            # Parse the stats that moved to this file in v3.9.3
-            lane["yield"] += int(row["Yield"])
-            lane["basesQ30"] += int(row["YieldQ30"])
-            lane_sample["yield"] += int(row["Yield"])
-            lane_sample["basesQ30"] += int(row["YieldQ30"])
-            # Collecting to re-calculate mean_quality:
-            lane["_quality_score_sum"] += float(row["QualityScoreSum"])
-            lane_sample["_quality_score_sum"] += float(row["QualityScoreSum"])
+        # Parse the stats that moved to this file in v3.9.3
+        lane["yield"] += int(row["Yield"])
+        lane["basesQ30"] += int(row["YieldQ30"])
+        lane_sample["yield"] += int(row["Yield"])
+        lane_sample["basesQ30"] += int(row["YieldQ30"])
+        # Collecting to re-calculate mean_quality:
+        lane["_quality_score_sum"] += float(row["QualityScoreSum"])
+        lane_sample["_quality_score_sum"] += float(row["QualityScoreSum"])
 
 def parse_top_unknown_barcodes(self, bclconvert_data, last_run_id):
     run_data = bclconvert_data[last_run_id]
@@ -603,7 +603,7 @@ def sample_stats_table(self, bclconvert_data, bclconvert_by_sample):
             "perfect_percent": perfect_percent,
             "one_mismatch_percent": one_mismatch_percent,
             "mean_quality": sample.get("mean_quality"),
-            "index": sample["index"],
+            "index": re.sub("-", "+", sample["index"]),
         }
         if sample["depth"] != "NA":
             depth_available = True
@@ -628,6 +628,12 @@ def sample_stats_table(self, bclconvert_data, bclconvert_by_sample):
             "scale": "BuPu",
         }
 
+    headers["index"] = {
+        "title": "Index Sequence",
+        "description": "Sample index sequence",
+        "scale": False,
+        "hidden": False,
+    }
     headers["clusters"] = {
         "title": f"{config.read_count_prefix} Clusters",
         "description": "Total number of clusters (read pairs) for this sample as determined by bclconvert demultiplexing ({})".format(
@@ -750,7 +756,7 @@ def lane_stats_table(self, bclconvert_by_lane):
             "scale": "BuPu",
         }
 
-    headers["reads-lane"] = {
+    headers["clusters-lane"] = {
         "title": f"{config.read_count_prefix} Clusters",
         "description": "Total number of clusters (read pairs) for this sample as determined by bclconvert demultiplexing ({})".format(
             config.read_count_desc

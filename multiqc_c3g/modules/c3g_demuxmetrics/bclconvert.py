@@ -2,13 +2,13 @@ import csv
 import logging
 import os
 import xml.etree.ElementTree as ET
-from collections import defaultdict
+from collections import OrderedDict, defaultdict
 import functools
 from itertools import islice
 from typing import Tuple, Dict, Optional
 
 from multiqc import config
-from multiqc.base_module import BaseMultiqcModule, ModuleNoSamplesFound
+from multiqc.base_module import ModuleNoSamplesFound
 from multiqc.plots import bargraph, table
 
 log = logging.getLogger(__name__)
@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 def parse_reports(self):
 
     # Set up and collate bclconvert run and demux files
-    demuxes, qmetrics, multiple_sequencing_runs, last_run_id = self._collate_log_files()
+    demuxes, qmetrics, multiple_sequencing_runs, last_run_id = collate_log_files(self)
 
     # variables to store reads for undetermined read recalculation
     self.per_lane_undetermined_reads = dict()
@@ -25,9 +25,9 @@ def parse_reports(self):
 
     bclconvert_data = dict()
     for demux in demuxes.values():
-        self.parse_demux_data(demux, bclconvert_data, len(demuxes))
+        parse_demux_data(self, demux, bclconvert_data, len(demuxes))
     for qmetric in qmetrics.values():
-        self.parse_qmetrics_data(bclconvert_data, qmetric)
+        parse_qmetrics_data(self, bclconvert_data, qmetric)
 
     if len(demuxes) == 0:
         raise ModuleNoSamplesFound
@@ -39,7 +39,7 @@ def parse_reports(self):
                 Runs were merged and undetermined stats were recalculated.
             </div>
         """
-        self._recalculate_undetermined(bclconvert_data, last_run_id)
+        recalculate_undetermined(self, bclconvert_data, last_run_id)
     elif multiple_sequencing_runs:
         # If we have data from multiple sequencing runs, the recalculation in
         # _recalculate_undetermined(last_run_id) wont work. In this case we
@@ -57,14 +57,14 @@ def parse_reports(self):
         getattr(config, "bclconvert", {}).get("create_undetermined_barcode_barplots", False) or len(demuxes) == 1
     )
     if create_undetermined_barplots:
-        self._parse_top_unknown_barcodes(bclconvert_data, last_run_id)
+        parse_top_unknown_barcodes(self, bclconvert_data, last_run_id)
 
     # Collect counts by lane and sample
     (
         bclconvert_by_lane,
         bclconvert_by_sample,
         counts_by_sample_by_lane,
-    ) = self._split_data_by_lane_and_sample(bclconvert_data)
+    ) = split_data_by_lane_and_sample(self, bclconvert_data)
 
     # Filter to strip out ignored sample names
     bclconvert_by_lane = self.ignore_samples(bclconvert_by_lane)
@@ -74,7 +74,7 @@ def parse_reports(self):
     # Return with Warning if no files are found
     if len(bclconvert_by_lane) == 0 and len(bclconvert_by_sample) == 0:
         raise ModuleNoSamplesFound
-    log.info(f"{len(bclconvert_by_lane)} lanes and {len(bclconvert_by_sample)} samples found")
+    #log.info(f"{len(bclconvert_by_lane)} lanes and {len(bclconvert_by_sample)} samples found")
 
     # Calculate mean quality scores
     for sample_id, sample in bclconvert_by_sample.items():
@@ -87,6 +87,8 @@ def parse_reports(self):
             lane["mean_quality"] = lane["_quality_score_sum"] / lane["yield"]
         del lane["_quality_score_sum"]
 
+    # Add sample counts to general stats table
+    add_general_stats(self, bclconvert_by_sample)
     self.write_data_file(bclconvert_by_lane, "multiqc_bclconvert_bylane")
     self.write_data_file(bclconvert_by_sample, "multiqc_bclconvert_bysample")
 
@@ -137,7 +139,7 @@ def parse_reports(self):
         helptext="""Perfect index reads are those that do not have a single mismatch.
             All samples of a lane are combined. Undetermined reads are treated as a third category.""",
         plot=bargraph.plot(
-            self.get_bar_data_from_counts(bclconvert_data, bclconvert_by_lane, last_run_id),
+            get_bar_data_from_counts(self, bclconvert_data, bclconvert_by_lane, last_run_id),
             cats,
             {
                 "id": "bclconvert_lane_counts",
@@ -157,7 +159,7 @@ def parse_reports(self):
             Undetermined reads are treated as a separate sample.""",
         plot=bargraph.plot(
             [
-                self.get_bar_data_from_counts(bclconvert_data, bclconvert_by_sample, last_run_id),
+                get_bar_data_from_counts(self, bclconvert_data, bclconvert_by_sample, last_run_id),
                 counts_by_sample_by_lane,
             ],
             [cats, sorted(bclconvert_by_lane.keys())],
@@ -173,7 +175,7 @@ def parse_reports(self):
 
     # Add section with undetermined barcodes
     if create_undetermined_barplots:
-        undetermined_data = self.get_bar_data_from_undetermined(bclconvert_by_lane)
+        undetermined_data = get_bar_data_from_undetermined(bclconvert_by_lane)
         if undetermined_data:
             self.add_section(
                 name="Undetermined barcodes by lane",
@@ -197,10 +199,11 @@ def parse_reports(self):
                 anchor="undetermine_by_lane",
                 content="<div class='alert alert-info'>No undetermined barcodes found</div>",
             )
+    return(len(bclconvert_by_lane))
 
 @staticmethod
 @functools.lru_cache
-def _get_genome_size() -> Optional[int]:
+def get_genome_size() -> Optional[int]:
     gs = getattr(config, "bclconvert", {}).get("genome_size")
     if gs:
         try:
@@ -219,7 +222,7 @@ def _get_genome_size() -> Optional[int]:
     return gs
 
 @staticmethod
-def _reads_dictionary():
+def reads_dictionary():
     return {
         "clusters": 0,
         "yield": 0,
@@ -233,7 +236,7 @@ def _reads_dictionary():
     }
 
 @staticmethod
-def _is_single_end_reads(root):
+def is_single_end_reads(root):
     ncount = 0
     # we have single-end reads if we have exactly one IsIndexedRead=N element in our RunInfo.xml
     for element in root.findall("./Run/Reads/Read"):
@@ -244,7 +247,7 @@ def _is_single_end_reads(root):
     return False
 
 @staticmethod
-def _get_r2_length(root):
+def get_r2_length(root):
     for element in root.findall("./Run/Reads/Read"):
         if element.get("Number") != "1" and element.get("IsIndexedRead") == "N":
             return element.get("NumCycles")
@@ -252,7 +255,7 @@ def _get_r2_length(root):
     log.error("Could not figure out read 2 length from RunInfo.xml")
     raise ModuleNoSamplesFound
 
-def _parse_single_runinfo_file(self, runinfo_file):
+def parse_single_runinfo_file(self, runinfo_file):
     """
     Get run id and cluster length from RunInfo.xml
     """
@@ -279,7 +282,7 @@ def _parse_single_runinfo_file(self, runinfo_file):
     )
     return {"run_id": run_id, "cluster_length": cluster_length}
 
-def _collate_log_files(self):
+def collate_log_files(self):
     # This function returns a list of self.find_log_files('bclconvert/demux') dicts,
     # with the run_id added on, sorted by root directory
     #
@@ -305,7 +308,7 @@ def _collate_log_files(self):
     multiple_sequencing_runs = None
     last_run_id = None
     for root, demux in demuxes_by_root.items():
-        runinfo = self._parse_single_runinfo_file(runinfos_by_root[root])
+        runinfo = parse_single_runinfo_file(self, runinfos_by_root[root])
         demux["run_id"] = runinfo["run_id"]
         demux["cluster_length"] = runinfo["cluster_length"]
         qmetrics = qmetrics_by_root.get(root)
@@ -319,7 +322,7 @@ def _collate_log_files(self):
 
     return demuxes_by_root, qmetrics_by_root, multiple_sequencing_runs, last_run_id
 
-def _recalculate_undetermined(self, bclconvert_data, last_run_id):
+def recalculate_undetermined(self, bclconvert_data, last_run_id):
     # We have to calculate "corrected" unknown read counts when parsing more than
     # one bclconvert run. To do this: add up all the reads in a lane that were
     # assigned to samples, then take the total reads in a lane (which is taken
@@ -359,62 +362,60 @@ def parse_demux_data(self, demux_file, bclconvert_data, num_demux_files):
             lane_id = f"L{row['Lane']}"
             lane = run_data.get(lane_id)
             if lane is None:
-                lane = dict(samples={}, cluster_length=demux_file["cluster_length"], **self._reads_dictionary())
+                lane = dict(samples={}, cluster_length=demux_file["cluster_length"], **reads_dictionary())
                 run_data[lane_id] = lane
                 self.per_lane_undetermined_reads[lane_id] = 0
 
-            sname = f"""{row['Lane']} | {row["Sample_Name"]}"""
+            sname = f"""L{row['Lane']} | {row["Sample_Name"]}"""
             self.add_data_source(
                 demux_file,
                 s_name=sname,
                 module="bclconvert",
                 section="bclconvert-runinfo-demux-csv",
             )
-            if sname != "Undetermined":
-                # Don't include undetermined reads at all in any of the calculations...
-                if sname not in lane["samples"]:
-                    lane["samples"][sname] = self._reads_dictionary()
-                    lane["samples"][sname]["filename"] = filename
-                    lane["samples"][sname]["samples"] = {}
+            if sname not in lane["samples"]:
+                lane["samples"][sname] = reads_dictionary()
+                lane["samples"][sname]["filename"] = filename
+                lane["samples"][sname]["samples"] = {}
 
-                sample = lane["samples"][sname]  # this sample in this lane
+            sample = lane["samples"][sname]  # this sample in this lane
 
-                # total lane stats
-                lane["clusters"] += int(row["# Reads"])
-                lane["_calculated_yield"] += int(row["# Reads"]) * demux_file["cluster_length"]
-                lane["perfect_index_reads"] += int(row["# Perfect Index Reads"])
-                lane["one_mismatch_index_reads"] += int(row["# One Mismatch Index Reads"])
-                lane["basesQ30"] += int(row.get("# of >= Q30 Bases (PF)", "0"))  # Column only present pre v3.9.3
+            # total lane stats
+            lane["clusters"] += int(row["# Reads"])
+            lane["_calculated_yield"] += int(row["# Reads"]) * demux_file["cluster_length"]
+            lane["perfect_index_reads"] += int(row["# Perfect Index Reads"])
+            lane["one_mismatch_index_reads"] += int(row["# One Mismatch Index Reads"])
+            lane["basesQ30"] += int(row.get("# of >= Q30 Bases (PF)", "0"))  # Column only present pre v3.9.3
 
-                # stats for this sample in this lane
-                sample["clusters"] += int(row["# Reads"])
-                sample["_calculated_yield"] += int(row["# Reads"]) * demux_file["cluster_length"]
-                sample["perfect_index_reads"] += int(row["# Perfect Index Reads"])
-                sample["one_mismatch_index_reads"] += int(row["# One Mismatch Index Reads"])
-                sample["index"] = str(row["Index"])
-                try:
-                    # Not all demux files have Sample_Project column
-                    sample["sample_project"] = str(row["Sample_Project"])
-                except KeyError:
-                    pass
+            # stats for this sample in this lane
+            sample["clusters"] += int(row["# Reads"])
+            sample["_calculated_yield"] += int(row["# Reads"]) * demux_file["cluster_length"]
+            sample["perfect_index_reads"] += int(row["# Perfect Index Reads"])
+            sample["one_mismatch_index_reads"] += int(row["# One Mismatch Index Reads"])
+            sample["index"] = str(row["Index"])
+            try:
+                # Not all demux files have Sample_Project column
+                sample["sample_project"] = str(row["Sample_Project"])
+            except KeyError:
+                pass
 
-                # columns only present pre v3.9.3, after they moved to quality_metrics
-                sample["basesQ30"] += int(row.get("# of >= Q30 Bases (PF)", 0))
-                # Collecting to re-calculate mean_quality:
-                calculated_quality_score_sum = (
-                    float(row.get("Mean Quality Score (PF)", 0)) * sample["_calculated_yield"]
-                )
-                sample["_calculated_quality_score_sum"] += calculated_quality_score_sum
-                lane["_calculated_quality_score_sum"] += calculated_quality_score_sum
+            # columns only present pre v3.9.3, after they moved to quality_metrics
+            sample["basesQ30"] += int(row.get("# of >= Q30 Bases (PF)", 0))
+            # Collecting to re-calculate mean_quality:
+            calculated_quality_score_sum = (
+                float(row.get("Mean Quality Score (PF)", 0)) * sample["_calculated_yield"]
+            )
+            sample["_calculated_quality_score_sum"] += calculated_quality_score_sum
+            lane["_calculated_quality_score_sum"] += calculated_quality_score_sum
 
-            if lane_id not in total_reads_in_lane:
-                total_reads_in_lane[lane_id] = 0
+        if lane_id not in total_reads_in_lane:
+            total_reads_in_lane[lane_id] = 0
 
-            # Add up number of reads, regardless of undetermined or not
-            total_reads_in_lane[lane_id] += int(row["# Reads"])
+        # Add up number of reads, regardless of undetermined or not
+        total_reads_in_lane[lane_id] += int(row["# Reads"])
 
-            if num_demux_files == 1 and sname == "Undetermined":
-                self.per_lane_undetermined_reads[lane_id] += int(row["# Reads"])
+        if num_demux_files == 1 and "Undetermined" in sname:
+            self.per_lane_undetermined_reads[lane_id] += int(row["# Reads"])
 
     self.total_reads_in_lane_per_file[filename] = total_reads_in_lane
 
@@ -433,14 +434,14 @@ def parse_qmetrics_data(self, bclconvert_data, qmetrics_file):
             log.warning(f"Found unrecognised lane {lane_id} in Quality Metrics file, skipping")
             continue
         lane = run_data[lane_id]
-        sample = f"""{row['Lane']} | {row["Sample_Name"]}"""
+        sample = f"""L{row['Lane']} | {row["Sample_Name"]}"""
         self.add_data_source(
             qmetrics_file,
             s_name=sample,
             module="bclconvert",
             section="bclconvert-runinfo-quality-metrics-csv",
         )
-        if sample != "Undetermined":  # don't include undetermined reads at all in any of the calculations...
+        if "Undetermined" not in sample:  # don't include undetermined reads at all in any of the calculations...
             if sample not in run_data[lane_id]["samples"]:
                 log.warning(f"Found unrecognised sample {sample} in Quality Metrics file, skipping")
                 continue
@@ -455,7 +456,7 @@ def parse_qmetrics_data(self, bclconvert_data, qmetrics_file):
             lane["_quality_score_sum"] += float(row["QualityScoreSum"])
             lane_sample["_quality_score_sum"] += float(row["QualityScoreSum"])
 
-def _parse_top_unknown_barcodes(self, bclconvert_data, last_run_id):
+def parse_top_unknown_barcodes(self, bclconvert_data, last_run_id):
     run_data = bclconvert_data[last_run_id]
 
     for unknown_barcode_file in self.find_log_files("bclconvert/unknown_barcodes", filehandles=True):
@@ -468,21 +469,21 @@ def _parse_top_unknown_barcodes(self, bclconvert_data, last_run_id):
             run_data[thislane]["top_unknown_barcodes"][thisbarcode] = int(unknown_barcode_row["# Reads"])
 
 @staticmethod
-def _total_reads_for_run(bclconvert_data, run_id):
+def total_reads_for_run(bclconvert_data, run_id):
     totalreads = 0
     for lane_id, lane in bclconvert_data[run_id].items():
         totalreads += lane["clusters"]
     return totalreads
 
 @staticmethod
-def _total_reads_all_runs(bclconvert_data):
+def total_reads_all_runs(bclconvert_data):
     totalreads = 0
     for key, run_data in bclconvert_data.items():
         for lane_id, lane in run_data.items():
             totalreads += lane["clusters"]
     return totalreads
 
-def _set_lane_percentage_stats(self, data, cluster_length):
+def set_lane_percentage_stats(self, data, cluster_length):
     try:
         data["percent_Q30"] = (float(data["basesQ30"]) / float(data["clusters"] * cluster_length)) * 100.0
     except ZeroDivisionError:
@@ -495,12 +496,12 @@ def _set_lane_percentage_stats(self, data, cluster_length):
         data["percent_oneMismatch"] = float(data["one_mismatch_index_reads"]) / float(data["clusters"]) * 100.0
     except ZeroDivisionError:
         data["percent_oneMismatch"] = "NA"
-    if self._get_genome_size():
-        data["depth"] = float(data["basesQ30"]) / self._get_genome_size()
+    if get_genome_size():
+        data["depth"] = float(data["basesQ30"]) / get_genome_size()
     else:
         data["depth"] = "NA"
 
-def _split_data_by_lane_and_sample(self, bclconvert_data) -> Tuple[Dict, Dict, Dict]:
+def split_data_by_lane_and_sample(self, bclconvert_data) -> Tuple[Dict, Dict, Dict]:
     """
     Populate a collection of "stats across all lanes" and "stats across all samples"
     """
@@ -510,9 +511,9 @@ def _split_data_by_lane_and_sample(self, bclconvert_data) -> Tuple[Dict, Dict, D
     for run_id, r in bclconvert_data.items():
         # set stats for each lane (across all samples) in bclconvert_bylane dictionary
         for lane_id, lane in r.items():
-            self._set_lane_percentage_stats(lane, lane["cluster_length"])
+            set_lane_percentage_stats(self, lane, lane["cluster_length"])
 
-            lane_key_name = self.prepend_runid(run_id, lane_id)
+            lane_key_name = prepend_runid(run_id, lane_id)
             bclconvert_by_lane[lane_key_name] = {
                 "depth": lane["depth"],
                 "clusters": lane["clusters"],
@@ -530,7 +531,7 @@ def _split_data_by_lane_and_sample(self, bclconvert_data) -> Tuple[Dict, Dict, D
             # now set stats for each sample (across all lanes) in bclconvert_bysample dictionary
             for sample_id, sample in lane["samples"].items():
                 if sample_id not in bclconvert_by_sample:
-                    bclconvert_by_sample[sample_id] = self._reads_dictionary()
+                    bclconvert_by_sample[sample_id] = reads_dictionary()
 
                 s = bclconvert_by_sample[sample_id]
                 s["clusters"] += int(sample["clusters"])
@@ -547,10 +548,10 @@ def _split_data_by_lane_and_sample(self, bclconvert_data) -> Tuple[Dict, Dict, D
                 except KeyError:
                     pass
 
-                if not self._get_genome_size():
+                if not get_genome_size():
                     s["depth"] = "NA"
                 else:
-                    s["depth"] += float(sample["basesQ30"]) / self._get_genome_size()
+                    s["depth"] += float(sample["basesQ30"]) / get_genome_size()
 
                 count_by_sample_by_lane[sample_id][lane_key_name] += sample["clusters"]
 
@@ -558,7 +559,7 @@ def _split_data_by_lane_and_sample(self, bclconvert_data) -> Tuple[Dict, Dict, D
 
 def sample_stats_table(self, bclconvert_data, bclconvert_by_sample):
     sample_stats_data = dict()
-    total_reads = self._total_reads_all_runs(bclconvert_data)
+    total_reads = total_reads_all_runs(bclconvert_data)
     depth_available = False
 
     for sample_id, sample in bclconvert_by_sample.items():
@@ -617,8 +618,8 @@ def sample_stats_table(self, bclconvert_data, bclconvert_by_sample):
             "description": (
                 "Estimated sequencing depth based on the number of bases with quality score greater or equal to Q30, "
                 + (
-                    f", assuming the genome size is {self._get_genome_size()} as provided in config"
-                    if self._get_genome_size() is not None
+                    f", assuming the genome size is {get_genome_size()} as provided in config"
+                    if get_genome_size() is not None
                     else ""
                 )
             ),
@@ -740,8 +741,8 @@ def lane_stats_table(self, bclconvert_by_lane):
             "description": (
                 "Estimated sequencing depth based on the number of bases with quality score greater or equal to Q30"
                 + (
-                    f", assuming the genome size is {self._get_genome_size()} as provided in config"
-                    if self._get_genome_size() is not None
+                    f", assuming the genome size is {get_genome_size()} as provided in config"
+                    if get_genome_size() is not None
                     else ""
                 )
             ),
@@ -835,6 +836,128 @@ def lane_stats_table(self, bclconvert_by_lane):
 
     return table.plot(bclconvert_bylane_foroutput, headers, table_config)
 
+def add_general_stats(self, bclconvert_by_sample):
+    data = dict()
+    for sample_id, sample in bclconvert_by_sample.items():
+        if "Undetermined" in sample_id:
+            continue
+
+        if sample_id in data:
+            # log.error("prout")
+            data[sample_id]["nb_barcodes"] += 1
+            data[sample_id]["yieldQ30"] += sample["basesQ30"]
+            data[sample_id]["total"] += sample["clusters"]
+            data[sample_id]["perfectIndex"] += sample["perfect_index_reads"]
+            for r in range(1, 5):
+                # log.error(data[sample_id]["R{}_Q30".format(r)])
+                # log.error(sample["R{}_Q30".format(r)])
+                # log.error(data[sample_id]["R{}_yield".format(r)])
+                # log.error(sample["R{}_yield".format(r)])
+                try:
+                    data[sample_id]["R{}_Q30".format(r)] += sample["R{}_Q30".format(r)]
+                    data[sample_id]["R{}_yield".format(r)] += sample["R{}_yield".format(r)]
+                    data[sample_id]["R{}_trimmed_bases".format(r)] += sample["R{}_trimmed_bases".format(r)]
+                except KeyError:
+                    pass
+
+        else:
+            data[sample_id] = {
+                "nb_barcodes": 1,
+                "yieldQ30": sample["basesQ30"],
+                "total": sample["clusters"],
+                "perfectIndex": sample["perfect_index_reads"]
+            }
+            for r in range(1, 5):
+                # log.error(str(r) + " " + sample_id + " " + str(sample["R{}_trimmed_bases".format(r)]))
+                # log.error(str(r) + " " + sample_id + " " + str(sample["R{}_Q30".format(r)]))
+                # log.error(str(r) + " " + sample_id + " " + str(sample["R{}_yield".format(r)]))
+                try:
+                    data[sample_id]["R{}_Q30".format(r)] = sample["R{}_Q30".format(r)]
+                    data[sample_id]["R{}_yield".format(r)] = sample["R{}_yield".format(r)]
+                    data[sample_id]["R{}_trimmed_bases".format(r)] = sample["R{}_trimmed_bases".format(r)]
+                except KeyError:
+                    pass
+
+        # percent_R_Q30 = dict()
+        for r in range(1, 5):
+            # Zero division is possible
+            try:
+                data[sample_id]["percent_R{}_Q30".format(r)] = "{0:.1f}".format(
+                    float(100.0 * data[sample_id]["R{}_Q30".format(r)] / data[sample_id]["R{}_yield".format(r)])
+                )
+            except ZeroDivisionError:
+                data[sample_id]["percent_R{}_Q30".format(r)] = "0.0"
+            except KeyError:
+                pass
+        try:
+            perfect_percent = "{0:.1f}".format(float(100.0 * data[sample_id]["perfectIndex"] / data[sample_id]["total"]))
+        except ZeroDivisionError:
+            perfect_percent = "0.0"
+        data[sample_id]["perfectPercent"] = perfect_percent
+
+        # for r in range(1, 5):
+        #     try:
+        #         data[sample_id]["percent_R{}_Q30".format(r)] = percent_R_Q30[r]
+        #         data[sample_id]["R{}_trimmed_bases".format(r)] = sample["R{}_trimmed_bases".format(r)]
+        #     except KeyError:
+        #         pass
+
+    headers = OrderedDict()
+    headers["total"] = {
+        "title": "{} Clusters".format(config.read_count_prefix),
+        "description": "Total number of reads for this sample as determined by bclconvert demultiplexing ({})".format(
+            config.read_count_desc
+        ),
+        "scale": "Blues",
+        "shared_key": "read_count",
+    }
+    headers["yieldQ30"] = {
+        "title": "Yield ({}) &ge; Q30".format(config.base_count_prefix),
+        "description": "Number of bases with a Phred score of 30 or higher ({})".format(config.base_count_desc),
+        "scale": "Greens",
+        "shared_key": "base_count",
+        "hidden": True
+    }
+    # If no data for a column, header will be automatically ignored
+    for r in range(1, 5):
+        headers["percent_R{}_Q30".format(r)] = {
+            "title": "% R{} Yield &ge; Q30".format(r),
+            "description": "Percent of bases in R{} with a Phred score of 30 or higher".format(r),
+            "scale": "RdYlGn",
+            "max": 100,
+            "min": 0,
+            "suffix": "%",
+        }
+    headers["perfectPercent"] = {
+        "title": "% Perfect Index",
+        "description": "Percent of reads with perfect index (0 mismatches)",
+        "max": 100,
+        "min": 0,
+        "scale": "RdYlGn",
+        "suffix": "%",
+    }
+    # If no data for a column, header will be automatically ignored
+    for r in range(1, 5):
+        hideCol = True
+        for s in data:
+            try:
+                if data[s]["R{}_trimmed_bases".format(r)] > 0:
+                    hideCol = False
+            except KeyError:
+                pass
+        try:
+            headers["R{}_trimmed_bases".format(r)] = {
+                "title": "{} R{} trimmed".format(config.base_count_prefix, r),
+                "description": "Number of bases trimmed ({})".format(config.base_count_desc),
+                "scale": "RdYlBu",
+                "modify": lambda x: x * 0.000001,
+                "hidden": hideCol,
+            }
+        except KeyError:
+            pass
+    self.general_stats_addcols(data, headers)
+
+
 @staticmethod
 def prepend_runid(runid, rest):
     return str(runid) + " - " + str(rest)
@@ -849,9 +972,9 @@ def get_bar_data_from_counts(self, bclconvert_data, counts, last_run_id) -> Dict
         }
         try:
             if key.startswith(
-                self.prepend_runid(last_run_id, "")  # this wont run in multiple sequencing run situations
+                prepend_runid(last_run_id, "")  # this wont run in multiple sequencing run situations
             ):  # per-lane stats start with a prepended run id, this is a per-lane entry
-                this_lane_id = key.replace(self.prepend_runid(last_run_id, ""), "")
+                this_lane_id = key.replace(prepend_runid(last_run_id, ""), "")
                 rundata = bclconvert_data[last_run_id]
                 if this_lane_id in rundata:  # this is definitely a lane
                     bar_data[key]["undetermined"] = self.per_lane_undetermined_reads[this_lane_id]

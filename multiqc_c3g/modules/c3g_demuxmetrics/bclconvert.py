@@ -54,11 +54,7 @@ def parse_reports(self):
         """
         self.per_lane_undetermined_reads = None
 
-    create_undetermined_barplots = (
-        getattr(config, "bclconvert", {}).get("create_undetermined_barcode_barplots", False) or len(demuxes) == 1
-    )
-    if create_undetermined_barplots:
-        parse_top_unknown_barcodes(self, bclconvert_data, last_run_id)
+    parse_top_unknown_barcodes(self, bclconvert_data, last_run_id)
 
     # Collect counts by lane and sample
     (
@@ -462,13 +458,13 @@ def parse_qmetrics_data(self, bclconvert_data, qmetrics_file):
 def parse_top_unknown_barcodes(self, bclconvert_data, last_run_id):
     run_data = bclconvert_data[last_run_id]
 
-    for unknown_barcode_file in self.find_log_files("bclconvert/unknown_barcodes", filehandles=True):
+    for unknown_barcode_file in self.find_log_files("c3g_demuxmetrics/bclconvert_unknown_barcodes", filehandles=True):
         barcode_reader = csv.DictReader(unknown_barcode_file["f"], delimiter=",")
         for unknown_barcode_row in barcode_reader:
             thislane = "L" + str(unknown_barcode_row["Lane"])
             if "top_unknown_barcodes" not in run_data[thislane]:
                 run_data[thislane]["top_unknown_barcodes"] = {}
-            thisbarcode = str(unknown_barcode_row["index"]) + "-" + str(unknown_barcode_row["index2"])
+            thisbarcode = str(unknown_barcode_row["index"]) + "+" + str(unknown_barcode_row["index2"])
             run_data[thislane]["top_unknown_barcodes"][thisbarcode] = int(unknown_barcode_row["# Reads"])
 
 @staticmethod
@@ -708,12 +704,6 @@ def sample_stats_table(self, bclconvert_data, bclconvert_by_sample):
         "min": 0,
         "max": 40,
         "scale": "RdYlGn",
-    }
-    headers["index"] = {
-        "title": "Index",
-        "description": "Sample index",
-        "scale": False,
-        "hidden": True,
     }
     headers["sample_project"] = {
         "title": "Project",

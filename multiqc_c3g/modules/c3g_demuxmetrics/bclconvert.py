@@ -184,11 +184,11 @@ def parse_reports(self):
             anchor="undetermine_by_lane",
             description="Count of the top twenty most abundant undetermined barcodes by lanes",
             plot=table.plot(
-                get_bar_data_from_undetermined(self.bcl2fastq_bylane),
+                undetermined_data,
                 headers,
                 {
-                    "id": "bcl2fastq_undetermined",
-                    "title": "bcl2fastq: Undetermined barcodes by lane",
+                    "id": "bclconvert_undetermined",
+                    "title": "bclconvert: Undetermined barcodes by lane",
                     "col1_header": "Sequence"
                 }
             )
@@ -991,12 +991,14 @@ def get_bar_data_from_undetermined(flowcells):
     bar_data = defaultdict(dict)
     # get undetermined barcodes for each lanes
     for lane_id, lane in flowcells.items():
+        lane_header = lane_id.split(" ")[2]
         try:
             for barcode, count in islice(lane["top_unknown_barcodes"].items(), 20):
-                bar_data[barcode][lane_id] = count
+                bar_data[barcode][lane_header] = count
         except AttributeError:
             pass
         except KeyError:
             pass
 
-    return {key: value for key, value in islice(bar_data.items(), 20)}
+    bar_data = OrderedDict(sorted(bar_data.items(), key=lambda x: sum(x[1].values()), reverse=True))
+    return OrderedDict((key, value) for key, value in islice(bar_data.items(), 20))

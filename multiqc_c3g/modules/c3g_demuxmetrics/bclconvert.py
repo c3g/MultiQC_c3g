@@ -541,6 +541,7 @@ def split_data_by_lane_and_sample(self, bclconvert_data) -> Tuple[Dict, Dict, Di
                 s["cluster_length"] = lane["cluster_length"]
                 s["_quality_score_sum"] += sample["_quality_score_sum"] or sample["_calculated_quality_score_sum"]
                 s["index"] = sample["index"]
+                s["percent_lane"] = (float(sample["clusters"]) / float(lane["clusters"])) * 100.0
                 try:
                     # Not all demux files have Sample_Project column
                     s["sample_project"] = sample["sample_project"]
@@ -594,6 +595,7 @@ def sample_stats_table(self, bclconvert_data, bclconvert_by_sample):
             "basesQ30": sample["basesQ30"],
             "clusters": sample["clusters"],
             "percent_reads": percent_reads,
+            "percent_lane": sample["percent_lane"],
             "yield": sample["yield"],
             "percent_yield": percent_yield,
             "yield_q30_percent": yield_q30_percent,
@@ -648,21 +650,22 @@ def sample_stats_table(self, bclconvert_data, bclconvert_by_sample):
         "scale": "Greens",
         "shared_key": "base_count",
     }
-    headers["percent_reads"] = {
-        "title": "% Clusters",
-        "description": "Percentage of clusters (read pairs) for this sample in this run, as determined by bclconvert demultiplexing",
+    headers["percent_lane"] = {
+        "title": "% Lane",
+        "description": "Percentage of clusters (read pairs) for this sample in its lane, as determined by bclconvert demultiplexing",
         "scale": "Blues",
         "max": 100,
         "min": 0,
         "suffix": "%",
     }
     headers["percent_yield"] = {
-        "title": "% Yield",
-        "description": "Percentage of sequenced bases for this sample in this run",
+        "title": "% Run Yield",
+        "description": "Percentage of sequenced bases for this sample in entire run",
         "scale": "Greens",
         "max": 100,
         "min": 0,
         "suffix": "%",
+        "hidden": True
     }
     headers["basesQ30"] = {
         "title": f"Bases ({config.base_count_prefix}) ≥ Q30 (PF)",
@@ -671,9 +674,10 @@ def sample_stats_table(self, bclconvert_data, bclconvert_by_sample):
         ),
         "scale": "Blues",
         "shared_key": "base_count",
+        "hidden": True
     }
     headers["yield_q30_percent"] = {
-        "title": "% Bases ≥ Q30 (PF)",
+        "title": "% Q30 Bases",
         "description": "Percent of bases with a Phred score of 30 or higher, passing filter ({})".format(
             config.base_count_desc
         ),

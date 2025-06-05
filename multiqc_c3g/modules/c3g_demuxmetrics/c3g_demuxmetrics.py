@@ -14,6 +14,7 @@ from multiqc_c3g.runprocessing_base import RunProcessingBaseModule
 from . import DemuxFastqs
 from . import CountIlluminaBarcodes
 from . import bcl2fastq
+from . import bclconvert
 from . import MatchUndetermined
 from . import SplitBarcode
 
@@ -40,6 +41,10 @@ class MultiqcModule(RunProcessingBaseModule):
         n["Bcl2Fastq"] = bcl2fastq.parse_reports(self)
         if n["Bcl2Fastq"] > 0:
             log.info("Found {} Bcl2Fastq reports".format(n["Bcl2Fastq"]))
+
+        n["BclConvert"] = bclconvert.parse_reports(self)
+        if n["BclConvert"] > 0:
+            log.info("Found {} BclConvert reports".format(n["BclConvert"]))
 
         n["CountIlluminaBarcodes"] = CountIlluminaBarcodes.parse_reports(self)
         if n["CountIlluminaBarcodes"] > 0:

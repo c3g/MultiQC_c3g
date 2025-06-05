@@ -90,6 +90,16 @@ def c3g_execution():
             config.update_dict( config.sp, {"c3g_demuxmetrics/count_illumina_barcodes": {"fn": "*_[12345678].metrics"}} )
         if "c3g_demuxmetrics/bcl2fastq" not in config.sp:
             config.update_dict( config.sp, {"c3g_demuxmetrics/bcl2fastq": {"fn": "Stats.json"}} )
+        if "c3g_demuxmetrics/bclconvert_runinfo" not in config.sp:
+            config.update_dict( config.sp, {"c3g_demuxmetrics/bclconvert_runinfo": {"fn": "RunInfo.xml"}})
+        if "c3g_demuxmetrics/bclconvert_demux" not in config.sp:
+            config.update_dict( config.sp, {"c3g_demuxmetrics/bclconvert_demux": {"fn": "Demultiplex_Stats.csv"}})
+        if "c3g_demuxmetrics/bclconvert_quality_metrics" not in config.sp:
+            config.update_dict( config.sp, {"c3g_demuxmetrics/bclconvert_quality_metrics": {"fn": "Quality_Metrics.csv"}})
+        if "c3g_demuxmetrics/bclconvert_adapter_metrics" not in config.sp:
+            config.update_dict( config.sp, {"c3g_demuxmetrics/bclconvert_adapter_metrics": {"fn": "Adapter_Metrics.csv"}})
+        if "c3g_demuxmetrics/bclconvert_unknown_barcodes" not in config.sp:
+            config.update_dict( config.sp, {"c3g_demuxmetrics/bclconvert_unknown_barcodes": {"fn": "Top_Unknown_Barcodes.csv"}})
         if "c3g_demuxmetrics/splitbarcode" not in config.sp:
             config.update_dict( config.sp, {"c3g_demuxmetrics/splitbarcode": {"fn": "*BarcodeStat_*_multiqc.txt"}} )
         if "c3g_demuxmetrics/unassigned" not in config.sp:

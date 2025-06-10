@@ -9,7 +9,7 @@ from typing import Tuple, Dict, Optional
 import re
 
 from multiqc import config
-from multiqc.base_module import ModuleNoSamplesFound
+from multiqc.base_module import BaseMultiqcModule, ModuleNoSamplesFound
 from multiqc.plots import bargraph, table
 
 log = logging.getLogger(__name__)
@@ -30,176 +30,175 @@ def parse_reports(self):
     for qmetric in qmetrics.values():
         parse_qmetrics_data(self, bclconvert_data, qmetric)
 
-    if len(demuxes) == 0:
-        raise ModuleNoSamplesFound
-    elif len(demuxes) > 1 and not multiple_sequencing_runs:
-        log.warning("Found multiple runs from the same sequencer output")
-        self.intro += """
-            <div class="alert alert-warning">
-                <strong>Warning:</strong> Detected multiple bclconvert runs from the same sequencer output.
-                Runs were merged and undetermined stats were recalculated.
-            </div>
-        """
-        recalculate_undetermined(self, bclconvert_data, last_run_id)
-    elif multiple_sequencing_runs:
-        # If we have data from multiple sequencing runs, the recalculation in
-        # _recalculate_undetermined(last_run_id) wont work. In this case we
-        # suppress/hide the info.
-        log.warning("Found multiple sequencer runs")
-        self.intro += """
-            <div class="alert alert-warning">
-                <strong>Warning:</strong> Detected multiple sequencer runs.
-                Sample stats were merged.
-            </div>
-        """
-        self.per_lane_undetermined_reads = None
+    if len(demuxes) != 0:
+        if len(demuxes) > 1 and not multiple_sequencing_runs:
+            log.warning("Found multiple runs from the same sequencer output")
+            self.intro += """
+                <div class="alert alert-warning">
+                    <strong>Warning:</strong> Detected multiple bclconvert runs from the same sequencer output.
+                    Runs were merged and undetermined stats were recalculated.
+                </div>
+            """
+            recalculate_undetermined(self, bclconvert_data, last_run_id)
+        elif multiple_sequencing_runs:
+            # If we have data from multiple sequencing runs, the recalculation in
+            # _recalculate_undetermined(last_run_id) wont work. In this case we
+            # suppress/hide the info.
+            log.warning("Found multiple sequencer runs")
+            self.intro += """
+                <div class="alert alert-warning">
+                    <strong>Warning:</strong> Detected multiple sequencer runs.
+                    Sample stats were merged.
+                </div>
+            """
+            self.per_lane_undetermined_reads = None
 
-    parse_top_unknown_barcodes(self, bclconvert_data, last_run_id)
+        parse_top_unknown_barcodes(self, bclconvert_data, last_run_id)
 
-    # Collect counts by lane and sample
-    (
-        bclconvert_by_lane,
-        bclconvert_by_sample,
-        counts_by_sample_by_lane,
-    ) = split_data_by_lane_and_sample(self, bclconvert_data)
+        # Collect counts by lane and sample
+        (
+            bclconvert_by_lane,
+            bclconvert_by_sample,
+            counts_by_sample_by_lane,
+        ) = split_data_by_lane_and_sample(self, bclconvert_data)
 
-    # Filter to strip out ignored sample names
-    bclconvert_by_lane = self.ignore_samples(bclconvert_by_lane)
-    bclconvert_by_sample = self.ignore_samples(bclconvert_by_sample)
-    counts_by_sample_by_lane = self.ignore_samples(counts_by_sample_by_lane)
+        # Filter to strip out ignored sample names
+        bclconvert_by_lane = self.ignore_samples(bclconvert_by_lane)
+        bclconvert_by_sample = self.ignore_samples(bclconvert_by_sample)
+        counts_by_sample_by_lane = self.ignore_samples(counts_by_sample_by_lane)
 
-    # Return with Warning if no files are found
-    if len(bclconvert_by_lane) == 0 and len(bclconvert_by_sample) == 0:
-        raise ModuleNoSamplesFound
-    #log.info(f"{len(bclconvert_by_lane)} lanes and {len(bclconvert_by_sample)} samples found")
+        # Return with Warning if no files are found
+        if len(bclconvert_by_lane) == 0 and len(bclconvert_by_sample) == 0:
+            raise ModuleNoSamplesFound
+        #log.info(f"{len(bclconvert_by_lane)} lanes and {len(bclconvert_by_sample)} samples found")
 
-    # Calculate mean quality scores
-    for sample_id, sample in bclconvert_by_sample.items():
-        if sample["yield"] > 0:
-            sample["mean_quality"] = sample["_quality_score_sum"] / sample["yield"]
-        del sample["_quality_score_sum"]
+        # Calculate mean quality scores
+        for sample_id, sample in bclconvert_by_sample.items():
+            if sample["yield"] > 0:
+                sample["mean_quality"] = sample["_quality_score_sum"] / sample["yield"]
+            del sample["_quality_score_sum"]
 
-    for lane_id, lane in bclconvert_by_lane.items():
-        if lane["yield"] > 0:
-            lane["mean_quality"] = lane["_quality_score_sum"] / lane["yield"]
-        del lane["_quality_score_sum"]
+        for lane_id, lane in bclconvert_by_lane.items():
+            if lane["yield"] > 0:
+                lane["mean_quality"] = lane["_quality_score_sum"] / lane["yield"]
+            del lane["_quality_score_sum"]
 
-    # Add sample counts to general stats table
-    add_general_stats(self, bclconvert_by_sample)
-    self.write_data_file(bclconvert_by_lane, "multiqc_bclconvert_bylane")
-    self.write_data_file(bclconvert_by_sample, "multiqc_bclconvert_bysample")
+        # Add sample counts to general stats table
+        add_general_stats(self, bclconvert_by_sample)
+        self.write_data_file(bclconvert_by_lane, "multiqc_bclconvert_bylane")
+        self.write_data_file(bclconvert_by_sample, "multiqc_bclconvert_bysample")
 
-    # Superfluous function call to confirm that it is used in this module
-    # Replace None with actual version if it is available
-    self.add_software_version(None)
+        # Superfluous function call to confirm that it is used in this module
+        # Replace None with actual version if it is available
+        self.add_software_version(None)
 
-    # Add sections for summary stats per flow cell
-    self.add_section(
-        name="Sample Statistics",
-        anchor="bclconvert-samplestats",
-        description="Statistics about each sample for each flowcell",
-        plot=sample_stats_table(self, bclconvert_data, bclconvert_by_sample),
-    )
-
-    self.add_section(
-        name="Lane Statistics",
-        anchor="bclconvert-lanestats",
-        description="Statistics about each lane for each flowcell",
-        plot=lane_stats_table(self, bclconvert_by_lane),
-    )
-
-    # Add section for counts by lane
-    cats = {
-        "perfect": {"name": "Perfect Index Reads"},
-        "imperfect": {"name": "Mismatched Index Reads"},
-        "undetermined": {"name": "Undetermined Reads"},
-    }
-    extra = ""
-    if len(demuxes) > 1 and not multiple_sequencing_runs:
-        extra = """
-            <div class="alert alert-warning">
-                <strong>Warning:</strong> Found multiple runs from the same sequencer output.
-                Runs were merged and <em>Undetermined Reads</em> were recalculated.
-            </div>
-        """
-    elif multiple_sequencing_runs:
-        extra = """
-            <div class="alert alert-warning">
-                <strong>Warning:</strong> Found multiple sequencer runs.
-                <em>Undetermined Reads</em> cannot be recalculated for multiple sequencing runs and are not shown.
-            </div>
-        """
-    self.add_section(
-        name="Clusters by lane",
-        anchor="bclconvert-bylane",
-        description="Number of reads per lane (with number of perfect index reads)." + extra,
-        helptext="""Perfect index reads are those that do not have a single mismatch.
-            All samples of a lane are combined. Undetermined reads are treated as a third category.""",
-        plot=bargraph.plot(
-            get_bar_data_from_counts(self, bclconvert_data, bclconvert_by_lane, last_run_id),
-            cats,
-            {
-                "id": "bclconvert_lane_counts",
-                "title": "bclconvert: Clusters by lane",
-                "ylab": "Number of clusters",
-                "hide_empty": False,
-            },
-        ),
-    )
-
-    self.add_section(
-        name="Clusters by sample",
-        anchor="bclconvert-bysample",
-        description="Number of reads per sample.",
-        helptext="""Perfect index reads are those that do not have a single mismatch.
-            All samples are aggregated across lanes combined. Undetermined reads are ignored.
-            Undetermined reads are treated as a separate sample.""",
-        plot=bargraph.plot(
-            [
-                get_bar_data_from_counts(self, bclconvert_data, bclconvert_by_sample, last_run_id),
-                counts_by_sample_by_lane,
-            ],
-            [cats, sorted(bclconvert_by_lane.keys())],
-            {
-                "id": "bclconvert_sample_counts",
-                "title": "bclconvert: Clusters by sample",
-                "hide_empty": False,
-                "ylab": "Number of clusters",
-                "data_labels": ["Index mismatches", "Counts per lane"],
-            },
-        ),
-    )
-
-    # Add section with undetermined barcodes
-    undetermined_data = get_bar_data_from_undetermined(bclconvert_by_lane)
-    headers = OrderedDict()
-    for r in range(1,9):
-        headers["L{}".format(r)] = {
-            "title": "L{}".format(r),
-            "description": "Barcode count for Lane {}".format(r),
-            }
-    if undetermined_data:
+        # Add sections for summary stats per flow cell
         self.add_section(
-            name="Undetermined barcodes by lane",
-            anchor="undetermine_by_lane",
-            description="Count of the top twenty most abundant undetermined barcodes by lanes",
-            plot=table.plot(
-                undetermined_data,
-                headers,
+            name="Sample Statistics",
+            anchor="bclconvert-samplestats",
+            description="Statistics about each sample for each flowcell",
+            plot=sample_stats_table(self, bclconvert_data, bclconvert_by_sample),
+        )
+
+        self.add_section(
+            name="Lane Statistics",
+            anchor="bclconvert-lanestats",
+            description="Statistics about each lane for each flowcell",
+            plot=lane_stats_table(self, bclconvert_by_lane),
+        )
+
+        # Add section for counts by lane
+        cats = {
+            "perfect": {"name": "Perfect Index Reads"},
+            "imperfect": {"name": "Mismatched Index Reads"},
+            "undetermined": {"name": "Undetermined Reads"},
+        }
+        extra = ""
+        if len(demuxes) > 1 and not multiple_sequencing_runs:
+            extra = """
+                <div class="alert alert-warning">
+                    <strong>Warning:</strong> Found multiple runs from the same sequencer output.
+                    Runs were merged and <em>Undetermined Reads</em> were recalculated.
+                </div>
+            """
+        elif multiple_sequencing_runs:
+            extra = """
+                <div class="alert alert-warning">
+                    <strong>Warning:</strong> Found multiple sequencer runs.
+                    <em>Undetermined Reads</em> cannot be recalculated for multiple sequencing runs and are not shown.
+                </div>
+            """
+        self.add_section(
+            name="Clusters by lane",
+            anchor="bclconvert-bylane",
+            description="Number of reads per lane (with number of perfect index reads)." + extra,
+            helptext="""Perfect index reads are those that do not have a single mismatch.
+                All samples of a lane are combined. Undetermined reads are treated as a third category.""",
+            plot=bargraph.plot(
+                get_bar_data_from_counts(self, bclconvert_data, bclconvert_by_lane, last_run_id),
+                cats,
                 {
-                    "id": "bclconvert_undetermined",
-                    "title": "bclconvert: Undetermined barcodes by lane",
-                    "col1_header": "Sequence"
-                }
-            )
+                    "id": "bclconvert_lane_counts",
+                    "title": "bclconvert: Clusters by lane",
+                    "ylab": "Number of clusters",
+                    "hide_empty": False,
+                },
+            ),
         )
-    else:
+
         self.add_section(
-            name="Undetermined barcodes by lane",
-            anchor="undetermine_by_lane",
-            content="<div class='alert alert-info'>No undetermined barcodes found</div>",
+            name="Clusters by sample",
+            anchor="bclconvert-bysample",
+            description="Number of reads per sample.",
+            helptext="""Perfect index reads are those that do not have a single mismatch.
+                All samples are aggregated across lanes combined. Undetermined reads are ignored.
+                Undetermined reads are treated as a separate sample.""",
+            plot=bargraph.plot(
+                [
+                    get_bar_data_from_counts(self, bclconvert_data, bclconvert_by_sample, last_run_id),
+                    counts_by_sample_by_lane,
+                ],
+                [cats, sorted(bclconvert_by_lane.keys())],
+                {
+                    "id": "bclconvert_sample_counts",
+                    "title": "bclconvert: Clusters by sample",
+                    "hide_empty": False,
+                    "ylab": "Number of clusters",
+                    "data_labels": ["Index mismatches", "Counts per lane"],
+                },
+            ),
         )
-    return(len(bclconvert_by_lane))
+
+        # Add section with undetermined barcodes
+        undetermined_data = get_bar_data_from_undetermined(bclconvert_by_lane)
+        headers = OrderedDict()
+        for r in range(1,9):
+            headers["L{}".format(r)] = {
+                "title": "L{}".format(r),
+                "description": "Barcode count for Lane {}".format(r),
+                }
+        if undetermined_data:
+            self.add_section(
+                name="Undetermined barcodes by lane",
+                anchor="undetermine_by_lane",
+                description="Count of the top twenty most abundant undetermined barcodes by lanes",
+                plot=table.plot(
+                    undetermined_data,
+                    headers,
+                    {
+                        "id": "bclconvert_undetermined",
+                        "title": "bclconvert: Undetermined barcodes by lane",
+                        "col1_header": "Sequence"
+                    }
+                )
+            )
+        else:
+            self.add_section(
+                name="Undetermined barcodes by lane",
+                anchor="undetermine_by_lane",
+                content="<div class='alert alert-info'>No undetermined barcodes found</div>",
+            )
+        return(len(bclconvert_by_lane))
 
 @staticmethod
 @functools.lru_cache

@@ -198,7 +198,10 @@ def parse_reports(self):
                 anchor="undetermine_by_lane",
                 content="<div class='alert alert-info'>No undetermined barcodes found</div>",
             )
+    if bclconvert_by_lane:
         return(len(bclconvert_by_lane))
+    else:
+        return(len(demuxes))
 
 @staticmethod
 @functools.lru_cache

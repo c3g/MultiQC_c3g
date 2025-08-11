@@ -30,6 +30,7 @@ def parse_reports(self):
     for qmetric in qmetrics.values():
         parse_qmetrics_data(self, bclconvert_data, qmetric)
 
+    bclconvert_by_lane = None
     if len(demuxes) != 0:
         if len(demuxes) > 1 and not multiple_sequencing_runs:
             log.warning("Found multiple runs from the same sequencer output")

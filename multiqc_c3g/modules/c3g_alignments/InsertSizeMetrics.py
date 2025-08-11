@@ -49,7 +49,10 @@ def parse_reports(self):
                             pass  # missing data
                     rp = self.picard_insertSize_data[rowkey]["READ_PAIRS"]
                     mis = self.picard_insertSize_data[rowkey]["MEAN_INSERT_SIZE"]
-                    self.picard_insertSize_samplestats[s_name]["meansum"] += rp * mis
+                    try:
+                        self.picard_insertSize_samplestats[s_name]["meansum"] += rp * mis
+                    except TypeError:
+                        pass # data not an integer
                     self.picard_insertSize_samplestats[s_name]["total_pairs"] += rp
 
                     vals = f["f"].readline().strip("\n").split("\t")

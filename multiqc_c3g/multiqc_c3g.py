@@ -264,7 +264,7 @@ def c3g_summaries():
             yields_by_lane[lane] = yields_by_lane.get(lane, []) + [sample_yield]
             clusters_by_lane[lane] = clusters_by_lane.get(lane, []) + [sample_clusters]
             clusters_by_sample.append(sample_clusters)
-        spreads_by_lane = [(lane, max(vals) / min(vals) if min(vals) else (lane, max(vals))) for lane, vals in yields_by_lane.items()]
+        spreads_by_lane = [(lane, max(vals) / min(vals) if min(vals) else max(vals)) for lane, vals in yields_by_lane.items()]
         spreads_by_lane.sort(key=lambda tupl: tupl[0])
         clusters_by_lane = [(lane, sum(vals)) for lane, vals in clusters_by_lane.items()]
         if config.report_header_info is None:

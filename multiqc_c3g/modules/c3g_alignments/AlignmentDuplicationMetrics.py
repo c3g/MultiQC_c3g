@@ -32,7 +32,7 @@ def parse_reports(self):
                 if fn_search:
                     s_name = os.path.basename(fn_search.group(1).strip("[]"))
                     s_name = self.clean_s_name(s_name, f)
-                    s_name = re.sub(r'_L00[1-8]$', '', s_name)
+                    s_name = re.sub(r'_[0-9]{4}_L00[1-8]$', '', s_name)
                     parsed_data[s_name] = dict()
 
             if s_name is not None:
